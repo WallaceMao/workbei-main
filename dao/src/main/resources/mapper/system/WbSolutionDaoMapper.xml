@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workbei.dao.system.WbSolutionDao">
+    <resultMap type="com.workbei.model.system.WbSolutionDO" id="solutionMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="scene" column="scene" />
+        <result property="account" column="account" />
+        <result property="type" column="type" />
+        <result property="todo" column="todo" />
+        <result property="kanban" column="kanban" />
+        <result property="corpus" column="corpus" />
+        <result property="updating" column="updating" />
+    </resultMap>
+
+    <sql id="select-all-fields">
+        id,
+        version,
+        date_created,
+        last_updated,
+        scene,
+        `account`,
+        type,
+        todo,
+        kanban,
+        corpus,
+        updating
+    </sql>
+
+    <select id="getWbSolutionListByType" resultMap="solutionMap">
+        SELECT <include refid="select-all-fields"/>  FROM solution
+        <![CDATA[
+			WHERE type=#{type}
+		 ]]>
+    </select>
+</mapper>

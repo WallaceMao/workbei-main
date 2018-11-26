@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--Listener 配置-->
+    <bean id="alimqSolutionListener" class="com.workbei.listener.impl.SolutionListenerAlimqImpl" />
+    <!-- 多 CID 订阅同一个 Topic，可以创建多个 ConsumerBean-->
+    <bean id="alimqSolutionConsumer" class="com.aliyun.openservices.ons.api.bean.ConsumerBean" init-method="start" destroy-method="shutdown">
+        <property name="properties" > <!--消费者配置信息-->
+            <props>
+                <prop key="ConsumerId">${alimq.solution.consumerId}</prop>
+                <prop key="AccessKey">${alimq.accessKey}</prop>
+                <prop key="SecretKey">${alimq.accessSecret}</prop>
+                <!--将消费者线程数固定为50个
+                <prop key="ConsumeThreadNums">50</prop>
+                -->
+            </props>
+        </property>
+        <property name="subscriptionTable">
+            <map>
+                <entry value-ref="alimqSolutionListener">
+                    <key>
+                        <bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+                            <property name="topic" value="${alimq.solution.topic}"/>
+                            <!--expression 即 Tag，可以设置成具体的 Tag，如 taga||tagb||tagc，也可设置成*。 *仅代表订阅所有 Tag，不支持通配-->
+                            <property name="expression" value="${alimq.solution.tag}"/>
+                        </bean>
+                    </key>
+                </entry>
+                <!--更多的订阅添加 entry 节点即可，如下所示-->
+                <!--<entry value-ref="msgListener">-->
+                <!--<key>-->
+                <!--<bean class="com.aliyun.openservices.ons.api.bean.Subscription">-->
+                <!--<property name="topic" value="TopicTestMQ-Other"/> &lt;!&ndash;订阅另外一个 Topic &ndash;&gt;-->
+                <!--<property name="expression" value="taga||tagb"/> &lt;!&ndash; 订阅多个 Tag &ndash;&gt;-->
+                <!--</bean>-->
+                <!--</key>-->
+                <!--</entry>-->
+            </map>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--active mq-->
+    <!--<bean id="solutionListener" class="com.workbei.listener.impl.SolutionListenerActivemqImpl" />-->
+    <!--<bean id="solutionJmsContainer"-->
+          <!--class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="connectionFactory" />-->
+        <!--<property name="destination" ref="solutionQueue" />-->
+        <!--<property name="messageListener" ref="solutionListener" />-->
+    <!--</bean>-->
+</beans>

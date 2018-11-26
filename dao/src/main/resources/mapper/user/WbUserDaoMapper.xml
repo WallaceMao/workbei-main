@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workbei.dao.user.WbUserDao">
+
+    <insert id="saveOrUpdateUserDeptAscription" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_dept_ascription (
+        version,
+        department_id,
+        user_id
+        )VALUES(
+        0,
+        #{departmentId},
+        #{userId}
+        )
+    </insert>
+
+    <select id="getTopDepartment" resultType="long">
+        SELECT id  FROM department
+        <![CDATA[
+			WHERE team_id=#{teamId} and type='top'
+		 ]]>
+    </select>
+</mapper>
