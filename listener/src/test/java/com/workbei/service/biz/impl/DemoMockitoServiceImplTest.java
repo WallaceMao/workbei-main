@@ -5,7 +5,10 @@ import com.workbei.dao.user.WbOuterDataTeamDao;
 import com.workbei.model.domain.user.WbOuterDataTeamDO;
 import com.workbei.service.biz.DemoService;
 import factory.TeamFactory;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -36,7 +39,7 @@ public class DemoMockitoServiceImplTest extends BaseUnitTest {
 
     @Test
     public void testMockitoSaveOuterDataTeam(){
-        WbOuterDataTeamDO outerDataTeamDO = TeamFactory.getOuterDataTeam();
+        WbOuterDataTeamDO outerDataTeamDO = TeamFactory.getOuterDataTeamDO();
         outerDataTeamDO.setClient("dingtalk");
         Mockito.when(wbOuterDataTeamDao.getOuterDataTeamByClientAndOuterId("dingtalk", "world"))
                 .thenReturn(outerDataTeamDO);

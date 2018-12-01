@@ -6,6 +6,7 @@ package com.workbei.model.domain.user;
  */
 public class WbUserRoleGroupDO {
     private Long id;
+    private Long version;
     private Long userId;
     private Long roleGroupId;
 
@@ -15,6 +16,14 @@ public class WbUserRoleGroupDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Long getUserId() {

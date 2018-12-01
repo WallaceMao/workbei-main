@@ -132,7 +132,7 @@ public class UserManageServiceImpl implements UserManageService {
         wbUserDao.saveOrUpdateUser(userDO);
         Long userId = userDO.getId();
         if(userVO.getOuterCombineId() != null){
-            outerDataUserDO = UserFactory.getOuterDataUser();
+            outerDataUserDO = UserFactory.getOuterDataUserDO();
             outerDataUserDO.setUserId(userDO.getId());
             outerDataUserDO.setOuterId(userVO.getOuterCombineId());
             outerDataUserDO.setClient(userVO.getClient());
@@ -145,14 +145,14 @@ public class UserManageServiceImpl implements UserManageService {
         WbUserDisplayOrderDO userDisplayOrderDO = UserFactory.getUserDisplayOrderDO();
         userDisplayOrderDO.setUserId(userId);
         wbUserDao.saveOrUpdateUserDisplayOrder(userDisplayOrderDO);
-        WbUserRoleGroupDO userRoleGroupDO = UserFactory.getUserRoleGroup();
+        WbUserRoleGroupDO userRoleGroupDO = UserFactory.getUserRoleGroupDO();
         userRoleGroupDO.setUserId(userId);
         userRoleGroupDO.setRoleGroupId(roleGroupDO.getId());
         wbUserDao.saveOrUpdateUserRoleGroup(userRoleGroupDO);
-        WbUserUiSettingDO userUiSettingDO = UserFactory.getUserUiSetting();
+        WbUserUiSettingDO userUiSettingDO = UserFactory.getUserUiSettingDO();
         userUiSettingDO.setUserId(userId);
         wbUserDao.saveOrUpdateUserUiSetting(userUiSettingDO);
-        WbUserFunctionSettingDO userFunctionSettingDO = UserFactory.getUserFunctionSetting();
+        WbUserFunctionSettingDO userFunctionSettingDO = UserFactory.getUserFunctionSettingDO();
         userFunctionSettingDO.setUserId(userId);
         wbUserDao.saveOrUpdateUserFunctionSetting(userFunctionSettingDO);
 

@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbTeamDO {
     private Long id;
+    private Long version;
     private Date dateCreated;
     private Date lastUpdated;
     /** 公司名 */
@@ -24,6 +25,14 @@ public class WbTeamDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Date getDateCreated() {

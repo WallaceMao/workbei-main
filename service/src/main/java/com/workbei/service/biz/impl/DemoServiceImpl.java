@@ -1,10 +1,9 @@
-package com.workbei.service.biz;
+package com.workbei.service.biz.impl;
 
 import com.workbei.constant.WbConstant;
 import com.workbei.dao.user.WbOuterDataTeamDao;
 import com.workbei.model.domain.user.WbOuterDataTeamDO;
-import com.workbei.model.domain.user.WbTeamDO;
-import com.workbei.service.base.TeamManageService;
+import com.workbei.service.biz.DemoService;
 import factory.TeamFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +22,7 @@ public class DemoServiceImpl implements DemoService {
 
     @Override
     public void saveOuterDataTeam(String outerId, Long teamId){
-        WbOuterDataTeamDO outerDataTeamDO = TeamFactory.getOuterDataTeam();
+        WbOuterDataTeamDO outerDataTeamDO = TeamFactory.getOuterDataTeamDO();
         outerDataTeamDO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         outerDataTeamDO.setOuterId(outerId);
         outerDataTeamDO.setTeamId(teamId);

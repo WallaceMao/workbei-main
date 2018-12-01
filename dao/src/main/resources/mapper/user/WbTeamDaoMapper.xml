@@ -2,60 +2,86 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workbei.dao.user.WbTeamDao">
 
+    <!--team相关-->
     <resultMap type="com.workbei.model.domain.user.WbTeamDO" id="teamMap">
         <id property="id" column="id" />
+        <result property="version" column="version" />
         <result property="dateCreated" column="date_created" />
         <result property="lastUpdated" column="last_updated" />
         <result property="logo" column="logo" />
         <result property="name" column="name" />
         <result property="isDisplay" column="is_display" />
     </resultMap>
-    <sql id="select-all-fields">
+    <sql id="select-all-fields-team">
         id,
+        version,
         date_created,
         last_updated,
         logo,
         `name`,
         is_display
     </sql>
-
-    <resultMap type="com.workbei.model.domain.user.WbTeamUserRoleDO" id="teamUserRoleMap">
-        <id property="id" column="id" />
-        <result property="dateCreated" column="date_created" />
-        <result property="lastUpdated" column="last_updated" />
-        <result property="teamId" column="team_id" />
-        <result property="userId" column="user_id" />
-    </resultMap>
-    <sql id="select-all-fields-team-user-role">
-        id,
-        date_created,
-        last_updated,
-        team_id,
-        user_id
-    </sql>
-
     <insert id="saveOrUpdateTeam" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO team (
-            version,
-            date_created,
-            last_updated,
-            logo,
-            `name`,
-            is_display
+        version,
+        date_created,
+        last_updated,
+        logo,
+        `name`,
+        is_display
         )VALUES(
-            0,
-            now(),
-            now(),
-            #{logo},
-            #{name},
-            #{isDisplay}
+        0,
+        now(),
+        now(),
+        #{logo},
+        #{name},
+        #{isDisplay}
         )ON DUPLICATE KEY UPDATE
-            last_updated=now(),
-            logo=#{logo},
-            `name`=#{name},
-            is_display=#{isDisplay}
+        last_updated=now(),
+        logo=#{logo},
+        `name`=#{name},
+        is_display=#{isDisplay}
     </insert>
+    <select id="getTeamById" resultMap="teamMap">
+        SELECT <include refid="select-all-fields-team"/>  FROM team
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
 
+    <!--teamData相关-->
+    <resultMap type="com.workbei.model.domain.user.WbTeamDataDO" id="teamDataMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="region" column="region" />
+        <result property="contacts" column="contacts" />
+        <result property="industry" column="industry" />
+        <result property="size" column="size" />
+        <result property="size" column="size" />
+        <result property="outerId" column="outer_id" />
+        <result property="phoneNumber" column="phone_number" />
+        <result property="teamId" column="team_id" />
+        <result property="canTel" column="can_tel" />
+        <result property="introduction" column="introduction" />
+        <result property="client" column="client" />
+    </resultMap>
+    <sql id="select-all-fields-team-data">
+        version,
+        date_created,
+        last_updated,
+        region,
+        contacts,
+        industry,
+        size,
+        outer_id,
+        phone_number,
+        team_id,
+        can_tel,
+        introduction,
+        `client`
+    </sql>
     <insert id="saveOrUpdateTeamData" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO team_data (
             version,
@@ -92,7 +118,31 @@
             size=#{size},
             introduction=#{introduction}
     </insert>
+    <select id="getTeamDataByTeamId" resultMap="teamDataMap">
+        SELECT <include refid="select-all-fields-team-data"/>  FROM team_data
+        <![CDATA[
+			WHERE team_id=#{teamId}
+		 ]]>
+    </select>
 
+    <!--teamUser相关-->
+    <resultMap type="com.workbei.model.domain.user.WbTeamUserDO" id="teamUserMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="teamId" column="team_id" />
+        <result property="whoCanInviteColleague" column="who_can_invite_colleague" />
+        <result property="deletedTeamUser" column="deleted_team_user" />
+    </resultMap>
+    <sql id="select-all-fields-team-user">
+        version,
+        date_created,
+        last_updated,
+        team_id,
+        who_can_invite_colleague,
+        deleted_team_user
+    </sql>
     <insert id="saveOrUpdateTeamUser" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO team_user (
             version,
@@ -113,22 +163,47 @@
             who_can_invite_colleague=#{whoCanInviteColleague},
             deleted_team_user=#{deletedTeamUser}
     </insert>
+    <select id="getTeamUserByTeamId" resultMap="teamUserMap">
+        SELECT <include refid="select-all-fields-team-user"/>  FROM team_user
+        <![CDATA[
+			WHERE team_id=#{teamId}
+		 ]]>
+    </select>
 
+    <!--teamUserRole相关-->
+    <resultMap type="com.workbei.model.domain.user.WbTeamUserRoleDO" id="teamUserRoleMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="teamId" column="team_id" />
+        <result property="userId" column="user_id" />
+        <result property="role" column="role" />
+    </resultMap>
+    <sql id="select-all-fields-team-user-role">
+        id,
+        version,
+        date_created,
+        last_updated,
+        team_id,
+        user_id,
+        role
+    </sql>
     <insert id="saveOrUpdateTeamUserRole" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO team_user_role (
             version,
             date_created,
             last_updated,
             team_id,
-            role,
-            user_id
+            user_id,
+            role
         )VALUES(
             0,
             now(),
             now(),
             #{teamId},
-            #{role},
-            #{userId}
+            #{userId},
+            #{role}
         )ON DUPLICATE KEY UPDATE
             last_updated=now(),
             role=#{role}
@@ -139,6 +214,43 @@
         WHERE team_id=#{teamId} AND user_id=#{userId}
         ]]>
     </delete>
+    <delete id="deleteTeamUserRoleByTeamIdAndUserIdAndRole">
+        DELETE FROM team_user_role
+        <![CDATA[
+        WHERE team_id=#{teamId} AND user_id=#{userId} AND role=#{role}
+        ]]>
+    </delete>
+    <select id="listTeamUserRoleByTeamIdAndUserId" resultMap="teamUserRoleMap">
+        SELECT <include refid="select-all-fields-team-user-role"/>  FROM team_user_role
+        <![CDATA[
+			WHERE team_id=#{teamId} AND user_id=#{userId}
+		 ]]>
+    </select>
+    <select id="getTeamUserRoleByTeamIdAndUserIdAndRole" resultMap="teamUserRoleMap">
+        SELECT <include refid="select-all-fields-team-user-role"/>  FROM team_user_role
+        <![CDATA[
+			WHERE team_id=#{teamId} AND user_id=#{userId} AND role=#{role}
+		 ]]>
+    </select>
+
+    <!--joinAndQuitTeamRecord相关-->
+    <resultMap type="com.workbei.model.domain.user.WbJoinAndQuitTeamRecordDO" id="joinAndQuitTeamRecordMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="userId" column="user_id" />
+        <result property="teamId" column="team_id" />
+        <result property="type" column="type" />
+    </resultMap>
+    <sql id="select-all-fields-join-and-quit-team-record">
+        version,
+        date_created,
+        last_updated,
+        user_id,
+        team_id,
+        type
+    </sql>
     <insert id="saveOrUpdateJoinAndQuitTeamRecord" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO join_and_quit_team_record (
         version,
@@ -156,17 +268,16 @@
         #{type}
         )
     </insert>
-
-    <select id="getTeamById" resultMap="teamMap">
-        SELECT <include refid="select-all-fields"/>  FROM team
-        <![CDATA[
-			WHERE id=#{id}
-		 ]]>
-    </select>
-    <select id="getTeamUserRoleByTeamIdAndUserId" resultMap="teamUserRoleMap">
-        SELECT <include refid="select-all-fields-team-user-role"/>  FROM team_user_role
+    <select id="listJoinAndQuitTeamRecordByTeamIdAndUserId" resultMap="joinAndQuitTeamRecordMap">
+        SELECT <include refid="select-all-fields-join-and-quit-team-record"/>  FROM join_and_quit_team_record
         <![CDATA[
 			WHERE team_id=#{teamId} AND user_id=#{userId}
+		 ]]>
+    </select>
+    <select id="getJoinAndQuitTeamRecordByTeamIdAndUserIdAndType" resultMap="joinAndQuitTeamRecordMap">
+        SELECT <include refid="select-all-fields-join-and-quit-team-record"/>  FROM join_and_quit_team_record
+        <![CDATA[
+			WHERE team_id=#{teamId} AND user_id=#{userId} AND type=#{type}
 		 ]]>
     </select>
 </mapper>

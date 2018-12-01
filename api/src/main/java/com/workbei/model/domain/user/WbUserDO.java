@@ -6,6 +6,7 @@ package com.workbei.model.domain.user;
  */
 public class WbUserDO {
     private Long id;
+    private Long version;
     private Boolean isParent;
     private Long teamId;
     private Long accountId;
@@ -24,6 +25,14 @@ public class WbUserDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Boolean getParent() {

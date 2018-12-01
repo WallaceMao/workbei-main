@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbUserDisplayOrderDO {
     private Long userId;
+    private Long version;
     private Date dateCreated;
     private Date lastUpdated;
     //文集最大值
@@ -33,6 +34,14 @@ public class WbUserDisplayOrderDO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Date getDateCreated() {

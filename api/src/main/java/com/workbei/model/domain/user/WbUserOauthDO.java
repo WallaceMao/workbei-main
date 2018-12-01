@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbUserOauthDO {
     private Long id;
+    private Long version;
     private Long accountId;
     private Date dateCreated;
     private Date lastUpdated;
@@ -42,6 +43,14 @@ public class WbUserOauthDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Long getAccountId() {

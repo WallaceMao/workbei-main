@@ -11,6 +11,9 @@ public class WbConstant {
     public static final String APP_ROLE_GROUP_ADMIN = "管理员";
     public static final String APP_ROLE_GROUP_SUPER_ADMIN = "超级管理员";
     public static final String APP_ROLE_GROUP_USER = "普通用户";
+    public static final String APP_DEFAULT_TEAM_CONTACT_NAME = "空";
+    public static final Boolean APP_DEFAULT_TEAM_CAN_TEL = true;
+    public static final String APP_DEFAULT_TEAM_INDUSTRY = "1";
 
     public static final String SUMMARY_DEFAULT_COVER = "cover/default/corpus_v1/card-default-";
     //文集归属个人选项
@@ -59,11 +62,11 @@ public class WbConstant {
     //普通成员
     public static final String TEAM_USER_ROLE_COMMON = "common";
     // 加入公司记录的类型
-    public static final String TEAM_JOIN_TEAM_RECORD_TYPE = "join";
+    public static final String TEAM_RECORD_TYPE_JOIN = "join";
     // 退出公司记录的类型
-    public static final String TEAM_QUIT_TEAM_RECORD_TYPE = "quit";
+    public static final String TEAM_RECORD_TYPE_QUIT = "quit";
     // 创建公司记录的类型
-    public static final String TEAM_CREATE_TEAM_RECORD_TYPE = "create";
+    public static final String TEAM_RECORD_TYPE_CREATE = "create";
     // 移出公司记录的类型
-    public static final String TEAM_REMOVE_TEAM_RECORD_TYPE = "remove";
+    public static final String TEAM_RECORD_TYPE_REMOVE = "remove";
 }

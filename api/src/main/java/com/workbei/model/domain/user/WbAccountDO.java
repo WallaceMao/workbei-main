@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbAccountDO {
     private Long id;
+    private Long version;
     //帐号是否被锁住
     private boolean accountLocked;
     //邮箱
@@ -30,6 +31,14 @@ public class WbAccountDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public boolean isAccountLocked() {

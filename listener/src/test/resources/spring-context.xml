@@ -10,13 +10,11 @@
         <property name="ignoreUnresolvablePlaceholders" value="true" />
         <property name="locations">
             <list>
-                <value>file:${user.home}/workbei/main-config.properties</value>
+                <value>file:${user.home}/workbei/main-config-test.properties</value>
             </list>
         </property>
     </bean>
 
     <!--引入对service中bean的依赖-->
     <import resource="classpath:spring-beans.xml" />
-    <!--引入对listener中queue的监听-->
-    <import resource="classpath:spring-queue-alimq.xml" />
 </beans>

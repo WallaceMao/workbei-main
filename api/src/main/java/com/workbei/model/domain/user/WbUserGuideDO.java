@@ -6,6 +6,7 @@ package com.workbei.model.domain.user;
  */
 public class WbUserGuideDO {
     private Long id;
+    private Long version;
     private Long userId;
     private Boolean guideKanbanFlag;
     private Boolean guideWebFlag;
@@ -18,6 +19,14 @@ public class WbUserGuideDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Long getUserId() {

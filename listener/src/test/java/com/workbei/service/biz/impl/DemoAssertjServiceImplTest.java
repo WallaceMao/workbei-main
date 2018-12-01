@@ -2,19 +2,9 @@ package com.workbei.service.biz.impl;
 
 import com.workbei.BaseUnitTest;
 import com.workbei.constant.WbConstant;
-import com.workbei.dao.user.WbOuterDataTeamDao;
 import com.workbei.model.domain.user.WbOuterDataTeamDO;
 import com.workbei.service.biz.DemoService;
-import factory.TeamFactory;
-import org.assertj.db.type.Table;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.assertj.db.api.Assertions.assertThat;
 
 /**
  * @author Wallace Mao

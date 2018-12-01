@@ -11,14 +11,14 @@ import com.workbei.model.domain.user.WbUserDeptDO;
  * Date: 2018-11-28 10:26
  */
 public class DepartmentFactory {
-    public static WbDepartmentDO getDepartment(){
+    public static WbDepartmentDO getDepartmentDO(){
         WbDepartmentDO departmentDO = new WbDepartmentDO();
         departmentDO.setType(WbConstant.DEPARTMENT_TYPE_COMMON);
         departmentDO.setDisplayOrder(WbConstant.DEPARTMENT_DEFAULT_DISPLAY_ORDER);
         return departmentDO;
     }
 
-    public static WbUserDeptDO getUserDept(){
+    public static WbUserDeptDO getUserDeptDO(){
         return new WbUserDeptDO();
     }
 
@@ -26,7 +26,7 @@ public class DepartmentFactory {
         return new WbUserDeptAscriptionDO();
     }
 
-    public static WbOuterDataDepartmentDO getOuterDataDepartment(){
+    public static WbOuterDataDepartmentDO getOuterDataDepartmentDO(){
         return new WbOuterDataDepartmentDO();
     }
 }

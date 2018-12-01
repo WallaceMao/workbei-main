@@ -70,7 +70,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         if(parentDept == null){
             parentDept = getTeamUnassignedDepartment(teamId);
         }
-        WbDepartmentDO dept = DepartmentFactory.getDepartment();
+        WbDepartmentDO dept = DepartmentFactory.getDepartmentDO();
         dept.setName(departmentVO.getName());
         dept.setLevel(parentDept.getLevel() + 1);
         dept.setCode("");
@@ -83,7 +83,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         wbDepartmentDao.saveOrUpdateDepartment(dept);
 
         if(departmentVO.getOuterCombineId() != null){
-            WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartment();
+            WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
             outerDataDepartmentDO.setClient(departmentVO.getClient());
             outerDataDepartmentDO.setDepartmentId(dept.getId());
             outerDataDepartmentDO.setOuterId(departmentVO.getOuterCombineId());
@@ -95,7 +95,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     public void saveTeamDefaultDepartment(WbTeamDO teamDO) {
         Long teamId = teamDO.getId();
         //  创建顶级部门
-        WbDepartmentDO topDept = DepartmentFactory.getDepartment();
+        WbDepartmentDO topDept = DepartmentFactory.getDepartmentDO();
         topDept.setName(teamDO.getName());
         topDept.setLevel(1);
         topDept.setCode("");
@@ -107,7 +107,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         wbDepartmentDao.saveOrUpdateDepartment(topDept);
 
         //  创建未分配部门
-        WbDepartmentDO unassigned = DepartmentFactory.getDepartment();
+        WbDepartmentDO unassigned = DepartmentFactory.getDepartmentDO();
         unassigned.setName(WbConstant.DEPARTMENT_NAME_UNASSIGNED);
         unassigned.setLevel(2);
         unassigned.setCode("");
@@ -128,7 +128,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
      */
     @Override
     public void saveDepartmentUser(Long departmentId, Long userId) {
-        WbUserDeptDO userDeptDO = DepartmentFactory.getUserDept();
+        WbUserDeptDO userDeptDO = DepartmentFactory.getUserDeptDO();
         userDeptDO.setUserId(userId);
         userDeptDO.setDepartmentId(departmentId);
         wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);

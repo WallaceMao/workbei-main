@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbUserUiSettingDO {
     private Long id;
+    private Long version;
     private Date dateCreated;
     private Date lastUpdated;
     private Long userId;
@@ -52,6 +53,14 @@ public class WbUserUiSettingDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Date getDateCreated() {

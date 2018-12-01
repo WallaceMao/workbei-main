@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbJoinAndQuitTeamRecordDO {
     private Long id;
+    private Long version;
     private Long userId;
     private Long teamId;
     private Date dateCreated;
@@ -21,6 +22,14 @@ public class WbJoinAndQuitTeamRecordDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Long getUserId() {

@@ -6,6 +6,7 @@ package com.workbei.model.domain.user;
  */
 public class WbUserFunctionSettingDO {
     private Long id;
+    private Long version;
     private Long userId;
     //移动端星期开始于 功能
     private String weekBegins;
@@ -22,6 +23,14 @@ public class WbUserFunctionSettingDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Long getUserId() {

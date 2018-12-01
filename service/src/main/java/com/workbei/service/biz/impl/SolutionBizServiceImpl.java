@@ -1,4 +1,4 @@
-package com.workbei.service.biz;
+package com.workbei.service.biz.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -18,6 +18,7 @@ import com.workbei.model.summary.WbSummaryDO;
 import com.workbei.model.summary.WbSummaryNoteDO;
 import com.workbei.model.system.WbSolutionDO;
 import com.workbei.model.todo.WbTaskDO;
+import com.workbei.service.biz.SolutionBizService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;

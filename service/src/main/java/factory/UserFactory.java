@@ -58,11 +58,11 @@ public class UserFactory {
         return userDisplayOrderDO;
     }
 
-    public static WbUserRoleGroupDO getUserRoleGroup(){
+    public static WbUserRoleGroupDO getUserRoleGroupDO(){
         return new WbUserRoleGroupDO();
     }
 
-    public static WbUserUiSettingDO getUserUiSetting(){
+    public static WbUserUiSettingDO getUserUiSettingDO(){
         WbUserUiSettingDO userUiSettingDO = new WbUserUiSettingDO();
         userUiSettingDO.setThemeSkin(WbConstant.USER_THEME_SKIN_DEFAULT);
         userUiSettingDO.setNarrowTheInbox(false);
@@ -83,7 +83,7 @@ public class UserFactory {
         return userUiSettingDO;
     }
 
-    public static WbUserFunctionSettingDO getUserFunctionSetting(){
+    public static WbUserFunctionSettingDO getUserFunctionSettingDO(){
         WbUserFunctionSettingDO userFunctionSettingDO = new WbUserFunctionSettingDO();
         userFunctionSettingDO.setWeekBegins("Sun");
         userFunctionSettingDO.setOpenNotificationPlugin(true);
@@ -93,7 +93,7 @@ public class UserFactory {
         return userFunctionSettingDO;
     }
 
-    public static WbOuterDataUserDO getOuterDataUser(){
+    public static WbOuterDataUserDO getOuterDataUserDO(){
         WbOuterDataUserDO outerDataUserDO = new WbOuterDataUserDO();
         return outerDataUserDO;
     }

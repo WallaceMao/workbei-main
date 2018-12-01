@@ -1,13 +1,14 @@
 package com.workbei;
 
-import org.junit.Ignore;
+import com.workbei.constant.TestConstant;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Wallace Mao
@@ -18,4 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class BaseUnitTest {
     @Test
     public void test(){}
+
+    protected void checkDateCloseToNow(Date... checkArray){
+        Date now = new Date();
+        for(int i = 0; i < checkArray.length; i++){
+            assertThat(checkArray[i]).as("检查checkDateCloseToNow")
+                    .isCloseTo(now, TestConstant.DEFAULT_DATE_DELTA);
+        }
+    }
 }

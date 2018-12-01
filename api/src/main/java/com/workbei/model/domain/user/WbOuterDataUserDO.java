@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class WbOuterDataUserDO {
     private Long id;
+    private Long version;
     //创建时间
     private Date dateCreated;
     //最后更新时间
@@ -26,6 +27,14 @@ public class WbOuterDataUserDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public Date getDateCreated() {

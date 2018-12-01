@@ -1,4 +1,4 @@
-package com.workbei.service.biz;
+package com.workbei.service.biz.impl;
 
 import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.*;
@@ -8,6 +8,7 @@ import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.service.base.DepartmentManageService;
 import com.workbei.service.base.TeamManageService;
 import com.workbei.service.base.UserManageService;
+import com.workbei.service.biz.AutoCreateBizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,11 +57,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
             WbRoleGroupDO roleGroupDO = userManageService.getCommonRoleGroup();
             WbUserDO creatorDO = userManageService.saveUserInfo(teamVO.getCreator(), teamDO, roleGroupDO);
             //  保存team与人员的关联
-            teamManageService.saveTeamUser(
-                    teamDO,
-                    creatorDO,
-                    WbConstant.TEAM_USER_ROLE_CREATOR,
-                    WbConstant.TEAM_CREATE_TEAM_RECORD_TYPE);
+            teamManageService.saveTeamCreator(teamDO.getId(), creatorDO.getId());
             //  保存部门与人员的关联
             WbDepartmentDO departmentDO = departmentManageService.getTeamUnassignedDepartment(teamDO.getId());
             departmentManageService.saveDepartmentUser(departmentDO.getId(), creatorDO.getId());
@@ -84,11 +81,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         WbRoleGroupDO roleGroupDO = userManageService.getCommonRoleGroup();
         WbUserDO userDO = userManageService.saveUserInfo(userVO, teamDO, roleGroupDO);
         //  保存team与人员的关联
-        teamManageService.saveTeamUser(
-                teamDO,
-                userDO,
-                WbConstant.TEAM_USER_ROLE_COMMON,
-                WbConstant.TEAM_JOIN_TEAM_RECORD_TYPE);
+        teamManageService.saveTeamCommonUser(teamDO.getId(), userDO.getId());
         //  保存部门与人员的关联
         if(userVO.getOuterCombineDeptIdList() != null){
             List<String> deptIdList = userVO.getOuterCombineDeptIdList();
@@ -193,7 +186,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
             return;
         }
         WbUserDO userDO = userManageService.getUserById(outerDataUserDO.getUserId());
-        teamManageService.updateAdmin(userDO, userVO.getAdmin());
+        teamManageService.updateTeamAdmin(userDO.getTeamId(), userDO.getId(), userVO.getAdmin());
     }
 
     @Override

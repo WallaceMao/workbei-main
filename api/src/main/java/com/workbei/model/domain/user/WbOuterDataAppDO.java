@@ -6,6 +6,7 @@ package com.workbei.model.domain.user;
  */
 public class WbOuterDataAppDO {
     private Long id;
+    private Long version;
     private String name;
     private String key;
     private String token;
@@ -18,6 +19,14 @@ public class WbOuterDataAppDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getName() {

@@ -6,6 +6,7 @@ package com.workbei.model.domain.user;
  */
 public class WbDepartmentDO {
     private Long id;
+    private Long version;
     private String name;
 
     /*
@@ -37,6 +38,14 @@ public class WbDepartmentDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getName() {
