@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workbei.dao.user.WbOuterDataDepartmentDao">
+
+    <resultMap id="outerDataDepartmentMap" type="com.workbei.model.domain.user.WbOuterDataDepartmentDO">
+        <id property="id" column="id" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="departmentId" column="department_id" />
+        <result property="outerId" column="outer_id" />
+        <result property="client" column="client" />
+    </resultMap>
+
+    <sql id="select-all-fields">
+        id,
+        date_created,
+        last_updated,
+        department_id,
+        outer_id,
+        `client`
+    </sql>
+
+    <insert id="saveOrUpdateOuterDataDepartment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO outer_data_department (
+            version,
+            date_created,
+            last_updated,
+            department_id,
+            outer_id,
+            `client`
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{departmentId},
+            #{outerId},
+            #{client}
+        )ON DUPLICATE KEY UPDATE
+            last_updated=now()
+    </insert>
+    <delete id="deleteOuterDataDepartmentByOuterId">
+        DELETE FROM outer_data_department
+        <![CDATA[
+        WHERE outer_id=#{outerId}
+        ]]>
+    </delete>
+
+    <select id="getOuterDataDepartmentByClientAndOuterId" resultMap="outerDataDepartmentMap">
+        SELECT <include refid="select-all-fields"/>  FROM outer_data_department
+        <![CDATA[
+			WHERE outer_id=#{outerId} AND `client`=#{client}
+		 ]]>
+    </select>
+
+    <select id="getOuterDataDepartmentDepartmentIdByClientAndOuterId" resultType="long">
+        SELECT departmeng_id  FROM outer_data_department
+        <![CDATA[
+			WHERE `client`=#{client} AND outer_id=#{outerId}
+		 ]]>
+    </select>
+</mapper>

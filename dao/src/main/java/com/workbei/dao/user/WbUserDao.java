@@ -1,5 +1,6 @@
 package com.workbei.dao.user;
 
+import com.workbei.model.domain.user.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -9,11 +10,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("wbUserDao")
 public interface WbUserDao {
-    public void saveOrUpdateUserDeptAscription(
-            @Param("departmentId") Long deptId,
-            @Param("userId") Long userId);
-
-    public Long getTopDepartment(
-            @Param("teamId") Long teamId
-    );
+    void saveOrUpdateUser(WbUserDO user);
+    void saveOrUpdateUserGuide(WbUserGuideDO userGuideDO);
+    void saveOrUpdateUserDisplayOrder(WbUserDisplayOrderDO userDisplayOrderDO);
+    void saveOrUpdateUserRoleGroup(WbUserRoleGroupDO userRoleGroupDO);
+    void saveOrUpdateUserUiSetting(WbUserUiSettingDO userUiSettingDO);
+    void saveOrUpdateUserFunctionSetting(WbUserFunctionSettingDO userFunctionSettingDO);
+    WbUserDO getUserById(@Param("id") Long id);
 }

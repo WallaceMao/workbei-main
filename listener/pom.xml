@@ -3,15 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>workbei.main</artifactId>
+        <artifactId>com.workbei.main</artifactId>
         <groupId>com.workbei</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>workbei.main.listener</artifactId>
+    <artifactId>com.workbei.main.listener</artifactId>
     <packaging>war</packaging>
-    <name>workbei backend</name>
-    <url>https://www.workbei.com</url>
+    <name>controller layer for com.workbei</name>
+    <url>https://www.com.workbei.com</url>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -21,11 +21,11 @@
     <dependencies>
         <dependency>
             <groupId>com.workbei</groupId>
-            <artifactId>workbei.main.api</artifactId>
+            <artifactId>com.workbei.main.api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.workbei</groupId>
-            <artifactId>workbei.main.service</artifactId>
+            <artifactId>com.workbei.main.service</artifactId>
         </dependency>
         <!--spring-->
         <dependency>
@@ -51,6 +51,14 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.aliyun.openservices/ons-client -->
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
@@ -70,6 +78,30 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-db</artifactId>
+        </dependency>
     </dependencies>
-    
 </project>

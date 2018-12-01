@@ -1,4 +1,4 @@
-package com.workbei.service;
+package com.workbei.service.biz;
 
 /**
  * @author Wallace Mao

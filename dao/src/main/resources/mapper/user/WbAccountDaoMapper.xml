@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workbei.dao.user.WbAccountDao">
+
+    <resultMap type="com.workbei.model.domain.user.WbAccountDO" id="accountMap">
+        <id property="id" column="id" />
+        <result property="birth" column="birth" />
+        <result property="phoneNumber" column="phone_number" />
+        <result property="name" column="name" />
+        <result property="accountLocked" column="account_locked" />
+        <result property="password" column="password" />
+        <result property="isCheckEmail" column="is_check_email" />
+        <result property="email" column="email" />
+        <result property="avatar" column="avatar" />
+    </resultMap>
+    <resultMap type="com.workbei.model.domain.user.WbUserOauthDO" id="userOauthMap">
+        <id property="id" column="id" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="accountId" column="account_id" />
+        <result property="weixinUnionId" column="weixin_union_id" />
+        <result property="weixinName" column="weixin_name" />
+        <result property="qqOpenId" column="qq_open_id" />
+        <result property="qqName" column="qq_name" />
+        <result property="sinaOpenId" column="sina_open_id" />
+        <result property="sinaName" column="sina_name" />
+        <result property="xiaomiOpenId" column="xiaomi_open_id" />
+        <result property="xiaomiName" column="xiaomi_name" />
+        <result property="ddUnionId" column="dd_union_id" />
+        <result property="ddWebJSONUser" column="dd_web_json_user" />
+        <result property="outerId" column="outer_id" />
+    </resultMap>
+
+    <sql id="select-all-fields">
+        id,
+        birth,
+        phone_number,
+        `name`,
+        account_locked,
+        `password`,
+        is_check_email,
+        email,
+        avatar,
+    </sql>
+
+    <insert id="saveOrUpdateAccount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `account` (
+            version,
+            birth,
+            phone_number,
+            `name`,
+            account_locked,
+            `password`,
+            is_check_email,
+            email,
+            avatar
+        )VALUES(
+            0,
+            #{birth},
+            #{phoneNumber},
+            #{name},
+            #{accountLocked},
+            #{password},
+            #{isCheckEmail},
+            #{email},
+            #{avatar}
+        )ON DUPLICATE KEY UPDATE
+            birth=#{birth},
+            `phone_number`=#{phoneNumber},
+            `name`=#{name},
+            `account_locked`=#{accountLocked},
+            `password`=#{password},
+            `is_check_email`=#{isCheckEmail},
+            `email`=#{email},
+            `avatar`=#{avatar}
+    </insert>
+
+    <insert id="saveOrUpdateUserOauth" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user_oauth` (
+            version,
+            date_created,
+            last_updated,
+            dd_union_id
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{ddUnionId}
+        )
+    </insert>
+
+    <insert id="saveOrUpdateUserRegister" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user_register` (
+            version,
+            date_created,
+            last_updated,
+            reg_date,
+            account_id,
+            `mode`,
+            `client`,
+            is_system
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{regDate},
+            #{accountId},
+            #{mode},
+            #{client},
+            #{isSystem}
+        )
+    </insert>
+
+    <select id="getAccountById" resultMap="accountMap">
+        SELECT <include refid="select-all-fields"/>  FROM `account`
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
+
+    <select id="getUserOauthByDdUnionId" resultMap="userOauthMap">
+        SELECT <include refid="select-all-fields"/>  FROM user_oauth
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
+</mapper>

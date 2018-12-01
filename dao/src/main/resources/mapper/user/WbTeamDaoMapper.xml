@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workbei.dao.user.WbTeamDao">
+
+    <resultMap type="com.workbei.model.domain.user.WbTeamDO" id="teamMap">
+        <id property="id" column="id" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="logo" column="logo" />
+        <result property="name" column="name" />
+        <result property="isDisplay" column="is_display" />
+    </resultMap>
+    <sql id="select-all-fields">
+        id,
+        date_created,
+        last_updated,
+        logo,
+        `name`,
+        is_display
+    </sql>
+
+    <resultMap type="com.workbei.model.domain.user.WbTeamUserRoleDO" id="teamUserRoleMap">
+        <id property="id" column="id" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="teamId" column="team_id" />
+        <result property="userId" column="user_id" />
+    </resultMap>
+    <sql id="select-all-fields-team-user-role">
+        id,
+        date_created,
+        last_updated,
+        team_id,
+        user_id
+    </sql>
+
+    <insert id="saveOrUpdateTeam" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO team (
+            version,
+            date_created,
+            last_updated,
+            logo,
+            `name`,
+            is_display
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{logo},
+            #{name},
+            #{isDisplay}
+        )ON DUPLICATE KEY UPDATE
+            last_updated=now(),
+            logo=#{logo},
+            `name`=#{name},
+            is_display=#{isDisplay}
+    </insert>
+
+    <insert id="saveOrUpdateTeamData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO team_data (
+            version,
+            date_created,
+            last_updated,
+            region,
+            contacts,
+            industry,
+            size,
+            outer_id,
+            phone_number,
+            team_id,
+            can_tel,
+            introduction,
+            `client`
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{region},
+            #{contacts},
+            #{industry},
+            #{size},
+            #{outerId},
+            #{phoneNumber},
+            #{teamId},
+            #{canTel},
+            #{introduction},
+            #{client}
+        ) ON DUPLICATE KEY UPDATE
+            last_updated=now(),
+            region=#{region},
+            industry=#{industry},
+            size=#{size},
+            introduction=#{introduction}
+    </insert>
+
+    <insert id="saveOrUpdateTeamUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO team_user (
+            version,
+            date_created,
+            last_updated,
+            team_id,
+            who_can_invite_colleague,
+            deleted_team_user
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{teamId},
+            #{whoCanInviteColleague},
+            #{deletedTeamUser}
+        ) ON DUPLICATE KEY UPDATE
+            last_updated=now(),
+            who_can_invite_colleague=#{whoCanInviteColleague},
+            deleted_team_user=#{deletedTeamUser}
+    </insert>
+
+    <insert id="saveOrUpdateTeamUserRole" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO team_user_role (
+            version,
+            date_created,
+            last_updated,
+            team_id,
+            role,
+            user_id
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{teamId},
+            #{role},
+            #{userId}
+        )ON DUPLICATE KEY UPDATE
+            last_updated=now(),
+            role=#{role}
+    </insert>
+    <delete id="deleteTeamUserRoleByTeamIdAndUserId">
+        DELETE FROM team_user_role
+        <![CDATA[
+        WHERE team_id=#{teamId} AND user_id=#{userId}
+        ]]>
+    </delete>
+    <insert id="saveOrUpdateJoinAndQuitTeamRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO join_and_quit_team_record (
+        version,
+        date_created,
+        last_updated,
+        user_id,
+        team_id,
+        type
+        )VALUES(
+        0,
+        now(),
+        now(),
+        #{userId},
+        #{teamId},
+        #{type}
+        )
+    </insert>
+
+    <select id="getTeamById" resultMap="teamMap">
+        SELECT <include refid="select-all-fields"/>  FROM team
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
+    <select id="getTeamUserRoleByTeamIdAndUserId" resultMap="teamUserRoleMap">
+        SELECT <include refid="select-all-fields-team-user-role"/>  FROM team_user_role
+        <![CDATA[
+			WHERE team_id=#{teamId} AND user_id=#{userId}
+		 ]]>
+    </select>
+</mapper>

@@ -1,10 +1,11 @@
 package com.workbei.controller;
 
+import com.workbei.model.view.autocreate.AutoCreateTeamVO;
+import com.workbei.service.biz.SolutionBizService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  * @author Wallace Mao
  * Date: 2018-11-25 18:02
  */
-@Controller
+@RestController
 @RequestMapping("/demo")
 public class ListenerDemoController {
     private static final Logger bizLogger = LoggerFactory.getLogger(ListenerDemoController.class);
@@ -25,5 +26,40 @@ public class ListenerDemoController {
         bizLogger.warn("warn==============" + new Date());
         bizLogger.error("error==============" + new Date());
         return  "success++++";
+    }
+
+    @Autowired
+    private SolutionBizService solutionBizService;
+    @RequestMapping("/generateSolution")
+    @ResponseBody
+    public String generateSolution(
+            @RequestParam("teamId") String teamId,
+            @RequestParam("userId") String userId,
+            @RequestParam("type") String type
+    ){
+        try {
+            if("team".equals(type)){
+                solutionBizService.generateTeamSolution(teamId, userId);
+            }else if("staff".equals(type)){
+                solutionBizService.generateUserSolution(teamId, userId);
+            }else{
+                return "no type";
+            }
+            return "success";
+        } catch (Exception e){
+            bizLogger.error("error in demo test", e);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/testBind", method= RequestMethod.POST)
+    @ResponseBody
+    public AutoCreateTeamVO testBind(
+            @RequestParam("client") String client,
+            @RequestBody AutoCreateTeamVO autoCreateTeamVO
+    ){
+                bizLogger.info("=======client: " + client);
+                bizLogger.info("=======autoCreateTeamVO: " + autoCreateTeamVO);
+                return autoCreateTeamVO;
     }
 }

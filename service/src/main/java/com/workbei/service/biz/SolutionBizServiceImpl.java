@@ -1,4 +1,4 @@
-package com.workbei.service.impl;
+package com.workbei.service.biz;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,6 +7,7 @@ import com.workbei.dao.kanban.WbKanbanDao;
 import com.workbei.dao.summary.WbSummaryDao;
 import com.workbei.dao.system.WbSolutionDao;
 import com.workbei.dao.todo.WbTodoDao;
+import com.workbei.dao.user.WbDepartmentDao;
 import com.workbei.dao.user.WbUserDao;
 import com.workbei.model.kanban.WbKanbanCardDO;
 import com.workbei.model.kanban.WbKanbanChildDO;
@@ -17,7 +18,6 @@ import com.workbei.model.summary.WbSummaryDO;
 import com.workbei.model.summary.WbSummaryNoteDO;
 import com.workbei.model.system.WbSolutionDO;
 import com.workbei.model.todo.WbTaskDO;
-import com.workbei.service.SolutionBizService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
@@ -29,14 +29,16 @@ import java.util.List;
  * Date: 2018-11-26 11:06
  */
 public class SolutionBizServiceImpl implements SolutionBizService {
-    private static final String WORKBEI_TYPE_TEAM = "workbei-team";
-    private static final String WORKBEI_TYPE_STAFF = "workbei-staff";
+    private static final String WORKBEI_TYPE_TEAM = "com.workbei-team";
+    private static final String WORKBEI_TYPE_STAFF = "com.workbei-staff";
     private static final Long ORDER_START = 65535L;
     private static final Long ORDER_STEP = 65536L;
     @Autowired
     private WbSolutionDao wbSolutionDao;
     @Autowired
     private WbUserDao wbUserDao;
+    @Autowired
+    private WbDepartmentDao wbDepartmentDao;
     @Autowired
     private WbKanbanDao wbKanbanDao;
     @Autowired
@@ -53,7 +55,6 @@ public class SolutionBizServiceImpl implements SolutionBizService {
         List<WbSolutionDO> list = wbSolutionDao.getWbSolutionListByType(WORKBEI_TYPE_TEAM);
         Long targetTeamId = Long.valueOf(teamId);
         Long targetUserId = Long.valueOf(userId);
-        addUserAscription(targetTeamId, targetUserId);
         generateSolution(targetTeamId, targetUserId, list);
     }
 
@@ -65,12 +66,7 @@ public class SolutionBizServiceImpl implements SolutionBizService {
     }
 
     private Long getTopDeptId(Long teamId){
-        return wbUserDao.getTopDepartment(teamId);
-    }
-
-    private void addUserAscription(Long teamId, Long userId){
-        Long deptId = getTopDeptId(teamId);
-        wbUserDao.saveOrUpdateUserDeptAscription(deptId, userId);
+        return wbDepartmentDao.getTopDepartmentId(teamId);
     }
 
     private void generateSolution(Long teamId, Long userId, List<WbSolutionDO> list){

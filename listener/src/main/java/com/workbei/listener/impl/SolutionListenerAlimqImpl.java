@@ -8,7 +8,7 @@ import com.aliyun.openservices.ons.api.MessageListener;
 import com.workbei.event.SolutionEvent;
 import com.workbei.exception.WorkbeiRuntimeException;
 import com.workbei.listener.SolutionListener;
-import com.workbei.service.SolutionBizService;
+import com.workbei.service.biz.SolutionBizService;
 import com.workbei.util.LogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

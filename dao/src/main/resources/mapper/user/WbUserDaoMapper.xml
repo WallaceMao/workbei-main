@@ -2,22 +2,203 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workbei.dao.user.WbUserDao">
 
-    <insert id="saveOrUpdateUserDeptAscription" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_dept_ascription (
-        version,
-        department_id,
-        user_id
+    <resultMap type="com.workbei.model.domain.user.WbUserDO" id="userMap">
+        <id property="id" column="id" />
+        <result property="isParent" column="is_parent" />
+        <result property="position" column="position" />
+        <result property="teamId" column="team_id" />
+        <result property="username" column="username" />
+        <result property="name" column="name" />
+        <result property="accountId" column="account_id" />
+        <result property="isDisplay" column="is_display" />
+    </resultMap>
+
+    <sql id="select-all-fields">
+        id,
+        is_parent,
+        position,
+        team_id,
+        username,
+        `name`,
+        account_id,
+        is_display
+    </sql>
+
+    <insert id="saveOrUpdateUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user` (
+            version,
+            is_parent,
+            position,
+            team_id,
+            username,
+            `name`,
+            account_id,
+            is_display
         )VALUES(
-        0,
-        #{departmentId},
-        #{userId}
+            0,
+            #{isParent},
+            #{position},
+            #{teamId},
+            #{username},
+            #{name},
+            #{accountId},
+            #{isDisplay}
         )
     </insert>
 
-    <select id="getTopDepartment" resultType="long">
-        SELECT id  FROM department
+    <insert id="saveOrUpdateUserGuide" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_guide (
+            version,
+            user_id,
+            guide_kanban_flag,
+            guide_web_flag,
+            guide_task_flag,
+            guide_note_flag
+        )VALUES(
+            0,
+            #{userId},
+            #{guideKanbanFlag},
+            #{guideWebFlag},
+            #{guideTaskFlag},
+            #{guideNoteFlag}
+        )ON DUPLICATE KEY UPDATE
+            guide_kanban_flag=#{guideKanbanFlag},
+            guide_web_flag=#{guideWebFlag},
+            guide_task_flag=#{guideTaskFlag},
+            guide_note_fla=#{guideNoteFlag}
+    </insert>
+
+    <insert id="saveOrUpdateUserDisplayOrder" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_display_order (
+            version,
+            date_created,
+            last_updated,
+            user_id,
+            max_star_corpus_display_order,
+            min_star_corpus_display_order,
+            max_star_kanban_display_order,
+            min_star_kanban_display_order,
+            max_corpus_display_order,
+            min_corpus_display_order,
+            max_kanban_display_order,
+            min_kanban_display_order
+        )VALUES(
+            0,
+            #{dateCreated},
+            #{lastUpdated},
+            #{userId},
+            #{maxStarCorpusDisplayOrder},
+            #{minStarCorpusDisplayOrder},
+            #{maxStarKanbanDisplayOrder},
+            #{minStarKanbanDisplayOrder},
+            #{maxCorpusDisplayOrder},
+            #{minCorpusDisplayOrder},
+            #{maxKanbanDisplayOrder},
+            #{minKanbanDisplayOrder}
+        )
+    </insert>
+
+    <insert id="saveOrUpdateUserRoleGroup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_role_group (
+            role_group_id,
+            user_id
+        )VALUES(
+            roleGroupId,
+            userId
+        )
+    </insert>
+
+    <insert id="saveOrUpdateUserUiSetting" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_ui_setting (
+            version,
+            user_id,
+            date_created,
+            last_updated,
+            narrow_the_corpus,
+            company_view,
+            narrow_the_kanban,
+            day_alert_time,
+            narrow_the_company,
+            expire_alert_flag,
+            lunar_flag,
+            theme_skin,
+            phone_theme_skin,
+            regist_alert_flag,
+            show_tip_box,
+            narrow_the_inbox,
+            narrow_the_application,
+            festival_flag,
+            theme_bg,
+            first_delete_flag,
+            inbox_mode
+        )VALUES(
+            0,
+            #{userId},
+            #{dateCreated},
+            #{lastUpdated},
+            #{narrowTheCorpus},
+            #{companyView},
+            #{narrowTheKanban},
+            #{dayAlertTime},
+            #{narrowTheCompany},
+            #{expireAlertFlag},
+            #{lunarFlag},
+            #{themeSkin},
+            #{phoneThemeSkin},
+            #{registAlertFlag},
+            #{showTipBox},
+            #{narrowTheInbox},
+            #{narrowTheApplication},
+            #{festivalFlag},
+            #{themeBg},
+            #{firstDeleteFlag},
+            #{inboxMode}
+        )ON DUPLICATE KEY UPDATE
+            last_updated=now(),
+            narrow_the_corpus=#{narrowTheCorpus},
+            company_view=#{companyView},
+            narrow_the_kanban=#{narrowTheKanban},
+            day_alert_time=#{dayAlertTime},
+            narrow_the_company=#{narrowTheCompany},
+            expire_alert_flag=#{expireAlertFlag},
+            lunar_flag=#{lunarFlag},
+            theme_skin=#{themeSkin},
+            phone_theme_skin=#{phoneThemeSkin},
+            regist_alert_flag=#{registAlertFlag},
+            show_tip_box=#{showTipBox},
+            narrow_the_inbox=#{narrowTheInbox},
+            narrow_the_application=#{narrowTheApplication},
+            festival_flag=#{festivalFlag},
+            theme_bg=#{themeBg},
+            first_delete_flag=#{firstDeleteFlag},
+            inbox_mode=#{inboxMode}
+    </insert>
+
+    <insert id="saveOrUpdateUserFunctionSetting" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_function_setting (
+            version,
+            user_id,
+            is_open_notification_plugin,
+            week_begins,
+            shake_mode,
+            read_collage_count
+        )VALUES(
+            0,
+            #{userId},
+            #{isOpenNotificationPlugin},
+            #{weekBegins},
+            #{shakeMode},
+            #{readCollageCount}
+        )ON DUPLICATE KEY UPDATE
+            is_open_notification_plugin=#{isOpenNotificationPlugin},
+            week_begins=#{weekBegins},
+            shake_mode=#{shakeMode},
+    </insert>
+
+    <select id="getUserById" resultMap="userMap">
+        SELECT <include refid="select-all-fields"/>  FROM `user`
         <![CDATA[
-			WHERE team_id=#{teamId} and type='top'
+			WHERE id=#{id}
 		 ]]>
     </select>
 </mapper>

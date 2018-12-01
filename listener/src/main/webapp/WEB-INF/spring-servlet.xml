@@ -13,7 +13,8 @@
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
             <!--fastjson 作为message-converters有问题，先用jackson-->
-            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" />
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+            <!--<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter" />-->
         </mvc:message-converters>
     </mvc:annotation-driven>
 
@@ -21,6 +22,7 @@
 
     <!--配置需要扫描的包-->
     <context:component-scan base-package="com.workbei.controller" />
+    <context:component-scan base-package="com.workbei.service" />
 
     <mvc:resources mapping="/checkpreload.html" location="/checkpreload.html" />
 </beans>

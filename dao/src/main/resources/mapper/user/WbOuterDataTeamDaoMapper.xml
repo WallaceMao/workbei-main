@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.workbei.dao.user.WbOuterDataTeamDao">
+
+    <resultMap id="outerDataTeamMap" type="com.workbei.model.domain.user.WbOuterDataTeamDO">
+        <id property="id" column="id" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="teamId" column="team_id" />
+        <result property="outerId" column="outer_id" />
+        <result property="client" column="client" />
+    </resultMap>
+
+    <sql id="select-all-fields">
+        id,
+        date_created,
+        last_updated,
+        team_id,
+        outer_id,
+        `client`
+    </sql>
+
+    <insert id="saveOrUpdateOuterDataTeam" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO outer_data_team (
+            version,
+            date_created,
+            last_updated,
+            team_id,
+            outer_id,
+            `client`
+        )VALUES(
+            0,
+            now(),
+            now(),
+            #{teamId},
+            #{outerId},
+            #{client}
+        )ON DUPLICATE KEY UPDATE
+            last_updated=now()
+    </insert>
+    <delete id="deleteOuterDataTeamByOuterId">
+        DELETE FROM outer_data_team
+        <![CDATA[
+        WHERE outer_id=#{outerId}
+        ]]>
+    </delete>
+
+    <select id="getOuterDataTeamByClientAndOuterId" resultMap="outerDataTeamMap">
+        SELECT <include refid="select-all-fields"/>  FROM outer_data_team
+        <![CDATA[
+			WHERE outer_id=#{outerId} AND `client`=#{client}
+		 ]]>
+    </select>
+</mapper>
