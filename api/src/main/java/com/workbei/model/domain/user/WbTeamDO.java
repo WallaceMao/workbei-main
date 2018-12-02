@@ -1,5 +1,6 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
-public class WbTeamDO {
+public class WbTeamDO implements Serializable {
     private Long id;
     private String uuid;
     private Long version;

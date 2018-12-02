@@ -1,5 +1,6 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * @author Wallace Mao
  * Date: 2018-11-28 15:08
  */
-public class WbUserUiSettingDO {
+public class WbUserUiSettingDO implements Serializable {
     private Long id;
     private Long version;
     private Date dateCreated;
@@ -45,6 +46,7 @@ public class WbUserUiSettingDO {
     // 手机端要有修改皮肤的功能，默认值“basic0”
     private String phoneThemeSkin;
 
+    private Boolean firstDeleteFlag;
     //新增字段，收纳箱“完整模式complete，精简模式simple”，新用户默认精简模式,2018年10月8日10:14:12
     private String inboxMode;
 
@@ -206,6 +208,14 @@ public class WbUserUiSettingDO {
 
     public void setPhoneThemeSkin(String phoneThemeSkin) {
         this.phoneThemeSkin = phoneThemeSkin;
+    }
+
+    public Boolean getFirstDeleteFlag() {
+        return firstDeleteFlag;
+    }
+
+    public void setFirstDeleteFlag(Boolean firstDeleteFlag) {
+        this.firstDeleteFlag = firstDeleteFlag;
     }
 
     public String getInboxMode() {

@@ -1,5 +1,6 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,8 @@ import java.util.Date;
  * @author Wallace Mao
  * Date: 2018-11-28 15:08
  */
-public class WbUserDisplayOrderDO {
+public class WbUserDisplayOrderDO implements Serializable {
+    private Long id;
     private Long userId;
     private Long version;
     private Date dateCreated;
@@ -28,6 +30,14 @@ public class WbUserDisplayOrderDO {
     private Double maxStarKanbanDisplayOrder;
     // 计划星标列表最小值
     private Double minStarKanbanDisplayOrder;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getUserId() {
         return userId;

@@ -1,11 +1,13 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
+
 /**
  * uuid为唯一约束
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
-public class WbDepartmentDO {
+public class WbDepartmentDO implements Serializable {
     private Long id;
     private String uuid;
     private Long version;

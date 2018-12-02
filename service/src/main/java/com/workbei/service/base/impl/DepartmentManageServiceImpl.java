@@ -48,7 +48,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     }
 
     @Override
-    public WbDepartmentDO getDepartmentByOuterId(String client, String outerId){
+    public WbDepartmentDO getDepartmentByClientAndOuterId(String client, String outerId){
         return wbDepartmentDao.getDepartmentByClientAndOuterId(client, outerId);
     }
 
@@ -199,7 +199,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         }
         //  修改父部门信息
         if(departmentVO.getOuterParentCombineId() != null){
-            WbDepartmentDO parentDept = getDepartmentByOuterId(
+            WbDepartmentDO parentDept = getDepartmentByClientAndOuterId(
                     departmentVO.getClient(), departmentVO.getOuterParentCombineId()
             );
             //  如果parentDept为null，那么就放到顶级部门下

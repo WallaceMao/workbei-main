@@ -1,11 +1,9 @@
 package com.workbei.service.base.impl;
 
-import com.workbei.constant.WbConstant;
 import com.workbei.dao.user.*;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.service.base.UserManageService;
-import com.workbei.util.LogFormatter;
 import factory.UserFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
@@ -27,10 +25,51 @@ public class UserManageServiceImpl implements UserManageService {
     private WbOuterDataUserDao wbOuterDataUserDao;
     @Autowired
     private WbAccountDao wbAccountDao;
-    @Autowired
-    private WbOuterDataTeamDao wbOuterDataTeamDao;
-    @Autowired
-    private WbRoleDao wbRoleDao;
+
+    @Override
+    public void saveOrUpdateUser(WbUserDO userDO) {
+        wbUserDao.saveOrUpdateUser(userDO);
+    }
+
+    @Override
+    public WbUserRegisterDO getUserRegisterByAccountId(Long accountId) {
+        return wbAccountDao.getUserRegisterByAccountId(accountId);
+    }
+
+    @Override
+    public WbUserOauthDO getUserOauthByAccountId(Long accountId) {
+        return wbAccountDao.getUserOauthByAccountId(accountId);
+    }
+
+    @Override
+    public WbUserGuideDO getUserGuideByUserId(Long userId) {
+        return wbUserDao.getUserGuideByUserId(userId);
+    }
+
+    @Override
+    public WbUserDisplayOrderDO getUserDisplayOrderByUserId(Long userId) {
+        return wbUserDao.getUserDisplayOrderByUserId(userId);
+    }
+
+    @Override
+    public WbUserUiSettingDO getUserUiSettingByUserId(Long userId) {
+        return wbUserDao.getUserUiSettingByUserId(userId);
+    }
+
+    @Override
+    public WbUserFunctionSettingDO getUserFunctionSettingByUserId(Long userId) {
+        return wbUserDao.getUserFunctionSettingByUserId(userId);
+    }
+
+    @Override
+    public void saveOrUpdateAccount(WbAccountDO accountDO){
+        wbAccountDao.saveOrUpdateAccount(accountDO);
+    }
+
+    @Override
+    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO){
+        wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
+    }
 
     @Override
     public WbOuterDataUserDO getOuterDataUserByClientAndOuterId(String client, String outerId){
@@ -43,6 +82,11 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
+    public WbUserDO getUserByClientAndOuterId(String client, String outerCombineId) {
+        return wbUserDao.getUserByClientAndOuterId(client, outerCombineId);
+    }
+
+    @Override
     public WbUserOauthDO getUserOauthByDdUnionId(String ddUnionId){
         return wbAccountDao.getUserOauthByDdUnionId(ddUnionId);
     }
@@ -50,11 +94,6 @@ public class UserManageServiceImpl implements UserManageService {
     @Override
     public WbAccountDO getAccountById(Long id){
         return wbAccountDao.getAccountById(id);
-    }
-
-    @Override
-    public WbRoleGroupDO getCommonRoleGroup(){
-        return wbRoleDao.getRoleGroupByName(WbConstant.APP_ROLE_GROUP_USER);
     }
 
     /**
@@ -66,14 +105,7 @@ public class UserManageServiceImpl implements UserManageService {
      * @return
      */
     @Override
-    public WbUserDO saveUserInfo(AutoCreateUserVO userVO, WbTeamDO teamDO, WbRoleGroupDO roleGroupDO){
-        //  如果outerDataUser中存在，那么就不创建，直接返回
-        WbOuterDataUserDO outerDataUserDO = wbOuterDataUserDao.getOuterDataUserByClientAndOuterId(
-                userVO.getClient(), userVO.getOuterCombineId()
-        );
-        if(outerDataUserDO != null){
-            return wbUserDao.getUserById(outerDataUserDO.getUserId());
-        }
+    public WbUserDO saveUserInfo(Long teamId, AutoCreateUserVO userVO){
         //  新增account
         //  如果unionId在数据库中存在，那么就根据unionId获取account，否则就新增account，并且保存unionId
         WbAccountDO accountDO = null;
@@ -111,28 +143,12 @@ public class UserManageServiceImpl implements UserManageService {
         WbUserDO userDO = UserFactory.getUserDO();
         userDO.setAccountId(accountDO.getId());
         userDO.setName(userVO.getName());
-        if(teamDO != null){
-            userDO.setTeamId(teamDO.getId());
-        }
-        if(userVO.getOuterCorpId() != null){
-            WbOuterDataTeamDO outerDataTeamDO = wbOuterDataTeamDao.getOuterDataTeamByClientAndOuterId(
-                    userVO.getClient(),
-                    userVO.getOuterCorpId()
-            );
-            if(outerDataTeamDO != null){
-                userDO.setTeamId(outerDataTeamDO.getTeamId());
-            }else{
-                logger.warn(LogFormatter.format(
-                        LogFormatter.LogEvent.COMMON,
-                        "can not get outerDataTeamDO by corpId",
-                        new LogFormatter.KeyValue("autoCreateUserVO: ", userVO)
-                ));
-            }
-        }
+        userDO.setTeamId(teamId);
+
         wbUserDao.saveOrUpdateUser(userDO);
         Long userId = userDO.getId();
         if(userVO.getOuterCombineId() != null){
-            outerDataUserDO = UserFactory.getOuterDataUserDO();
+            WbOuterDataUserDO outerDataUserDO = UserFactory.getOuterDataUserDO();
             outerDataUserDO.setUserId(userDO.getId());
             outerDataUserDO.setOuterId(userVO.getOuterCombineId());
             outerDataUserDO.setClient(userVO.getClient());
@@ -145,10 +161,6 @@ public class UserManageServiceImpl implements UserManageService {
         WbUserDisplayOrderDO userDisplayOrderDO = UserFactory.getUserDisplayOrderDO();
         userDisplayOrderDO.setUserId(userId);
         wbUserDao.saveOrUpdateUserDisplayOrder(userDisplayOrderDO);
-        WbUserRoleGroupDO userRoleGroupDO = UserFactory.getUserRoleGroupDO();
-        userRoleGroupDO.setUserId(userId);
-        userRoleGroupDO.setRoleGroupId(roleGroupDO.getId());
-        wbUserDao.saveOrUpdateUserRoleGroup(userRoleGroupDO);
         WbUserUiSettingDO userUiSettingDO = UserFactory.getUserUiSettingDO();
         userUiSettingDO.setUserId(userId);
         wbUserDao.saveOrUpdateUserUiSetting(userUiSettingDO);
@@ -161,37 +173,46 @@ public class UserManageServiceImpl implements UserManageService {
         return userDO;
     }
 
+    /**
+     * 暂时不支持修改ddUnionId
+     * @param userDO
+     * @param userVO
+     * @return
+     */
     @Override
-    public WbUserDO updateUserInfo(AutoCreateUserVO userVO, WbUserDO userDO) {
+    public WbUserDO updateUserInfo(WbUserDO userDO, AutoCreateUserVO userVO) {
+        WbUserDO updatedUserDO = null;
+        WbAccountDO updatedAccountDO = null;
+        WbUserOauthDO updatedUserOauthDO = null;
+
         if(userVO.getName() != null){
-            userDO.setName(userVO.getName());
-            wbUserDao.saveOrUpdateUser(userDO);
+            updatedUserDO = userDO;
+            updatedUserDO.setName(userVO.getName());
+            updatedAccountDO = wbAccountDao.getAccountById(userDO.getAccountId());
+            updatedAccountDO.setName(userVO.getName());
         }
         if(userVO.getAvatar() != null){
-            WbAccountDO accountDO = wbAccountDao.getAccountById(userDO.getAccountId());
-            accountDO.setAvatar(userVO.getAvatar());
-            wbAccountDao.saveOrUpdateAccount(accountDO);
+            updatedAccountDO = updatedAccountDO == null ? wbAccountDao.getAccountById(userDO.getAccountId()) : updatedAccountDO;
+            updatedAccountDO.setAvatar(userVO.getAvatar());
         }
-        if(userVO.getOuterUnionId() != null){
-            WbUserOauthDO userOauthDO = wbAccountDao.getUserOauthByDdUnionId(userVO.getOuterUnionId());
-            userOauthDO.setDdUnionId(userVO.getOuterUnionId());
-            wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
+//        if(userVO.getOuterUnionId() != null){
+//            updatedUserOauthDO = wbAccountDao.getUserOauthByDdUnionId(userVO.getOuterUnionId());
+//            if(updatedUserOauthDO == null){
+//                updatedUserOauthDO
+//            }
+//            updatedUserOauthDO.setDdUnionId(userVO.getOuterUnionId());
+//        }
+        //  执行更新
+        if(updatedUserDO != null){
+            wbUserDao.saveOrUpdateUser(updatedUserDO);
         }
+        if(updatedAccountDO != null){
+            wbAccountDao.saveOrUpdateAccount(updatedAccountDO);
+        }
+//        if(updatedUserOauthDO != null){
+//            wbAccountDao.saveOrUpdateUserOauth(updatedUserOauthDO);
+//        }
+
         return userDO;
-    }
-
-    @Override
-    public void saveOrUpdateUser(WbUserDO userDO) {
-        wbUserDao.saveOrUpdateUser(userDO);
-    }
-
-    @Override
-    public void saveOrUpdateAccount(WbAccountDO accountDO){
-        wbAccountDao.saveOrUpdateAccount(accountDO);
-    }
-
-    @Override
-    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO){
-        wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
     }
 }

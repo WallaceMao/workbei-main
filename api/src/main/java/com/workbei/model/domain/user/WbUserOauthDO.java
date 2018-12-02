@@ -1,5 +1,6 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * @author Wallace Mao
  * Date: 2018-11-27 16:09
  */
-public class WbUserOauthDO {
+public class WbUserOauthDO implements Serializable {
     private Long id;
     private Long version;
     private Long accountId;
@@ -33,7 +34,7 @@ public class WbUserOauthDO {
     // 钉钉用户唯一标识
     private String ddUnionId;
     // 钉钉用户的名字
-    private String ddWebJSONUser;
+    private String ddWebjsonuser;
 
     //自动注册公司记录的第三方数据
     private String outerId;
@@ -150,12 +151,12 @@ public class WbUserOauthDO {
         this.ddUnionId = ddUnionId;
     }
 
-    public String getDdWebJSONUser() {
-        return ddWebJSONUser;
+    public String getDdWebjsonuser() {
+        return ddWebjsonuser;
     }
 
-    public void setDdWebJSONUser(String ddWebJSONUser) {
-        this.ddWebJSONUser = ddWebJSONUser;
+    public void setDdWebjsonuser(String ddWebjsonuser) {
+        this.ddWebjsonuser = ddWebjsonuser;
     }
 
     public String getOuterId() {

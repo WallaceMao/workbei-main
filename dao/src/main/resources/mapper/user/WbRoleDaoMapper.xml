@@ -6,16 +6,43 @@
         <id property="id" column="id" />
         <result property="name" column="name" />
     </resultMap>
-
     <sql id="select-all-fields">
         id,
         `name`
     </sql>
-
     <select id="getRoleGroupByName" resultMap="roleGroupMap">
         SELECT <include refid="select-all-fields"/>  FROM `role_group`
         <![CDATA[
 			WHERE `name`=#{name}
+		 ]]>
+    </select>
+
+    <!--userRoleGroup相关-->
+    <insert id="saveOrUpdateUserRoleGroup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_role_group (
+        role_group_id,
+        user_id
+        )VALUES(
+        #{roleGroupId},
+        #{userId}
+        )
+    </insert>
+    <resultMap type="com.workbei.model.domain.user.WbUserRoleGroupDO" id="userRoleGroupMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="userId" column="user_id" />
+        <result property="roleGroupId" column="role_group_id" />
+    </resultMap>
+    <sql id="select-all-fields-user-role-group">
+        id,
+        version,
+        role_group_id,
+        user_id
+    </sql>
+    <select id="getUserRoleGroupByUserId" resultMap="userRoleGroupMap">
+        SELECT <include refid="select-all-fields-user-role-group"/>  FROM `user_role_group`
+        <![CDATA[
+			WHERE user_id=#{userId}
 		 ]]>
     </select>
 </mapper>

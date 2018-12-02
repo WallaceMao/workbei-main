@@ -2,28 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workbei.dao.user.WbUserDao">
 
-    <resultMap type="com.workbei.model.domain.user.WbUserDO" id="userMap">
-        <id property="id" column="id" />
-        <result property="isParent" column="is_parent" />
-        <result property="position" column="position" />
-        <result property="teamId" column="team_id" />
-        <result property="username" column="username" />
-        <result property="name" column="name" />
-        <result property="accountId" column="account_id" />
-        <result property="isDisplay" column="is_display" />
-    </resultMap>
-
-    <sql id="select-all-fields">
-        id,
-        is_parent,
-        position,
-        team_id,
-        username,
-        `name`,
-        account_id,
-        is_display
-    </sql>
-
+    <!--user相关-->
     <insert id="saveOrUpdateUser" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `user` (
             version,
@@ -43,9 +22,56 @@
             #{name},
             #{accountId},
             #{isDisplay}
-        )
+        )ON DUPLICATE KEY UPDATE
+            `name`=#{name}
     </insert>
+    <resultMap type="com.workbei.model.domain.user.WbUserDO" id="userMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="isParent" column="is_parent" />
+        <result property="position" column="position" />
+        <result property="teamId" column="team_id" />
+        <result property="username" column="username" />
+        <result property="name" column="name" />
+        <result property="accountId" column="account_id" />
+        <result property="isDisplay" column="is_display" />
+    </resultMap>
+    <sql id="select-all-fields-user">
+        id,
+        version,
+        is_parent,
+        position,
+        team_id,
+        username,
+        `name`,
+        account_id,
+        is_display
+    </sql>
+    <select id="getUserById" resultMap="userMap">
+        SELECT <include refid="select-all-fields-user"/>  FROM `user`
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
+    <select id="getUserByClientAndOuterId" resultMap="userMap">
+        SELECT
+            u.id,
+            u.version,
+            u.is_parent,
+            u.position,
+            u.team_id,
+            u.username,
+            u.`name`,
+            u.account_id,
+            u.is_display
+        FROM `user` u
+        INNER JOIN outer_data_user o ON u.id=o.user_id
+        <![CDATA[
+			WHERE o.client=#{client} AND o.outer_id=#{outerId}
+		 ]]>
+    </select>
 
+    <!--userGuide相关-->
     <insert id="saveOrUpdateUserGuide" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_guide (
             version,
@@ -65,9 +91,34 @@
             guide_kanban_flag=#{guideKanbanFlag},
             guide_web_flag=#{guideWebFlag},
             guide_task_flag=#{guideTaskFlag},
-            guide_note_fla=#{guideNoteFlag}
+            guide_note_flag=#{guideNoteFlag}
     </insert>
+    <resultMap type="com.workbei.model.domain.user.WbUserGuideDO" id="userGuideMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="userId" column="user_id" />
+        <result property="guideKanbanFlag" column="guide_kanban_flag" />
+        <result property="guideWebFlag" column="guide_web_flag" />
+        <result property="guideTaskFlag" column="guide_task_flag" />
+        <result property="guideNoteFlag" column="guide_note_flag" />
+    </resultMap>
+    <sql id="select-all-fields-user-guide">
+        id,
+        version,
+        user_id,
+        guide_kanban_flag,
+        guide_web_flag,
+        guide_task_flag,
+        guide_note_flag
+    </sql>
+    <select id="getUserGuideByUserId" resultMap="userGuideMap">
+        SELECT <include refid="select-all-fields-user-guide"/>  FROM `user_guide`
+        <![CDATA[
+			WHERE user_id=#{userId}
+		 ]]>
+    </select>
 
+    <!--userDisplayOrder相关-->
     <insert id="saveOrUpdateUserDisplayOrder" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_display_order (
             version,
@@ -84,8 +135,8 @@
             min_kanban_display_order
         )VALUES(
             0,
-            #{dateCreated},
-            #{lastUpdated},
+            now(),
+            now(),
             #{userId},
             #{maxStarCorpusDisplayOrder},
             #{minStarCorpusDisplayOrder},
@@ -97,23 +148,50 @@
             #{minKanbanDisplayOrder}
         )
     </insert>
+    <resultMap type="com.workbei.model.domain.user.WbUserDisplayOrderDO" id="userDisplayOrderMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="dateCreated" column="date_created" />
+        <result property="userId" column="user_id" />
+        <result property="maxStarCorpusDisplayOrder" column="max_star_corpus_display_order" />
+        <result property="minStarCorpusDisplayOrder" column="min_star_corpus_display_order" />
+        <result property="maxStarKanbanDisplayOrder" column="max_star_kanban_display_order" />
+        <result property="minStarKanbanDisplayOrder" column="min_star_kanban_display_order" />
+        <result property="maxCorpusDisplayOrder" column="max_corpus_display_order" />
+        <result property="minCorpusDisplayOrder" column="min_corpus_display_order" />
+        <result property="maxKanbanDisplayOrder" column="max_kanban_display_order" />
+        <result property="minKanbanDisplayOrder" column="min_kanban_display_order" />
+    </resultMap>
+    <sql id="select-all-fields-user-display-order">
+        id,
+        version,
+        date_created,
+        last_updated,
+        user_id,
+        max_star_corpus_display_order,
+        min_star_corpus_display_order,
+        max_star_kanban_display_order,
+        min_star_kanban_display_order,
+        max_corpus_display_order,
+        min_corpus_display_order,
+        max_kanban_display_order,
+        min_kanban_display_order
+    </sql>
+    <select id="getUserDisplayOrderByUserId" resultMap="userDisplayOrderMap">
+        SELECT <include refid="select-all-fields-user-display-order"/>  FROM `user_display_order`
+        <![CDATA[
+			WHERE user_id=#{userId}
+		 ]]>
+    </select>
 
-    <insert id="saveOrUpdateUserRoleGroup" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_role_group (
-            role_group_id,
-            user_id
-        )VALUES(
-            roleGroupId,
-            userId
-        )
-    </insert>
-
+    <!--userUiSetting相关-->
     <insert id="saveOrUpdateUserUiSetting" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_ui_setting (
             version,
-            user_id,
             date_created,
             last_updated,
+            user_id,
             narrow_the_corpus,
             company_view,
             narrow_the_kanban,
@@ -133,9 +211,9 @@
             inbox_mode
         )VALUES(
             0,
+            now(),
+            now(),
             #{userId},
-            #{dateCreated},
-            #{lastUpdated},
             #{narrowTheCorpus},
             #{companyView},
             #{narrowTheKanban},
@@ -173,7 +251,62 @@
             first_delete_flag=#{firstDeleteFlag},
             inbox_mode=#{inboxMode}
     </insert>
+    <resultMap type="com.workbei.model.domain.user.WbUserUiSettingDO" id="userUiSettingMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="dateCreated" column="date_created" />
+        <result property="lastUpdated" column="last_updated" />
+        <result property="userId" column="user_id" />
+        <result property="narrowTheCorpus" column="narrow_the_corpus" />
+        <result property="companyView" column="company_view" />
+        <result property="narrowTheKanban" column="narrow_the_kanban" />
+        <result property="dayAlertTime" column="day_alert_time" />
+        <result property="narrowTheCompany" column="narrow_the_company" />
+        <result property="expireAlertFlag" column="expire_alert_flag" />
+        <result property="lunarFlag" column="lunar_flag" />
+        <result property="themeSkin" column="theme_skin" />
+        <result property="phoneThemeSkin" column="phone_theme_skin" />
+        <result property="registAlertFlag" column="regist_alert_flag" />
+        <result property="showTipBox" column="show_tip_box" />
+        <result property="narrowTheInbox" column="narrow_the_inbox" />
+        <result property="narrowTheApplication" column="narrow_the_application" />
+        <result property="festivalFlag" column="festival_flag" />
+        <result property="themeGg" column="theme_bg" />
+        <result property="firstDeleteFlag" column="first_delete_flag" />
+        <result property="inboxMode" column="inbox_mode" />
+    </resultMap>
+    <sql id="select-all-fields-user-ui-setting">
+        id,
+        version,
+        date_created,
+        last_updated,
+        user_id,
+        narrow_the_corpus,
+        company_view,
+        narrow_the_kanban,
+        day_alert_time,
+        narrow_the_company,
+        expire_alert_flag,
+        lunar_flag,
+        theme_skin,
+        phone_theme_skin,
+        regist_alert_flag,
+        show_tip_box,
+        narrow_the_inbox,
+        narrow_the_application,
+        festival_flag,
+        theme_bg,
+        first_delete_flag,
+        inbox_mode
+    </sql>
+    <select id="getUserUiSettingByUserId" resultMap="userUiSettingMap">
+        SELECT <include refid="select-all-fields-user-ui-setting"/>  FROM `user_ui_setting`
+        <![CDATA[
+			WHERE user_id=#{userId}
+		 ]]>
+    </select>
 
+    <!--userFunctionSetting相关-->
     <insert id="saveOrUpdateUserFunctionSetting" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_function_setting (
             version,
@@ -192,13 +325,30 @@
         )ON DUPLICATE KEY UPDATE
             is_open_notification_plugin=#{isOpenNotificationPlugin},
             week_begins=#{weekBegins},
-            shake_mode=#{shakeMode},
+            shake_mode=#{shakeMode}
     </insert>
-
-    <select id="getUserById" resultMap="userMap">
-        SELECT <include refid="select-all-fields"/>  FROM `user`
+    <resultMap type="com.workbei.model.domain.user.WbUserFunctionSettingDO" id="userFunctionSettingMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="userId" column="user_id" />
+        <result property="isOpenNotificationPlugin" column="is_open_notification_plugin" />
+        <result property="weekBegins" column="week_begins" />
+        <result property="shakeMode" column="shake_mode" />
+        <result property="readCollageCount" column="read_collage_count" />
+    </resultMap>
+    <sql id="select-all-fields-user-function-setting">
+        id,
+        version,
+        user_id,
+        is_open_notification_plugin,
+        week_begins,
+        shake_mode,
+        read_collage_count
+    </sql>
+    <select id="getUserFunctionSettingByUserId" resultMap="userFunctionSettingMap">
+        SELECT <include refid="select-all-fields-user-function-setting"/>  FROM `user_function_setting`
         <![CDATA[
-			WHERE id=#{id}
+			WHERE user_id=#{userId}
 		 ]]>
     </select>
 </mapper>

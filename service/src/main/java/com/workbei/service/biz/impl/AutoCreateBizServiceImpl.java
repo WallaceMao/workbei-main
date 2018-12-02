@@ -6,6 +6,7 @@ import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.service.base.DepartmentManageService;
+import com.workbei.service.base.RoleManageService;
 import com.workbei.service.base.TeamManageService;
 import com.workbei.service.base.UserManageService;
 import com.workbei.service.biz.AutoCreateBizService;
@@ -26,6 +27,8 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
     private DepartmentManageService departmentManageService;
     @Autowired
     private UserManageService userManageService;
+    @Autowired
+    private RoleManageService roleManageService;
 
     /**
      * 创建团队：
@@ -54,8 +57,9 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         departmentManageService.saveTeamDefaultDepartment(teamDO.getId(), teamDO.getName());
         //  新建user
         if(teamVO.getCreator() != null){
-            WbRoleGroupDO roleGroupDO = userManageService.getCommonRoleGroup();
-            WbUserDO creatorDO = userManageService.saveUserInfo(teamVO.getCreator(), teamDO, roleGroupDO);
+            WbUserDO creatorDO = userManageService.saveUserInfo(teamDO.getId(), teamVO.getCreator());
+            //  保存人员的roleGroup
+            roleManageService.saveOrUpdateUserCommonRoleGroup(creatorDO);
             //  保存team与人员的关联
             teamManageService.saveTeamCreator(teamDO.getId(), creatorDO.getId());
             //  保存部门与人员的关联
@@ -69,6 +73,13 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(userVO.getClient() == null){
             userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
+        //  如果outerDataUser中存在，那么就不创建，直接返回
+        WbOuterDataUserDO outerDataUserDO = userManageService.getOuterDataUserByClientAndOuterId(
+                userVO.getClient(), userVO.getOuterCombineId()
+        );
+        if(outerDataUserDO != null){
+            return ;
+        }
         WbOuterDataTeamDO outerDataTeamDO = teamManageService.getOuterDataTeamByClientAndOuterId(
                 userVO.getClient(), userVO.getOuterCorpId());
         if(outerDataTeamDO == null){
@@ -78,8 +89,9 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(teamDO == null){
             return;
         }
-        WbRoleGroupDO roleGroupDO = userManageService.getCommonRoleGroup();
-        WbUserDO userDO = userManageService.saveUserInfo(userVO, teamDO, roleGroupDO);
+        WbUserDO userDO = userManageService.saveUserInfo(teamDO.getId(), userVO);
+        //  保存人员的roleGroup
+        roleManageService.saveOrUpdateUserCommonRoleGroup(userDO);
         //  保存team与人员的关联
         teamManageService.saveTeamCommonUser(teamDO.getId(), userDO.getId());
         //  保存部门与人员的关联
@@ -116,7 +128,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
             return;
         }
         Long userId = userDO.getId();
-        userManageService.updateUserInfo(userVO, userDO);
+        userManageService.updateUserInfo(userDO, userVO);
         //  更新部门
         if(userVO.getOuterCombineDeptIdList() != null){
             List<String> newOuterDeptIdList = userVO.getOuterCombineDeptIdList();
@@ -211,7 +223,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(departmentVO.getClient() == null){
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByOuterId(
+        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId()
         );
         if(departmentDO == null){
@@ -229,7 +241,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(departmentVO.getClient() == null){
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByOuterId(
+        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId()
         );
         if(departmentDO == null){

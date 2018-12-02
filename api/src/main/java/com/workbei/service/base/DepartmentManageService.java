@@ -32,7 +32,7 @@ public interface DepartmentManageService {
 
     WbDepartmentDO getTeamTopDepartment(Long teamId);
 
-    WbDepartmentDO getDepartmentByOuterId(String client, String outerId);
+    WbDepartmentDO getDepartmentByClientAndOuterId(String client, String outerId);
 
     List<WbDepartmentDO> listDepartmentByTeamId(Long teamId);
 

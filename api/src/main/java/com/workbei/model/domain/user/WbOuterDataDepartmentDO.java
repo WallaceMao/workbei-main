@@ -1,12 +1,13 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Wallace Mao
  * Date: 2018-11-27 16:08
  */
-public class WbOuterDataDepartmentDO {
+public class WbOuterDataDepartmentDO implements Serializable {
     private Long id;
     private Long version;
     //创建时间

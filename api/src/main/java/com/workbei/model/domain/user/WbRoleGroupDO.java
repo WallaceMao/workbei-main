@@ -1,10 +1,12 @@
 package com.workbei.model.domain.user;
 
+import java.io.Serializable;
+
 /**
  * @author Wallace Mao
  * Date: 2018-11-28 15:51
  */
-public class WbRoleGroupDO {
+public class WbRoleGroupDO implements Serializable {
     private Long id;
     private Long version;
     private String name;

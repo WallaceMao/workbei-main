@@ -12,9 +12,17 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("wbAccountDao")
 public interface WbAccountDao {
-    WbAccountDO getAccountById(@Param("id") Long id);
-    WbUserOauthDO getUserOauthByDdUnionId(@Param("ddUnionId") String ddUnionId);
     void saveOrUpdateAccount(WbAccountDO account);
+    WbAccountDO getAccountById(
+            @Param("id") Long id);
+
     void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO);
+    WbUserOauthDO getUserOauthByAccountId(
+            @Param("accountId") Long accountId);
+    WbUserOauthDO getUserOauthByDdUnionId(
+            @Param("ddUnionId") String ddUnionId);
+
     void saveOrUpdateUserRegister(WbUserRegisterDO userRegisterDO);
+    WbUserRegisterDO getUserRegisterByAccountId(
+            @Param("accountId") Long accountId);
 }

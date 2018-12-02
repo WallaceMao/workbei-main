@@ -4,6 +4,8 @@ import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.*;
 import com.workbei.util.UuidUtil;
 
+import java.util.Date;
+
 /**
  * @author Wallace Mao
  * Date: 2018-11-28 10:26
@@ -20,6 +22,9 @@ public class UserFactory {
     public static WbUserRegisterDO getUserRegisterDO(){
         WbUserRegisterDO userRegisterDO = new WbUserRegisterDO();
         userRegisterDO.setSystem(false);
+        userRegisterDO.setRegDate(new Date());
+        userRegisterDO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        userRegisterDO.setMode(WbConstant.APP_DEFAULT_MODE);
         return userRegisterDO;
     }
 
@@ -56,13 +61,9 @@ public class UserFactory {
         userDisplayOrderDO.setMaxKanbanDisplayOrder(DEFAULT_MAX);
         userDisplayOrderDO.setMinKanbanDisplayOrder(DEFAULT_MIN);
         userDisplayOrderDO.setMaxStarKanbanDisplayOrder(DEFAULT_MAX);
-        userDisplayOrderDO.setMinKanbanDisplayOrder(DEFAULT_MIN);
+        userDisplayOrderDO.setMinStarKanbanDisplayOrder(DEFAULT_MIN);
 
         return userDisplayOrderDO;
-    }
-
-    public static WbUserRoleGroupDO getUserRoleGroupDO(){
-        return new WbUserRoleGroupDO();
     }
 
     public static WbUserUiSettingDO getUserUiSettingDO(){

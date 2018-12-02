@@ -11,10 +11,20 @@ import org.springframework.stereotype.Repository;
 @Repository("wbUserDao")
 public interface WbUserDao {
     void saveOrUpdateUser(WbUserDO user);
-    void saveOrUpdateUserGuide(WbUserGuideDO userGuideDO);
-    void saveOrUpdateUserDisplayOrder(WbUserDisplayOrderDO userDisplayOrderDO);
-    void saveOrUpdateUserRoleGroup(WbUserRoleGroupDO userRoleGroupDO);
-    void saveOrUpdateUserUiSetting(WbUserUiSettingDO userUiSettingDO);
-    void saveOrUpdateUserFunctionSetting(WbUserFunctionSettingDO userFunctionSettingDO);
     WbUserDO getUserById(@Param("id") Long id);
+    WbUserDO getUserByClientAndOuterId(
+            @Param("client") String client,
+            @Param("outerId") String outerId);
+
+    void saveOrUpdateUserGuide(WbUserGuideDO userGuideDO);
+    WbUserGuideDO getUserGuideByUserId(@Param("userId") Long userId);
+
+    void saveOrUpdateUserDisplayOrder(WbUserDisplayOrderDO userDisplayOrderDO);
+    WbUserDisplayOrderDO getUserDisplayOrderByUserId(@Param("userId") Long userId);
+
+    void saveOrUpdateUserUiSetting(WbUserUiSettingDO userUiSettingDO);
+    WbUserUiSettingDO getUserUiSettingByUserId(@Param("userId") Long userId);
+
+    void saveOrUpdateUserFunctionSetting(WbUserFunctionSettingDO userFunctionSettingDO);
+    WbUserFunctionSettingDO getUserFunctionSettingByUserId(@Param("userId") Long userId);
 }

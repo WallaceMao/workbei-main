@@ -124,7 +124,7 @@ public class DepartmentManageServiceImplTest extends BaseUnitTest {
                 globalOuterDataTeam.getOuterId());
         departmentVO.setOuterParentCombineId(globalCommonOuterDataDepartment.getOuterId());
         departmentManageService.saveDepartmentInfo(teamId, departmentVO);
-        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByOuterId(
+        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId());
         assertThat(departmentDO).isNotNull();
         assertThat(departmentDO.getUuid()).isNotNull();
@@ -155,7 +155,7 @@ public class DepartmentManageServiceImplTest extends BaseUnitTest {
         departmentVO.setOuterParentCombineId("at_outer_id_" + new Date().getTime());
         departmentManageService.saveDepartmentInfo(teamId, departmentVO);
 
-        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByOuterId(
+        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId());
         assertThat(departmentDO).isNotNull();
         assertThat(departmentDO.getUuid()).isNotNull();

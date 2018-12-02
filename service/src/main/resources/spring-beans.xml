@@ -12,4 +12,5 @@
     <bean id="teamManageService" class="com.workbei.service.base.impl.TeamManageServiceImpl" />
     <bean id="departmentManageService" class="com.workbei.service.base.impl.DepartmentManageServiceImpl" />
     <bean id="userManageService" class="com.workbei.service.base.impl.UserManageServiceImpl" />
+    <bean id="roleManageService" class="com.workbei.service.base.impl.RoleManageServiceImpl" />
 </beans>

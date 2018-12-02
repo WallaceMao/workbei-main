@@ -12,19 +12,31 @@ public interface UserManageService {
 
     WbUserDO getUserById(Long id);
 
+    WbUserDO getUserByClientAndOuterId(String client, String outerCombineId);
+
     WbUserOauthDO getUserOauthByDdUnionId(String ddUnionId);
 
     WbAccountDO getAccountById(Long id);
-
-    WbRoleGroupDO getCommonRoleGroup();
 
     void saveOrUpdateAccount(WbAccountDO accountDO);
 
     void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO);
 
-    WbUserDO saveUserInfo(AutoCreateUserVO userVO, WbTeamDO teamDO, WbRoleGroupDO roleGroupDO);
+    WbUserDO saveUserInfo(Long teamId, AutoCreateUserVO userVO);
 
-    WbUserDO updateUserInfo(AutoCreateUserVO userVO, WbUserDO userDO);
+    WbUserDO updateUserInfo(WbUserDO userDO, AutoCreateUserVO userVO);
 
     void saveOrUpdateUser(WbUserDO userDO);
+
+    WbUserRegisterDO getUserRegisterByAccountId(Long accountId);
+
+    WbUserOauthDO getUserOauthByAccountId(Long accountId);
+
+    WbUserGuideDO getUserGuideByUserId(Long userId);
+
+    WbUserDisplayOrderDO getUserDisplayOrderByUserId(Long userId);
+
+    WbUserUiSettingDO getUserUiSettingByUserId(Long userId);
+
+    WbUserFunctionSettingDO getUserFunctionSettingByUserId(Long userId);
 }
