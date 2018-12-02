@@ -2,8 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workbei.dao.user.WbDepartmentDao">
 
+    <!--部门相关-->
     <resultMap type="com.workbei.model.domain.user.WbDepartmentDO" id="departmentMap">
         <id property="id" column="id" />
+        <result property="uuid" column="uuid" />
+        <result property="version" column="version" />
         <result property="level" column="level" />
         <result property="displayOrder" column="display_order" />
         <result property="code" column="code" />
@@ -12,9 +15,10 @@
         <result property="type" column="type" />
         <result property="parentId" column="parent_id" />
     </resultMap>
-
     <sql id="select-all-fields">
         id,
+        uuid,
+        version,
         `level`,
         display_order,
         `code`,
@@ -23,9 +27,9 @@
         type,
         parent_id
     </sql>
-
     <insert id="saveOrUpdateDepartment" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO team (
+        INSERT INTO department (
+            uuid,
             version,
             `level`,
             display_order,
@@ -35,6 +39,7 @@
             type,
             parent_id
         )VALUES(
+            #{uuid},
             0,
             #{level},
             #{displayOrder},
@@ -50,7 +55,75 @@
             `name`=#{name},
             `parent_id`=#{parentId}
     </insert>
+    <delete id="deleteDepartmentById">
+        DELETE FROM department
+        <![CDATA[
+        WHERE id=#{id}
+        ]]>
+    </delete>
+    <select id="listDepartmentByTeamId" resultMap="departmentMap">
+        SELECT <include refid="select-all-fields"/>  FROM department
+        <![CDATA[
+			WHERE team_id=#{teamId}
+		 ]]>
+    </select>
+    <select id="getDepartmentById" resultMap="departmentMap">
+        SELECT <include refid="select-all-fields"/>  FROM department
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
+    <select id="getTopDepartment" resultMap="departmentMap">
+        SELECT <include refid="select-all-fields"/>  FROM department
+        <![CDATA[
+			WHERE team_id=#{teamId} and type='top'
+		 ]]>
+    </select>
+    <select id="getTopDepartmentId" resultType="long">
+        SELECT id  FROM department
+        <![CDATA[
+			WHERE team_id=#{teamId} and type='top'
+		 ]]>
+    </select>
+    <select id="getUnassignedDepartment" resultMap="departmentMap">
+        SELECT <include refid="select-all-fields"/>  FROM department
+        <![CDATA[
+			WHERE team_id=#{teamId} and type='unassigned'
+		 ]]>
+    </select>
+    <select id="getDepartmentListByIds" resultMap="departmentMap">
+        SELECT <include refid="select-all-fields"/> FROM department
+        WHERE id IN
+        <foreach collection="ids" item="item" index="index"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="listDepartmentsByParentId" resultType="long">
+        SELECT <include refid="select-all-fields"/>  FROM department
+        <![CDATA[
+			WHERE parent_id=#{parentId}
+		 ]]>
+    </select>
+    <select id="getDepartmentByClientAndOuterId" resultMap="departmentMap">
+        SELECT
+        d.id,
+        d.uuid,
+        d.`level`,
+        d.display_order,
+        d.`code`,
+        d.`team_id`,
+        d.`name`,
+        d.type,
+        d.parent_id
+        FROM department d
+        INNER JOIN outer_data_department o ON d.id=o.department_id
+        <![CDATA[
+			WHERE o.client=#{client} AND o.outer_id=#{outerId}
+		 ]]>
+    </select>
 
+    <!--userDept相关-->
     <insert id="saveOrUpdateUserDept" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_dept (
         version,
@@ -68,7 +141,20 @@
         WHERE user_id=#{userId} AND department_id=#{departmentId}
         ]]>
     </delete>
+    <update id="updateUserDeptDepartmentId">
+        UPDATE user_dept SET
+        department_id=#{targetId}
+        WHERE
+        department_id=#{sourceId}
+    </update>
+    <select id="listUserDeptDepartmentIdByUserId" resultType="long">
+        SELECT department_id  FROM department
+        <![CDATA[
+			WHERE user_id=#{userId}
+		 ]]>
+    </select>
 
+    <!--部门归属相关-->
     <insert id="saveOrUpdateUserDeptAscription" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_dept_ascription (
         version,
@@ -98,81 +184,4 @@
 			WHERE department_id=#{departmentId}
 		 ]]>
     </select>
-
-    <delete id="deleteDepartmentById">
-        DELETE FROM department
-        <![CDATA[
-        WHERE id=#{id}
-        ]]>
-    </delete>
-
-    <select id="getDepartmentById" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields"/>  FROM department
-        <![CDATA[
-			WHERE id=#{id}
-		 ]]>
-    </select>
-
-    <select id="getTopDepartment" resultType="long">
-        SELECT <include refid="select-all-fields"/>  FROM department
-        <![CDATA[
-			WHERE team_id=#{teamId} and type='top'
-		 ]]>
-    </select>
-    <select id="getTopDepartmentId" resultType="long">
-        SELECT id  FROM department
-        <![CDATA[
-			WHERE team_id=#{teamId} and type='top'
-		 ]]>
-    </select>
-
-    <select id="getUnassignedDepartment" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields"/>  FROM department
-        <![CDATA[
-			WHERE team_id=#{teamId} and type='unassigned'
-		 ]]>
-    </select>
-    <select id="getDepartmentListByIds" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields"/> FROM department
-        WHERE id IN
-        <foreach collection="ids" item="item" index="index"
-                 open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
-    <select id="listUserDeptDepartmentIdByUserId" resultType="long">
-        SELECT department_id  FROM department
-        <![CDATA[
-			WHERE user_id=#{userId}
-		 ]]>
-    </select>
-    <select id="listDepartmentsByParentId" resultType="long">
-        SELECT <include refid="select-all-fields"/>  FROM department
-        <![CDATA[
-			WHERE parent_id=#{parentId}
-		 ]]>
-    </select>
-    <select id="getDepartmentByClientAndOuterId" resultMap="departmentMap">
-        SELECT
-            d.id,
-            d.`level`,
-            d.display_order,
-            d.`code`,
-            d.`team_id`,
-            d.`name`,
-            d.type,
-            d.parent_id
-        FROM department d
-            INNER JOIN outer_data_department o ON d.id=o.department_id
-        <![CDATA[
-			WHERE o.client=#{client} AND o.outer_id=#{outerId}
-		 ]]>
-    </select>
-
-    <update id="updateUserDeptDepartmentId">
-        UPDATE user_dept SET
-            department_id=#{targetId}
-        WHERE
-            department_id=#{sourceId}
-    </update>
 </mapper>

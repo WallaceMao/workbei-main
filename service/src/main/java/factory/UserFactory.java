@@ -2,6 +2,7 @@ package factory;
 
 import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.*;
+import com.workbei.util.UuidUtil;
 
 /**
  * @author Wallace Mao
@@ -10,6 +11,7 @@ import com.workbei.model.domain.user.*;
 public class UserFactory {
     public static WbAccountDO getAccountDO(){
         WbAccountDO accountDO = new WbAccountDO();
+        accountDO.setUuid(UuidUtil.generateAccountUuid());
         accountDO.setAccountLocked(false);
         accountDO.setCheckEmail(true);
         return accountDO;
@@ -28,6 +30,7 @@ public class UserFactory {
 
     public static WbUserDO getUserDO(){
         WbUserDO userDO = new WbUserDO();
+        userDO.setUsername(UuidUtil.generateUserUuid());
         userDO.setDisplay(true);
         userDO.setParent(false);
         return userDO;

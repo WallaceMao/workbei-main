@@ -16,6 +16,8 @@ public interface TeamManageService {
 
     void saveOrUpdateTeam(WbTeamDO teamDO);
 
+    void saveOrUpdateOuterDataTeam(WbOuterDataTeamDO outerDataTeamDO);
+
     WbTeamDO getTeamById(Long teamId);
 
     WbTeamUserRoleDO getTeamUserRoleByTeamIdAndUserIdAndRole(Long teamId, Long userId, String role);

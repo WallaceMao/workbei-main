@@ -3,6 +3,7 @@ package com.workbei.model.domain.user;
 import java.util.Date;
 
 /**
+ * accountId为唯一约束
  * @author Wallace Mao
  * Date: 2018-11-27 16:09
  */

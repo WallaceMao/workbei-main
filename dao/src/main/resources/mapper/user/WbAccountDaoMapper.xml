@@ -4,6 +4,7 @@
 
     <resultMap type="com.workbei.model.domain.user.WbAccountDO" id="accountMap">
         <id property="id" column="id" />
+        <result property="uuid" column="uuid" />
         <result property="birth" column="birth" />
         <result property="phoneNumber" column="phone_number" />
         <result property="name" column="name" />
@@ -33,6 +34,7 @@
 
     <sql id="select-all-fields">
         id,
+        uuid,
         birth,
         phone_number,
         `name`,
@@ -45,6 +47,7 @@
 
     <insert id="saveOrUpdateAccount" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `account` (
+            uuid,
             version,
             birth,
             phone_number,
@@ -55,6 +58,7 @@
             email,
             avatar
         )VALUES(
+            #{uuid},
             0,
             #{birth},
             #{phoneNumber},
@@ -80,11 +84,13 @@
             version,
             date_created,
             last_updated,
+            account_id,
             dd_union_id
         )VALUES(
             0,
             now(),
             now(),
+            #{accountId},
             #{ddUnionId}
         )
     </insert>

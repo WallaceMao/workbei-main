@@ -18,16 +18,8 @@ public interface WbDepartmentDao {
     void deleteDepartmentById(
             @Param("id") Long id
     );
-    void saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
-    void deleteUserDeptByUserIdAndDepartmentId(
-            @Param("userId") Long userId,
-            @Param("departmentId") Long deptId
-    );
-    void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
-    void deleteUserDeptAscriptionByUserIdAndDepartmentId(
-            @Param("userId") Long userId,
-            @Param("departmentId") Long deptId
-    );
+    List<WbDepartmentDO> listDepartmentByTeamId(
+            @Param("teamId") Long teamId);
     WbDepartmentDO getDepartmentById(
             @Param("id") Long id
     );
@@ -42,6 +34,16 @@ public interface WbDepartmentDao {
     );
     List<WbDepartmentDO> getDepartmentListByIds(@Param("ids") String[] ids);
 
+    void saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
+    void deleteUserDeptByUserIdAndDepartmentId(
+            @Param("userId") Long userId,
+            @Param("departmentId") Long deptId
+    );
+    void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
+    void deleteUserDeptAscriptionByUserIdAndDepartmentId(
+            @Param("userId") Long userId,
+            @Param("departmentId") Long deptId
+    );
     List<Long> listUserDeptDepartmentIdByUserId(@Param("userId") Long id);
 
     WbDepartmentDO getDepartmentByClientAndOuterId(

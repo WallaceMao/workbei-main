@@ -4,6 +4,7 @@
 
     <resultMap id="outerDataAppMap" type="com.workbei.model.domain.user.WbOuterDataAppDO">
         <id property="id" column="id" />
+        <result property="version" column="version" />
         <result property="name" column="name" />
         <result property="key" column="key" />
         <result property="token" column="token" />
@@ -13,6 +14,7 @@
 
     <sql id="select-all-fields">
         id,
+        version,
         `name`,
         `key`,
         token,

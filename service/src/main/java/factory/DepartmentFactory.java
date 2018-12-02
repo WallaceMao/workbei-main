@@ -5,6 +5,7 @@ import com.workbei.model.domain.user.WbDepartmentDO;
 import com.workbei.model.domain.user.WbOuterDataDepartmentDO;
 import com.workbei.model.domain.user.WbUserDeptAscriptionDO;
 import com.workbei.model.domain.user.WbUserDeptDO;
+import com.workbei.util.UuidUtil;
 
 /**
  * @author Wallace Mao
@@ -13,6 +14,7 @@ import com.workbei.model.domain.user.WbUserDeptDO;
 public class DepartmentFactory {
     public static WbDepartmentDO getDepartmentDO(){
         WbDepartmentDO departmentDO = new WbDepartmentDO();
+        departmentDO.setUuid(UuidUtil.generateDepartmentUuid());
         departmentDO.setType(WbConstant.DEPARTMENT_TYPE_COMMON);
         departmentDO.setDisplayOrder(WbConstant.DEPARTMENT_DEFAULT_DISPLAY_ORDER);
         return departmentDO;

@@ -4,6 +4,7 @@
 
     <resultMap id="outerDataDepartmentMap" type="com.workbei.model.domain.user.WbOuterDataDepartmentDO">
         <id property="id" column="id" />
+        <result property="version" column="version" />
         <result property="dateCreated" column="date_created" />
         <result property="lastUpdated" column="last_updated" />
         <result property="departmentId" column="department_id" />
@@ -13,6 +14,7 @@
 
     <sql id="select-all-fields">
         id,
+        version,
         date_created,
         last_updated,
         department_id,

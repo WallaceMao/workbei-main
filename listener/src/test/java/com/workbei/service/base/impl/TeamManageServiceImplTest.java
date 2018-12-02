@@ -56,6 +56,7 @@ public class TeamManageServiceImplTest extends BaseUnitTest {
         checkDateCloseToNow(teamDO.getDateCreated(), teamDO.getLastUpdated());
         assertThat(teamDO).as("检查保存后返回的teamDO").isNotNull();
         assertThat(teamDO.getId()).as("检查保存后id").isNotNull();
+        assertThat(teamDO.getUuid()).as("检查保存后uuid").isNotNull();
         assertThat(teamDO.getName()).as("检查name")
                 .isEqualTo(teamVO.getName());
         assertThat(teamDO.getDisplay()).as("检查isDisplay")

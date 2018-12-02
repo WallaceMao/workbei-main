@@ -3,11 +3,13 @@ package com.workbei.model.domain.user;
 import java.util.Date;
 
 /**
+ * uuid为唯一约束
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
 public class WbAccountDO {
     private Long id;
+    private String uuid;
     private Long version;
     //帐号是否被锁住
     private boolean accountLocked;
@@ -31,6 +33,14 @@ public class WbAccountDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Long getVersion() {

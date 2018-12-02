@@ -12,7 +12,7 @@ public class AutoCreateDepartmentVO {
     private String outerCorpId;
     private String outerParentCombineId;
     private String outerCombineId;
-    private Boolean isTop;
+    private Boolean isTop = false;
 
     //  不再使用parentId和teamId来传值
     @Deprecated

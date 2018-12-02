@@ -1,11 +1,13 @@
 package com.workbei.model.domain.user;
 
 /**
+ * uuid为唯一约束
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
 public class WbDepartmentDO {
     private Long id;
+    private String uuid;
     private Long version;
     private String name;
 
@@ -38,6 +40,14 @@ public class WbDepartmentDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Long getVersion() {

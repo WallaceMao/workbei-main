@@ -5,6 +5,7 @@
     <!--team相关-->
     <resultMap type="com.workbei.model.domain.user.WbTeamDO" id="teamMap">
         <id property="id" column="id" />
+        <result property="uuid" column="uuid" />
         <result property="version" column="version" />
         <result property="dateCreated" column="date_created" />
         <result property="lastUpdated" column="last_updated" />
@@ -14,6 +15,7 @@
     </resultMap>
     <sql id="select-all-fields-team">
         id,
+        uuid,
         version,
         date_created,
         last_updated,
@@ -23,6 +25,7 @@
     </sql>
     <insert id="saveOrUpdateTeam" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO team (
+        uuid,
         version,
         date_created,
         last_updated,
@@ -30,6 +33,7 @@
         `name`,
         is_display
         )VALUES(
+        #{uuid},
         0,
         now(),
         now(),

@@ -51,7 +51,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         //  新建team
         WbTeamDO teamDO = teamManageService.saveTeamInfo(teamVO);
         //  新建teamDefaultDepartment
-        departmentManageService.saveTeamDefaultDepartment(teamDO);
+        departmentManageService.saveTeamDefaultDepartment(teamDO.getId(), teamDO.getName());
         //  新建user
         if(teamVO.getCreator() != null){
             WbRoleGroupDO roleGroupDO = userManageService.getCommonRoleGroup();
@@ -186,7 +186,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
             return;
         }
         WbUserDO userDO = userManageService.getUserById(outerDataUserDO.getUserId());
-        teamManageService.updateTeamAdmin(userDO.getTeamId(), userDO.getId(), userVO.getAdmin());
+        teamManageService.updateTeamAdmin(userDO.getTeamId(), userDO.getId(),userVO.getAdmin());
     }
 
     @Override
@@ -203,7 +203,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(teamDO == null){
             return;
         }
-        departmentManageService.saveDepartmentInfo(departmentVO, teamDO);
+        departmentManageService.saveDepartmentInfo(teamDO.getId(), departmentVO);
     }
 
     @Override

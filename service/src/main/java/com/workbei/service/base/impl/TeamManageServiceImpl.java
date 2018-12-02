@@ -27,6 +27,11 @@ public class TeamManageServiceImpl implements TeamManageService {
     }
 
     @Override
+    public void saveOrUpdateOuterDataTeam(WbOuterDataTeamDO outerDataTeamDO){
+        wbOuterDataTeamDao.saveOrUpdateOuterDataTeam(outerDataTeamDO);
+    }
+
+    @Override
     public WbTeamDO getTeamById(Long teamId){
         return wbTeamDao.getTeamById(teamId);
     }

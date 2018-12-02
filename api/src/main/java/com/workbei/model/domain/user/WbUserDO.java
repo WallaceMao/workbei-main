@@ -1,6 +1,7 @@
 package com.workbei.model.domain.user;
 
 /**
+ * username为唯一约束
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */

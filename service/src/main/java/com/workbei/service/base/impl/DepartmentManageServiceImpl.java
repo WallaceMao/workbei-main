@@ -21,6 +21,16 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     @Autowired
     private WbOuterDataDepartmentDao wbOuterDataDepartmentDao;
 
+    @Override
+    public void saveOrUpdateDepartment(WbDepartmentDO department) {
+        wbDepartmentDao.saveOrUpdateDepartment(department);
+    }
+
+    @Override
+    public void saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO) {
+        wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
+    }
+
     @Deprecated
     @Override
     public WbOuterDataDepartmentDO getOuterDataDepartmentClientAndOuterId(String client, String outerCorpId){
@@ -43,6 +53,11 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     }
 
     @Override
+    public List<WbDepartmentDO> listDepartmentByTeamId(Long teamId){
+        return wbDepartmentDao.listDepartmentByTeamId(teamId);
+    }
+
+    @Override
     public List<Long> listUserDeptDepartmentIdByUser(Long userId) {
         return wbDepartmentDao.listUserDeptDepartmentIdByUserId(userId);
     }
@@ -53,50 +68,10 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     }
 
     @Override
-    public void saveDepartmentInfo(AutoCreateDepartmentVO departmentVO, WbTeamDO teamDO){
-        Long teamId = teamDO.getId();
-        //  查找父级部门
-        WbDepartmentDO parentDept = null;
-        if(departmentVO.getTop()){
-            //  说明是根部门
-            parentDept = wbDepartmentDao.getTopDepartment(teamId);
-        }else{
-            //  说明是普通部门
-            parentDept = wbDepartmentDao.getDepartmentByClientAndOuterId(
-                    departmentVO.getClient(), departmentVO.getOuterParentCombineId()
-            );
-        }
-        //  如果父级部门没找到，那么默认为未分配部门
-        if(parentDept == null){
-            parentDept = getTeamUnassignedDepartment(teamId);
-        }
-        WbDepartmentDO dept = DepartmentFactory.getDepartmentDO();
-        dept.setName(departmentVO.getName());
-        dept.setLevel(parentDept.getLevel() + 1);
-        dept.setCode("");
-        dept.setTeamId(teamId);
-        dept.setDisplayOrder(departmentVO.getDisplayOrder());
-        dept.setType(WbConstant.DEPARTMENT_TYPE_COMMON);
-        wbDepartmentDao.saveOrUpdateDepartment(dept);
-
-        dept.setCode(parentDept.getCode() + WbConstant.DEPARTMENT_CODE_SEPARATOR + dept.getId());
-        wbDepartmentDao.saveOrUpdateDepartment(dept);
-
-        if(departmentVO.getOuterCombineId() != null){
-            WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
-            outerDataDepartmentDO.setClient(departmentVO.getClient());
-            outerDataDepartmentDO.setDepartmentId(dept.getId());
-            outerDataDepartmentDO.setOuterId(departmentVO.getOuterCombineId());
-            wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
-        }
-    }
-
-    @Override
-    public void saveTeamDefaultDepartment(WbTeamDO teamDO) {
-        Long teamId = teamDO.getId();
+    public void saveTeamDefaultDepartment(Long teamId, String topDepartmentName) {
         //  创建顶级部门
         WbDepartmentDO topDept = DepartmentFactory.getDepartmentDO();
-        topDept.setName(teamDO.getName());
+        topDept.setName(topDepartmentName);
         topDept.setLevel(1);
         topDept.setCode("");
         topDept.setTeamId(teamId);
@@ -118,6 +93,45 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
         unassigned.setCode(topDept.getId() + WbConstant.DEPARTMENT_CODE_SEPARATOR + unassigned.getId());
         wbDepartmentDao.saveOrUpdateDepartment(unassigned);
+    }
+
+    @Override
+    public void saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO){
+        //  查找父级部门
+        WbDepartmentDO dept = null;
+        if(departmentVO.getTop()){
+            //  说明是根部门，根部门不做处理，直接把topDepartment作为根部门
+            dept = wbDepartmentDao.getTopDepartment(teamId);
+        }else{
+            //  说明是普通部门
+            WbDepartmentDO parentDept = wbDepartmentDao.getDepartmentByClientAndOuterId(
+                    departmentVO.getClient(), departmentVO.getOuterParentCombineId()
+            );
+            //  如果父级部门没找到，那么就直接挂到topDepartment下
+            if(parentDept == null){
+                parentDept = getTeamTopDepartment(teamId);
+            }
+            dept = DepartmentFactory.getDepartmentDO();
+            dept.setName(departmentVO.getName());
+            dept.setLevel(parentDept.getLevel() + 1);
+            dept.setCode("");
+            dept.setTeamId(teamId);
+            dept.setDisplayOrder(departmentVO.getDisplayOrder());
+            dept.setType(WbConstant.DEPARTMENT_TYPE_COMMON);
+            dept.setParentId(parentDept.getId());
+            wbDepartmentDao.saveOrUpdateDepartment(dept);
+
+            dept.setCode(parentDept.getCode() + WbConstant.DEPARTMENT_CODE_SEPARATOR + dept.getId());
+            wbDepartmentDao.saveOrUpdateDepartment(dept);
+        }
+
+        if(departmentVO.getOuterCombineId() != null){
+            WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
+            outerDataDepartmentDO.setClient(departmentVO.getClient());
+            outerDataDepartmentDO.setDepartmentId(dept.getId());
+            outerDataDepartmentDO.setOuterId(departmentVO.getOuterCombineId());
+            wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
+        }
     }
 
     /**
@@ -143,6 +157,11 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
             userDeptAscriptionDO.setDepartmentId(Long.valueOf(parentDeptId));
             wbDepartmentDao.saveOrUpdateUserDeptAscription(userDeptAscriptionDO);
         }
+    }
+
+    @Override
+    public WbDepartmentDO getTeamTopDepartment(Long teamId) {
+        return wbDepartmentDao.getTopDepartment(teamId);
     }
 
     /**

@@ -35,7 +35,6 @@ public class TestUserFactory {
         Date now = new Date();
         WbUserDO userDO = UserFactory.getUserDO();
         userDO.setName("at_user_name_" + now.getTime());
-        userDO.setUsername("at_user_username_" + now.getTime());
         return userDO;
     }
 }

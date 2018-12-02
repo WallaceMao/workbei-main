@@ -3,6 +3,7 @@ package com.workbei.model.domain.user;
 import java.util.Date;
 
 /**
+ * 无为唯一约束
  * @author Wallace Mao
  * Date: 2018-11-28 17:33
  */
