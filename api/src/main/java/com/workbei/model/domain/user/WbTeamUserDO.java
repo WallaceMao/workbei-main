@@ -75,4 +75,17 @@ public class WbTeamUserDO implements Serializable {
     public void setWhoCanInviteColleague(String whoCanInviteColleague) {
         this.whoCanInviteColleague = whoCanInviteColleague;
     }
+
+    @Override
+    public String toString() {
+        return "WbTeamUserDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", teamId=" + teamId +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", deletedTeamUser='" + deletedTeamUser + '\'' +
+                ", whoCanInviteColleague='" + whoCanInviteColleague + '\'' +
+                '}';
+    }
 }

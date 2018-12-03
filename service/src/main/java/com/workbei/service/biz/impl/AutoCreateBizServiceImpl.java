@@ -99,7 +99,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
             List<String> deptIdList = userVO.getOuterCombineDeptIdList();
             for(String outerDeptId : deptIdList){
                 WbOuterDataDepartmentDO outerDataDepartmentDO =
-                        departmentManageService.getOuterDataDepartmentClientAndOuterId(userVO.getClient(), outerDeptId);
+                        departmentManageService.getOuterDataDepartmentByClientAndOuterId(userVO.getClient(), outerDeptId);
                 if(outerDataDepartmentDO == null){
                     continue;
                 }
@@ -154,7 +154,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
             //  遍历oldDeptList，如果oldDeptId在newDeptId中不存在，说明是需要删除的
             for(Long oldDeptId : oldDeptList){
                 if(!newDeptList.contains(oldDeptId)){
-                    departmentManageService.removeDepartmentUser(oldDeptId, userId);
+                    departmentManageService.deleteDepartmentUser(oldDeptId, userId);
                 }
             }
         }
@@ -176,7 +176,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         //  删除user与team中的department的关联
         List<Long> deptIdList = departmentManageService.listUserDeptDepartmentIdByUser(userId);
         for(Long deptId : deptIdList){
-            departmentManageService.removeDepartmentUser(deptId, userId);
+            departmentManageService.deleteDepartmentUser(deptId, userId);
         }
         //  删除user与team的关联
         WbTeamDO teamDO = teamManageService.getTeamById(userDO.getTeamId());
@@ -223,13 +223,7 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(departmentVO.getClient() == null){
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByClientAndOuterId(
-                departmentVO.getClient(), departmentVO.getOuterCombineId()
-        );
-        if(departmentDO == null){
-            return;
-        }
-        departmentManageService.updateDepartmentInfo(departmentVO, departmentDO);
+        departmentManageService.updateDepartmentInfo(departmentVO);
     }
 
     /**
@@ -241,12 +235,6 @@ public class AutoCreateBizServiceImpl implements AutoCreateBizService {
         if(departmentVO.getClient() == null){
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbDepartmentDO departmentDO = departmentManageService.getDepartmentByClientAndOuterId(
-                departmentVO.getClient(), departmentVO.getOuterCombineId()
-        );
-        if(departmentDO == null){
-            return;
-        }
-        departmentManageService.deleteDepartmentInfo(departmentDO);
+        departmentManageService.deleteDepartmentInfo(departmentVO);
     }
 }

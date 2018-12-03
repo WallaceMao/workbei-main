@@ -90,4 +90,19 @@ public class WbUserRegisterDO implements Serializable {
     public void setSystem(Boolean system) {
         isSystem = system;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserRegisterDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", regDate=" + regDate +
+                ", accountId=" + accountId +
+                ", mode='" + mode + '\'' +
+                ", client='" + client + '\'' +
+                ", isSystem=" + isSystem +
+                '}';
+    }
 }

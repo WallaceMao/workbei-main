@@ -4,10 +4,12 @@
 
     <resultMap type="com.workbei.model.domain.user.WbRoleGroupDO" id="roleGroupMap">
         <id property="id" column="id" />
+        <result property="version" column="version" />
         <result property="name" column="name" />
     </resultMap>
     <sql id="select-all-fields">
         id,
+        `version`,
         `name`
     </sql>
     <select id="getRoleGroupByName" resultMap="roleGroupMap">
@@ -25,17 +27,16 @@
         )VALUES(
         #{roleGroupId},
         #{userId}
-        )
+        )ON DUPLICATE KEY UPDATE
+            id=id
     </insert>
     <resultMap type="com.workbei.model.domain.user.WbUserRoleGroupDO" id="userRoleGroupMap">
         <id property="id" column="id" />
-        <result property="version" column="version" />
         <result property="userId" column="user_id" />
         <result property="roleGroupId" column="role_group_id" />
     </resultMap>
     <sql id="select-all-fields-user-role-group">
         id,
-        version,
         role_group_id,
         user_id
     </sql>

@@ -91,4 +91,19 @@ public class AutoCreateDepartmentVO {
     public void setTeamId(String teamId) {
         this.teamId = teamId;
     }
+
+    @Override
+    public String toString() {
+        return "AutoCreateDepartmentVO{" +
+                "name='" + name + '\'' +
+                ", displayOrder=" + displayOrder +
+                ", client='" + client + '\'' +
+                ", outerCorpId='" + outerCorpId + '\'' +
+                ", outerParentCombineId='" + outerParentCombineId + '\'' +
+                ", outerCombineId='" + outerCombineId + '\'' +
+                ", isTop=" + isTop +
+                ", parentId='" + parentId + '\'' +
+                ", teamId='" + teamId + '\'' +
+                '}';
+    }
 }

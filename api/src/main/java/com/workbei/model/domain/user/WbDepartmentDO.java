@@ -115,4 +115,20 @@ public class WbDepartmentDO implements Serializable {
     public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
+
+    @Override
+    public String toString() {
+        return "WbDepartmentDO{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", version=" + version +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", level=" + level +
+                ", displayOrder=" + displayOrder +
+                ", code='" + code + '\'' +
+                ", teamId=" + teamId +
+                ", parentId=" + parentId +
+                '}';
+    }
 }

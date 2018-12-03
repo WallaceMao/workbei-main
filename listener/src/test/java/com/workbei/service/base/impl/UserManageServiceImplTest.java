@@ -192,6 +192,7 @@ public class UserManageServiceImplTest extends BaseUnitTest {
         Long teamId = globalTeam.getId();
         userManageService.saveUserInfo(teamId, userVO);
 
+        //  通过clone保存旧的object
         WbUserDO userDO = (WbUserDO) SerializationUtils.clone(
                 userManageService.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId()));
         Long userId = userDO.getId();

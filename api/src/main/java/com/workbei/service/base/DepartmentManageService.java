@@ -2,6 +2,8 @@ package com.workbei.service.base;
 
 import com.workbei.model.domain.user.WbDepartmentDO;
 import com.workbei.model.domain.user.WbOuterDataDepartmentDO;
+import com.workbei.model.domain.user.WbUserDeptAscriptionDO;
+import com.workbei.model.domain.user.WbUserDeptDO;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 
 import java.util.List;
@@ -16,13 +18,19 @@ public interface DepartmentManageService {
 
     void saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO);
 
-    WbOuterDataDepartmentDO getOuterDataDepartmentClientAndOuterId(String client, String outerCorpId);
+    WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndOuterId(String client, String outerId);
 
     Long getOuterDataDepartmentDepartmentIdByClientAndOuterId(String client, String outerId);
+
+    void saveOrUpdateDepartment(WbDepartmentDO department, String parentCode);
 
     WbDepartmentDO getDepartmentById(Long id);
 
     void saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO);
+
+    void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
+
+    WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(Long departmentId, Long userId);
 
     void saveTeamDefaultDepartment(Long teamId, String topDepartmentName);
 
@@ -36,11 +44,19 @@ public interface DepartmentManageService {
 
     List<WbDepartmentDO> listDepartmentByTeamId(Long teamId);
 
+    void saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
+
+    WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId);
+
     List<Long> listUserDeptDepartmentIdByUser(Long userId);
 
-    void removeDepartmentUser(Long departmengId, Long userId);
+    void deleteDepartmentUser(Long departmentId, Long userId);
 
-    void updateDepartmentInfo(AutoCreateDepartmentVO departmentVO, WbDepartmentDO departmentDO);
+    void updateDepartmentInfo(AutoCreateDepartmentVO departmentVO);
 
-    void deleteDepartmentInfo(WbDepartmentDO departmentDO);
+    void deleteDepartmentInfo(AutoCreateDepartmentVO departmentVO);
+
+    List<Long> listUserDeptAscriptionDepartmentIdByUserId(Long userId);
+
+    List<Long> listUserDeptAscriptionUserIdByDepartmentId(Long departmentId);
 }

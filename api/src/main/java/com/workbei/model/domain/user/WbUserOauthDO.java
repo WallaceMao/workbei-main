@@ -166,4 +166,26 @@ public class WbUserOauthDO implements Serializable {
     public void setOuterId(String outerId) {
         this.outerId = outerId;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserOauthDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", accountId=" + accountId +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", weixinUnionId='" + weixinUnionId + '\'' +
+                ", weixinName='" + weixinName + '\'' +
+                ", qqOpenId='" + qqOpenId + '\'' +
+                ", qqName='" + qqName + '\'' +
+                ", sinaOpenId='" + sinaOpenId + '\'' +
+                ", sinaName='" + sinaName + '\'' +
+                ", xiaomiOpenId='" + xiaomiOpenId + '\'' +
+                ", xiaomiName='" + xiaomiName + '\'' +
+                ", ddUnionId='" + ddUnionId + '\'' +
+                ", ddWebjsonuser='" + ddWebjsonuser + '\'' +
+                ", outerId='" + outerId + '\'' +
+                '}';
+    }
 }

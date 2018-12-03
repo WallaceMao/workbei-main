@@ -77,4 +77,17 @@ public class WbTeamUserRoleDO implements Serializable {
     public void setRole(String role) {
         this.role = role;
     }
+
+    @Override
+    public String toString() {
+        return "WbTeamUserRoleDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", userId=" + userId +
+                ", teamId=" + teamId +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", role='" + role + '\'' +
+                '}';
+    }
 }

@@ -25,26 +25,27 @@
     </sql>
     <insert id="saveOrUpdateTeam" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO team (
-        uuid,
-        version,
-        date_created,
-        last_updated,
-        logo,
-        `name`,
-        is_display
+            uuid,
+            version,
+            date_created,
+            last_updated,
+            logo,
+            `name`,
+            is_display
         )VALUES(
-        #{uuid},
-        0,
-        now(),
-        now(),
-        #{logo},
-        #{name},
-        #{isDisplay}
+            #{uuid},
+            0,
+            now(),
+            now(),
+            #{logo},
+            #{name},
+            #{isDisplay}
         )ON DUPLICATE KEY UPDATE
-        last_updated=now(),
-        logo=#{logo},
-        `name`=#{name},
-        is_display=#{isDisplay}
+            version=version+1,
+            last_updated=now(),
+            logo=#{logo},
+            `name`=#{name},
+            is_display=#{isDisplay}
     </insert>
     <select id="getTeamById" resultMap="teamMap">
         SELECT <include refid="select-all-fields-team"/>  FROM team
@@ -116,6 +117,7 @@
             #{introduction},
             #{client}
         ) ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now(),
             region=#{region},
             industry=#{industry},
@@ -163,6 +165,7 @@
             #{whoCanInviteColleague},
             #{deletedTeamUser}
         ) ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now(),
             who_can_invite_colleague=#{whoCanInviteColleague},
             deleted_team_user=#{deletedTeamUser}
@@ -209,6 +212,7 @@
             #{userId},
             #{role}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now(),
             role=#{role}
     </insert>
@@ -257,20 +261,21 @@
     </sql>
     <insert id="saveOrUpdateJoinAndQuitTeamRecord" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO join_and_quit_team_record (
-        version,
-        date_created,
-        last_updated,
-        user_id,
-        team_id,
-        type
+            version,
+            date_created,
+            last_updated,
+            user_id,
+            team_id,
+            type
         )VALUES(
-        0,
-        now(),
-        now(),
-        #{userId},
-        #{teamId},
-        #{type}
-        )
+            0,
+            now(),
+            now(),
+            #{userId},
+            #{teamId},
+            #{type}
+        )ON DUPLICATE KEY UPDATE
+            version=version+1
     </insert>
     <select id="listJoinAndQuitTeamRecordByTeamIdAndUserId" resultMap="joinAndQuitTeamRecordMap">
         SELECT <include refid="select-all-fields-join-and-quit-team-record"/>  FROM join_and_quit_team_record

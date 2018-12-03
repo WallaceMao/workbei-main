@@ -27,6 +27,7 @@
             #{email},
             #{avatar}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             birth=#{birth},
             `phone_number`=#{phoneNumber},
             `name`=#{name},
@@ -102,6 +103,7 @@
             #{ddWebjsonuser},
             #{outerId}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now(),
             dd_union_id=#{ddUnionId}
     </insert>
@@ -173,7 +175,8 @@
             #{mode},
             #{client},
             #{isSystem}
-        )
+        )ON DUPLICATE KEY UPDATE
+            version=version+1
     </insert>
     <resultMap type="com.workbei.model.domain.user.WbUserRegisterDO" id="userRegisterMap">
         <id property="id" column="id" />

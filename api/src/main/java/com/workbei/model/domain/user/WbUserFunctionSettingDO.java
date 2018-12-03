@@ -75,4 +75,17 @@ public class WbUserFunctionSettingDO implements Serializable {
     public void setShakeMode(Boolean shakeMode) {
         this.shakeMode = shakeMode;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserFunctionSettingDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", userId=" + userId +
+                ", weekBegins='" + weekBegins + '\'' +
+                ", isOpenNotificationPlugin=" + isOpenNotificationPlugin +
+                ", readCollageCount=" + readCollageCount +
+                ", shakeMode=" + shakeMode +
+                '}';
+    }
 }

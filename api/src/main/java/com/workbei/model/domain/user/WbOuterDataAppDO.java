@@ -70,4 +70,17 @@ public class WbOuterDataAppDO implements Serializable {
     public void setNote(String note) {
         this.note = note;
     }
+
+    @Override
+    public String toString() {
+        return "WbOuterDataAppDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", name='" + name + '\'' +
+                ", key='" + key + '\'' +
+                ", token='" + token + '\'' +
+                ", whiteIpList='" + whiteIpList + '\'' +
+                ", note='" + note + '\'' +
+                '}';
+    }
 }

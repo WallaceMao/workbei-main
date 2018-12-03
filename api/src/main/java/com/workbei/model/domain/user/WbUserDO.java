@@ -93,4 +93,19 @@ public class WbUserDO implements Serializable {
     public void setDisplay(Boolean display) {
         isDisplay = display;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", isParent=" + isParent +
+                ", teamId=" + teamId +
+                ", accountId=" + accountId +
+                ", username='" + username + '\'' +
+                ", position='" + position + '\'' +
+                ", name='" + name + '\'' +
+                ", isDisplay=" + isDisplay +
+                '}';
+    }
 }

@@ -16,50 +16,51 @@ import java.util.List;
 public interface WbDepartmentDao {
     void saveOrUpdateDepartment(WbDepartmentDO department);
     void deleteDepartmentById(
-            @Param("id") Long id
-    );
+            @Param("id") Long id);
     List<WbDepartmentDO> listDepartmentByTeamId(
             @Param("teamId") Long teamId);
     WbDepartmentDO getDepartmentById(
-            @Param("id") Long id
-    );
+            @Param("id") Long id);
     WbDepartmentDO getTopDepartment(
-            @Param("teamId") Long teamId
-    );
+            @Param("teamId") Long teamId);
     Long getTopDepartmentId(
-            @Param("teamId") Long teamId
-    );
+            @Param("teamId") Long teamId);
     WbDepartmentDO getUnassignedDepartment(
-            @Param("teamId") Long teamId
-    );
-    List<WbDepartmentDO> getDepartmentListByIds(@Param("ids") String[] ids);
-
-    void saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
-    void deleteUserDeptByUserIdAndDepartmentId(
-            @Param("userId") Long userId,
-            @Param("departmentId") Long deptId
-    );
-    void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
-    void deleteUserDeptAscriptionByUserIdAndDepartmentId(
-            @Param("userId") Long userId,
-            @Param("departmentId") Long deptId
-    );
-    List<Long> listUserDeptDepartmentIdByUserId(@Param("userId") Long id);
-
+            @Param("teamId") Long teamId);
+    List<WbDepartmentDO> getDepartmentListByIds(
+            @Param("ids") String[] ids);
     WbDepartmentDO getDepartmentByClientAndOuterId(
             @Param("client") String client,
             @Param("outerId") String outerParentCombineId);
+    List<WbDepartmentDO> listDepartmentByParentId(
+            @Param("parentId") Long parentId);
 
-    List<WbDepartmentDO> listDepartmentsByParentId(@Param("parentId") Long parentId);
-
+    void saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
     void updateUserDeptDepartmentId(
             @Param("sourceId") Long sourceDepartmentId,
             @Param("targetId") Long targetDepartmentId);
+    void deleteUserDeptByUserIdAndDepartmentId(
+            @Param("departmentId") Long departmentId,
+            @Param("userId") Long userId);
+    WbUserDeptDO getUserDeptByDepartmentIdAndUserId(
+            @Param("departmentId") Long departmentId,
+            @Param("userId") Long userId);
+    List<Long> listUserDeptDepartmentIdByUserId(@Param("userId") Long id);
 
+    void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
+    void deleteUserDeptAscriptionByUserIdAndDepartmentId(
+            @Param("departmentId") Long departmentId,
+            @Param("userId") Long userId);
     void deleteUserDeptAscriptionByDepartmentId(
-            @Param("departmentId") Long deptId
-    );
-
+            @Param("departmentId") Long deptId);
+    void deleteUserDeptAscriptionByUserIdAndDepartmentType(
+            @Param("userId") Long userId,
+            @Param("departmentType") String departmentType);
+    WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(
+            @Param("departmentId") Long departmentId,
+            @Param("userId") Long userId);
     List<Long> listUserDeptAscriptionUserIdByDepartmentId(
             @Param("departmentId") Long deptId);
+    List<Long> listUserDeptAscriptionDepartmentIdByUserId(
+            @Param("userId") Long userId);
 }

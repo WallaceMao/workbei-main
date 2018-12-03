@@ -38,6 +38,7 @@
             #{outerId},
             #{client}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now()
     </insert>
     <delete id="deleteOuterDataUserByOuterId">

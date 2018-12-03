@@ -134,4 +134,23 @@ public class WbUserDisplayOrderDO implements Serializable {
     public void setMinStarKanbanDisplayOrder(Double minStarKanbanDisplayOrder) {
         this.minStarKanbanDisplayOrder = minStarKanbanDisplayOrder;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserDisplayOrderDO{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", maxCorpusDisplayOrder=" + maxCorpusDisplayOrder +
+                ", minCorpusDisplayOrder=" + minCorpusDisplayOrder +
+                ", maxStarCorpusDisplayOrder=" + maxStarCorpusDisplayOrder +
+                ", minStarCorpusDisplayOrder=" + minStarCorpusDisplayOrder +
+                ", maxKanbanDisplayOrder=" + maxKanbanDisplayOrder +
+                ", minKanbanDisplayOrder=" + minKanbanDisplayOrder +
+                ", maxStarKanbanDisplayOrder=" + maxStarKanbanDisplayOrder +
+                ", minStarKanbanDisplayOrder=" + minStarKanbanDisplayOrder +
+                '}';
+    }
 }

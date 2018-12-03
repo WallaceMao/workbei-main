@@ -14,6 +14,9 @@ public interface WbOuterDataDepartmentDao {
     void deleteOuterDataDepartmentByOuterId(
             @Param("outerId") String outerId
     );
+    void deleteOuterDataDepartmentByDepartmentId(
+            @Param("departmentId") Long deptId
+    );
     WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndOuterId(
             @Param("client") String client,
             @Param("outerId") String outerId

@@ -44,4 +44,14 @@ public class WbUserDeptAscriptionDO implements Serializable {
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserDeptAscriptionDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", userId=" + userId +
+                ", departmentId=" + departmentId +
+                '}';
+    }
 }

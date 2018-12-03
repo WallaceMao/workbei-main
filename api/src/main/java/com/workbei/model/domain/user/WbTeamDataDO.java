@@ -147,4 +147,24 @@ public class WbTeamDataDO implements Serializable {
     public void setCanTel(Boolean canTel) {
         this.canTel = canTel;
     }
+
+    @Override
+    public String toString() {
+        return "WbTeamDataDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", teamId=" + teamId +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", contacts='" + contacts + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", industry='" + industry + '\'' +
+                ", introduction='" + introduction + '\'' +
+                ", region='" + region + '\'' +
+                ", size='" + size + '\'' +
+                ", outerId='" + outerId + '\'' +
+                ", client='" + client + '\'' +
+                ", canTel=" + canTel +
+                '}';
+    }
 }

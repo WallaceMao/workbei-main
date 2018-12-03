@@ -85,4 +85,18 @@ public class WbTeamDO implements Serializable {
     public void setDisplay(Boolean display) {
         isDisplay = display;
     }
+
+    @Override
+    public String toString() {
+        return "WbTeamDO{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", name='" + name + '\'' +
+                ", logo='" + logo + '\'' +
+                ", isDisplay=" + isDisplay +
+                '}';
+    }
 }

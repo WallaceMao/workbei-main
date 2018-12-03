@@ -34,4 +34,13 @@ public class WbRoleGroupDO implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "WbRoleGroupDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

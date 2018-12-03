@@ -73,4 +73,17 @@ public class WbJoinAndQuitTeamRecordDO implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "WbJoinAndQuitTeamRecordDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", userId=" + userId +
+                ", teamId=" + teamId +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }

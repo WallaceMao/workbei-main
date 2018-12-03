@@ -225,4 +225,32 @@ public class WbUserUiSettingDO implements Serializable {
     public void setInboxMode(String inboxMode) {
         this.inboxMode = inboxMode;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserUiSettingDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", userId=" + userId +
+                ", themeSkin='" + themeSkin + '\'' +
+                ", themeBg='" + themeBg + '\'' +
+                ", narrowTheInbox=" + narrowTheInbox +
+                ", narrowTheKanban=" + narrowTheKanban +
+                ", narrowTheCorpus=" + narrowTheCorpus +
+                ", narrowTheCompany=" + narrowTheCompany +
+                ", narrowTheApplication=" + narrowTheApplication +
+                ", registAlertFlag=" + registAlertFlag +
+                ", companyView='" + companyView + '\'' +
+                ", showTipBox=" + showTipBox +
+                ", expireAlertFlag=" + expireAlertFlag +
+                ", lunarFlag=" + lunarFlag +
+                ", festivalFlag=" + festivalFlag +
+                ", dayAlertTime='" + dayAlertTime + '\'' +
+                ", phoneThemeSkin='" + phoneThemeSkin + '\'' +
+                ", firstDeleteFlag=" + firstDeleteFlag +
+                ", inboxMode='" + inboxMode + '\'' +
+                '}';
+    }
 }

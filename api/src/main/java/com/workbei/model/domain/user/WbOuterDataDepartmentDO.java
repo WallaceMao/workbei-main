@@ -77,4 +77,17 @@ public class WbOuterDataDepartmentDO implements Serializable {
     public void setClient(String client) {
         this.client = client;
     }
+
+    @Override
+    public String toString() {
+        return "WbOuterDataDepartmentDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", departmentId=" + departmentId +
+                ", outerId='" + outerId + '\'' +
+                ", client='" + client + '\'' +
+                '}';
+    }
 }

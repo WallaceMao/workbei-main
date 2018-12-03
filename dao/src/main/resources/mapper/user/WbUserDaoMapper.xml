@@ -23,6 +23,7 @@
             #{accountId},
             #{isDisplay}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             `name`=#{name}
     </insert>
     <resultMap type="com.workbei.model.domain.user.WbUserDO" id="userMap">
@@ -88,6 +89,7 @@
             #{guideTaskFlag},
             #{guideNoteFlag}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             guide_kanban_flag=#{guideKanbanFlag},
             guide_web_flag=#{guideWebFlag},
             guide_task_flag=#{guideTaskFlag},
@@ -146,7 +148,8 @@
             #{minCorpusDisplayOrder},
             #{maxKanbanDisplayOrder},
             #{minKanbanDisplayOrder}
-        )
+        )ON DUPLICATE KEY UPDATE
+            version=version+1
     </insert>
     <resultMap type="com.workbei.model.domain.user.WbUserDisplayOrderDO" id="userDisplayOrderMap">
         <id property="id" column="id" />
@@ -232,6 +235,7 @@
             #{firstDeleteFlag},
             #{inboxMode}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now(),
             narrow_the_corpus=#{narrowTheCorpus},
             company_view=#{companyView},
@@ -323,6 +327,7 @@
             #{shakeMode},
             #{readCollageCount}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             is_open_notification_plugin=#{isOpenNotificationPlugin},
             week_begins=#{weekBegins},
             shake_mode=#{shakeMode}

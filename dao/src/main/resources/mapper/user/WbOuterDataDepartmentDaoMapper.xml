@@ -38,12 +38,19 @@
             #{outerId},
             #{client}
         )ON DUPLICATE KEY UPDATE
+            version=version+1,
             last_updated=now()
     </insert>
     <delete id="deleteOuterDataDepartmentByOuterId">
         DELETE FROM outer_data_department
         <![CDATA[
         WHERE outer_id=#{outerId}
+        ]]>
+    </delete>
+    <delete id="deleteOuterDataDepartmentByDepartmentId">
+        DELETE FROM outer_data_department
+        <![CDATA[
+        WHERE department_id=#{departmentId}
         ]]>
     </delete>
 

@@ -43,4 +43,14 @@ public class WbUserRoleGroupDO implements Serializable {
     public void setRoleGroupId(Long roleGroupId) {
         this.roleGroupId = roleGroupId;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserRoleGroupDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", userId=" + userId +
+                ", roleGroupId=" + roleGroupId +
+                '}';
+    }
 }

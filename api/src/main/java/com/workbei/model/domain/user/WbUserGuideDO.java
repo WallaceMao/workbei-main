@@ -71,4 +71,17 @@ public class WbUserGuideDO implements Serializable {
     public void setGuideNoteFlag(Boolean guideNoteFlag) {
         this.guideNoteFlag = guideNoteFlag;
     }
+
+    @Override
+    public String toString() {
+        return "WbUserGuideDO{" +
+                "id=" + id +
+                ", version=" + version +
+                ", userId=" + userId +
+                ", guideKanbanFlag=" + guideKanbanFlag +
+                ", guideWebFlag=" + guideWebFlag +
+                ", guideTaskFlag=" + guideTaskFlag +
+                ", guideNoteFlag=" + guideNoteFlag +
+                '}';
+    }
 }
