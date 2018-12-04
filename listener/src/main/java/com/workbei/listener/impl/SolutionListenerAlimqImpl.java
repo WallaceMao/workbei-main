@@ -8,7 +8,7 @@ import com.aliyun.openservices.ons.api.MessageListener;
 import com.workbei.event.SolutionEvent;
 import com.workbei.exception.WorkbeiRuntimeException;
 import com.workbei.listener.SolutionListener;
-import com.workbei.service.biz.SolutionBizService;
+import com.workbei.service.solution.SolutionService;
 import com.workbei.util.LogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class SolutionListenerAlimqImpl implements MessageListener, SolutionListe
     private static final Logger bizLogger = LoggerFactory.getLogger(SolutionListenerAlimqImpl.class);
 
     @Autowired
-    private SolutionBizService solutionBizService;
+    private SolutionService solutionService;
 
     @Override
     public Action consume(Message message, ConsumeContext consumeContext) {
@@ -33,9 +33,9 @@ public class SolutionListenerAlimqImpl implements MessageListener, SolutionListe
             String type = event.getType();
 
             if("team".equals(type)){
-                solutionBizService.generateTeamSolution(teamId, userId);
+                solutionService.generateTeamSolution(teamId, userId);
             }else if("staff".equals(type)){
-                solutionBizService.generateUserSolution(teamId, userId);
+                solutionService.generateUserSolution(teamId, userId);
             }else{
                 throw new WorkbeiRuntimeException("invalid solution type: " + type + ", teamId: " + teamId + ", userId: " + userId);
             }

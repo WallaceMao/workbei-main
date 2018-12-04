@@ -2,7 +2,7 @@ package com.workbei.listener.impl;
 
 import com.workbei.exception.WorkbeiRuntimeException;
 import com.workbei.listener.SolutionListener;
-import com.workbei.service.biz.SolutionBizService;
+import com.workbei.service.solution.SolutionService;
 import com.workbei.util.LogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class SolutionListenerActivemqImpl implements MessageListener, SolutionLi
     private static final Logger bizLogger = LoggerFactory.getLogger(SolutionListenerActivemqImpl.class);
 
     @Autowired
-    private SolutionBizService solutionBizService;
+    private SolutionService solutionService;
 
     @Override
     public void onMessage(Message message) {
@@ -31,9 +31,9 @@ public class SolutionListenerActivemqImpl implements MessageListener, SolutionLi
             String type = mapMessage.getString("type");
 
             if("team".equals(type)){
-                solutionBizService.generateTeamSolution(teamId, userId);
+                solutionService.generateTeamSolution(teamId, userId);
             }else if("staff".equals(type)){
-                solutionBizService.generateUserSolution(teamId, userId);
+                solutionService.generateUserSolution(teamId, userId);
             }else{
                 throw new WorkbeiRuntimeException("invalid solution type: " + type + ", teamId: " + teamId + ", userId: " + userId);
             }

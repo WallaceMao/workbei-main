@@ -6,11 +6,11 @@
     <import resource="classpath:spring-dao.xml" />
 
     <!--基础service-->
-    <bean id="demoService" class="com.workbei.service.biz.impl.DemoServiceImpl" />
-    <bean id="solutionBizService" class="com.workbei.service.biz.impl.SolutionBizServiceImpl" />
-    <bean id="autoCreateBizService" class="com.workbei.service.biz.impl.AutoCreateBizServiceImpl" />
-    <bean id="teamManageService" class="com.workbei.service.base.impl.TeamManageServiceImpl" />
-    <bean id="departmentManageService" class="com.workbei.service.base.impl.DepartmentManageServiceImpl" />
-    <bean id="userManageService" class="com.workbei.service.base.impl.UserManageServiceImpl" />
-    <bean id="roleManageService" class="com.workbei.service.base.impl.RoleManageServiceImpl" />
+    <bean id="demoService" class="com.workbei.service.demo.impl.DemoServiceImpl" />
+    <bean id="solutionBizService" class="com.workbei.service.solution.impl.SolutionServiceImpl" />
+    <bean id="autoCreateBizService" class="com.workbei.service.autocreate.impl.AutoCreateServiceImpl" />
+    <bean id="teamManageService" class="com.workbei.manager.user.impl.TeamManagerImpl" />
+    <bean id="departmentManageService" class="com.workbei.manager.user.impl.DepartmentManagerImpl" />
+    <bean id="userManageService" class="com.workbei.manager.user.impl.UserManagerImpl" />
+    <bean id="roleManageService" class="com.workbei.manager.user.impl.RoleManagerImpl" />
 </beans>

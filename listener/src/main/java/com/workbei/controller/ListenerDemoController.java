@@ -1,7 +1,7 @@
 package com.workbei.controller;
 
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
-import com.workbei.service.biz.SolutionBizService;
+import com.workbei.service.solution.SolutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ListenerDemoController {
     }
 
     @Autowired
-    private SolutionBizService solutionBizService;
+    private SolutionService solutionService;
     @RequestMapping("/generateSolution")
     @ResponseBody
     public String generateSolution(
@@ -39,9 +39,9 @@ public class ListenerDemoController {
     ){
         try {
             if("team".equals(type)){
-                solutionBizService.generateTeamSolution(teamId, userId);
+                solutionService.generateTeamSolution(teamId, userId);
             }else if("staff".equals(type)){
-                solutionBizService.generateUserSolution(teamId, userId);
+                solutionService.generateUserSolution(teamId, userId);
             }else{
                 return "no type";
             }
