@@ -6,7 +6,7 @@ import com.workbei.dao.user.WbTeamDao;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.service.base.TeamManageService;
-import factory.TeamFactory;
+import com.workbei.factory.TeamFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

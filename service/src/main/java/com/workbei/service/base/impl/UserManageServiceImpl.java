@@ -4,7 +4,7 @@ import com.workbei.dao.user.*;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.service.base.UserManageService;
-import factory.UserFactory;
+import com.workbei.factory.UserFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

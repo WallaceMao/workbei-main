@@ -5,7 +5,7 @@ import com.workbei.model.domain.user.WbAccountDO;
 import com.workbei.model.domain.user.WbUserDO;
 import com.workbei.model.domain.user.WbUserOauthDO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
-import factory.UserFactory;
+import com.workbei.factory.UserFactory;
 
 import java.util.Date;
 

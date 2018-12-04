@@ -5,10 +5,10 @@ import com.workbei.dao.user.WbDepartmentDao;
 import com.workbei.dao.user.WbOuterDataDepartmentDao;
 import com.workbei.exception.ExceptionCode;
 import com.workbei.exception.WorkbeiServiceException;
+import com.workbei.factory.DepartmentFactory;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.service.base.DepartmentManageService;
-import factory.DepartmentFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;

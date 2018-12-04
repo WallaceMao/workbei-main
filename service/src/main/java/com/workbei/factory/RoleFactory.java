@@ -1,4 +1,4 @@
-package factory;
+package com.workbei.factory;
 
 import com.workbei.model.domain.user.WbUserRoleGroupDO;
 

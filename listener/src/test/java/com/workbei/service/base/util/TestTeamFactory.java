@@ -4,7 +4,7 @@ import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.WbOuterDataTeamDO;
 import com.workbei.model.domain.user.WbTeamDO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
-import factory.TeamFactory;
+import com.workbei.factory.TeamFactory;
 
 import java.util.Date;
 

@@ -4,7 +4,7 @@ import com.workbei.BaseUnitTest;
 import com.workbei.dao.user.WbOuterDataTeamDao;
 import com.workbei.model.domain.user.WbOuterDataTeamDO;
 import com.workbei.service.biz.DemoService;
-import factory.TeamFactory;
+import com.workbei.factory.TeamFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;

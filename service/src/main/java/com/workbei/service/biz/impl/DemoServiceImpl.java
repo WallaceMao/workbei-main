@@ -4,7 +4,7 @@ import com.workbei.constant.WbConstant;
 import com.workbei.dao.user.WbOuterDataTeamDao;
 import com.workbei.model.domain.user.WbOuterDataTeamDO;
 import com.workbei.service.biz.DemoService;
-import factory.TeamFactory;
+import com.workbei.factory.TeamFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

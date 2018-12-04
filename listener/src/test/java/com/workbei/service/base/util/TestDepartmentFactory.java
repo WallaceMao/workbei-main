@@ -4,9 +4,7 @@ import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.WbDepartmentDO;
 import com.workbei.model.domain.user.WbOuterDataDepartmentDO;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
-import com.workbei.util.UuidUtil;
-import factory.DepartmentFactory;
-import sun.plugin.util.UIUtil;
+import com.workbei.factory.DepartmentFactory;
 
 import java.util.Date;
 

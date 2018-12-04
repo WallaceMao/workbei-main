@@ -6,7 +6,7 @@ import com.workbei.model.domain.user.WbRoleGroupDO;
 import com.workbei.model.domain.user.WbUserDO;
 import com.workbei.model.domain.user.WbUserRoleGroupDO;
 import com.workbei.service.base.RoleManageService;
-import factory.RoleFactory;
+import com.workbei.factory.RoleFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
