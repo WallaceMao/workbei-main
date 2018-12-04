@@ -24,7 +24,7 @@ public interface UserManager {
 
     WbUserDO saveUserInfo(Long teamId, AutoCreateUserVO userVO);
 
-    WbUserDO updateUserInfo(WbUserDO userDO, AutoCreateUserVO userVO);
+    WbUserDO updateUserInfo(AutoCreateUserVO userVO);
 
     void saveOrUpdateUser(WbUserDO userDO);
 

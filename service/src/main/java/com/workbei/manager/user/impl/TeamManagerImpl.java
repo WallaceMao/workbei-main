@@ -12,6 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
+ * team聚合，
+ * 包括的domain:
+ * WbTeamDO
+ * WbTeamDataDO
+ * WbTeamUserDO
+ * WbOuterDataTeamDO
+ * 负责管理的关联:
+ * WbTeamUserRoleDO
+ * WbJoinAndQuitTeamRecordDO
  * @author Wallace Mao
  * Date: 2018-11-27 15:53
  */
@@ -37,6 +46,11 @@ public class TeamManagerImpl implements TeamManager {
     }
 
     @Override
+    public WbTeamDO getTeamByClientAndOuterId(String client, String outerCorpId){
+        return wbTeamDao.getTeamByClientAndOuterId(client, outerCorpId);
+    }
+
+    @Override
     public WbTeamDataDO getTeamDataByTeamId(Long teamId){
         return wbTeamDao.getTeamDataByTeamId(teamId);
     }
@@ -52,6 +66,11 @@ public class TeamManagerImpl implements TeamManager {
     }
 
     @Override
+    public WbOuterDataTeamDO getOuterDataTeamByClientAndOuterId(String client, String outerCorpId){
+        return wbOuterDataTeamDao.getOuterDataTeamByClientAndOuterId(client, outerCorpId);
+    }
+
+    @Override
     public List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndUserId(Long teamId, Long userId){
         return wbTeamDao.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
     }
@@ -61,11 +80,13 @@ public class TeamManagerImpl implements TeamManager {
         return wbTeamDao.listJoinAndQuitTeamRecordByTeamIdAndUserId(teamId, userId);
     }
 
-    @Override
-    public WbOuterDataTeamDO getOuterDataTeamByClientAndOuterId(String client, String outerCorpId){
-        return wbOuterDataTeamDao.getOuterDataTeamByClientAndOuterId(client, outerCorpId);
-    }
+    //  以下为聚合方法
 
+    /**
+     * 保存team的基本信息，同时也会跟team相关的聚合类
+     * @param teamVO
+     * @return
+     */
     @Override
     public WbTeamDO saveTeamInfo(AutoCreateTeamVO teamVO) {
         //  保存公司
@@ -100,8 +121,13 @@ public class TeamManagerImpl implements TeamManager {
         return teamDO;
     }
 
+    /**
+     * 新增团队创建者的角色
+     * @param teamId
+     * @param userId
+     */
     @Override
-    public void saveTeamCreator(Long teamId, Long userId) {
+    public void saveTeamCreatorRole(Long teamId, Long userId) {
         //  设置teamUserRole
         WbTeamUserRoleDO creatorRole = TeamFactory.getTeamUserRoleDO();
         creatorRole.setTeamId(teamId);
@@ -121,8 +147,18 @@ public class TeamManagerImpl implements TeamManager {
         wbTeamDao.saveOrUpdateJoinAndQuitTeamRecord(joinAndQuitTeamRecordDO);
     }
 
+    /**
+     * 新增普通用户的团队角色
+     *  @param teamId
+     * @param userId
+     */
     @Override
-    public void saveTeamCommonUser(Long teamId, Long userId){
+    public void saveTeamCommonUserRole(Long teamId, Long userId){
+        WbTeamUserRoleDO userRole = TeamFactory.getTeamUserRoleDO();
+        userRole.setTeamId(teamId);
+        userRole.setUserId(userId);
+        userRole.setRole(WbConstant.TEAM_USER_ROLE_COMMON);
+        wbTeamDao.saveOrUpdateTeamUserRole(userRole);
         //  添加创建公司的记录
         WbJoinAndQuitTeamRecordDO joinAndQuitTeamRecordDO = TeamFactory.getJoinAndQuitTeamRecordDO();
         joinAndQuitTeamRecordDO.setTeamId(teamId);
@@ -131,8 +167,13 @@ public class TeamManagerImpl implements TeamManager {
         wbTeamDao.saveOrUpdateJoinAndQuitTeamRecord(joinAndQuitTeamRecordDO);
     }
 
+    /**
+     * 删除团队用户的角色，同时打出日志
+     * @param teamId
+     * @param userId
+     */
     @Override
-    public void removeTeamUser(Long teamId, Long userId) {
+    public void deleteTeamUserRole(Long teamId, Long userId) {
         //  删除teamUserRole
         wbTeamDao.deleteTeamUserRoleByTeamIdAndUserId(teamId, userId);
         //  添加创建公司的记录
@@ -143,6 +184,12 @@ public class TeamManagerImpl implements TeamManager {
         wbTeamDao.saveOrUpdateJoinAndQuitTeamRecord(joinAndQuitTeamRecordDO);
     }
 
+    /**
+     * 更新团队的管理员角色
+     * @param teamId
+     * @param userId
+     * @param admin
+     */
     @Override
     public void updateTeamAdmin(Long teamId, Long userId, Boolean admin) {
         WbTeamUserRoleDO adminRole = wbTeamDao.getTeamUserRoleByTeamIdAndUserIdAndRole(

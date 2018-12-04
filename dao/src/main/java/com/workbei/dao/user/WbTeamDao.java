@@ -15,6 +15,9 @@ public interface WbTeamDao {
 
     void saveOrUpdateTeam(WbTeamDO teamDO);
     WbTeamDO getTeamById(@Param("id") Long id);
+    WbTeamDO getTeamByClientAndOuterId(
+            @Param("client") String client,
+            @Param("outerId") String outerCorpId);
 
     void saveOrUpdateTeamData(WbTeamDataDO teamDataDO);
     WbTeamDataDO getTeamDataByTeamId(@Param("teamId") Long teamId);
@@ -46,5 +49,4 @@ public interface WbTeamDao {
             @Param("teamId") Long teamId,
             @Param("userId") Long userId,
             @Param("type") String type);
-
 }

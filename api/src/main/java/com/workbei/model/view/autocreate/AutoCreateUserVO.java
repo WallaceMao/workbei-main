@@ -1,12 +1,14 @@
 package com.workbei.model.view.autocreate;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
-public class AutoCreateUserVO {
+public class AutoCreateUserVO implements Serializable {
+    private Long id;
     private String name;
     private String avatar;
     private String client;
@@ -23,6 +25,14 @@ public class AutoCreateUserVO {
     private String password;
     @Deprecated
     private Long teamId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

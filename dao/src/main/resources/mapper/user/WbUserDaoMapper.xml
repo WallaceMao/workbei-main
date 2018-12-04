@@ -24,7 +24,8 @@
             #{isDisplay}
         )ON DUPLICATE KEY UPDATE
             version=version+1,
-            `name`=#{name}
+            `name`=#{name},
+            team_id=#{teamId}
     </insert>
     <resultMap type="com.workbei.model.domain.user.WbUserDO" id="userMap">
         <id property="id" column="id" />

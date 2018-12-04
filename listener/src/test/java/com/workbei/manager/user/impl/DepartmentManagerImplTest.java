@@ -596,6 +596,8 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         assertThat(user6ascriptionList).contains(
                 deptDOC2.getId(), deptDOB1.getId(), globalTopDepartment.getId());
 
+        //TODO 将部门移动到其他位置
+
     }
 
     @Test
@@ -708,7 +710,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         );
         assertThat(newDeptDOC2).isNull();
         assertThat(newOuterDataDepartmentDOC2).isNull();
-        List<Long> user2DepartmentIdList = departmentManager.listUserDeptDepartmentIdByUser(userId2);
+        List<Long> user2DepartmentIdList = departmentManager.listUserDeptDepartmentIdByUserId(userId2);
         assertThat(user2DepartmentIdList).containsExactly(globalUnassignedDepartment.getId());
         List<Long> user2AscriptionDepartmentIdList = departmentManager.listUserDeptAscriptionDepartmentIdByUserId(userId2);
         assertThat(user2AscriptionDepartmentIdList).hasSize(1);

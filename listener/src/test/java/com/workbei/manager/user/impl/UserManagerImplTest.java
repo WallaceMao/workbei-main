@@ -221,7 +221,7 @@ public class UserManagerImplTest extends BaseUnitTest {
         AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
         userVO.setOuterUnionId("at_user_union_id_" + new Date().getTime());
         WbUserDO userDOForUpdate = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
-        userManager.updateUserInfo(userDOForUpdate, userVO2);
+        userManager.updateUserInfo(userVO2);
         WbUserDO userDO2 = userManager.getUserById(userDOForUpdate.getId());
         Long userId2 = userDO2.getId();
         WbAccountDO accountDO2 = userManager.getAccountById(userDO2.getAccountId());

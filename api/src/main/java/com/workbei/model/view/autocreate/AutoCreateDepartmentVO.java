@@ -1,10 +1,13 @@
 package com.workbei.model.view.autocreate;
 
+import java.io.Serializable;
+
 /**
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
-public class AutoCreateDepartmentVO {
+public class AutoCreateDepartmentVO implements Serializable {
+    private Long id;
     private String name;
     private Double displayOrder;
 
@@ -19,6 +22,14 @@ public class AutoCreateDepartmentVO {
     private String parentId;
     @Deprecated
     private String teamId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

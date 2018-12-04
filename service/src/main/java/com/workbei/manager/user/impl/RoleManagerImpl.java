@@ -10,6 +10,11 @@ import com.workbei.factory.RoleFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * Role的聚合
+ * 包括的实体：
+ * WbRoleGroupDO
+ * 包括的关联：
+ * WbUserRoleGroupDO
  * @author Wallace Mao
  * Date: 2018-12-02 22:16
  */
@@ -29,5 +34,10 @@ public class RoleManagerImpl implements RoleManager {
         userRoleGroupDO.setUserId(userDO.getId());
         userRoleGroupDO.setRoleGroupId(roleGroup.getId());
         wbRoleDao.saveOrUpdateUserRoleGroup(userRoleGroupDO);
+    }
+
+    @Override
+    public WbUserRoleGroupDO getUserRoleGroupByUserId(Long userId){
+        return wbRoleDao.getUserRoleGroupByUserId(userId);
     }
 }

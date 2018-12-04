@@ -48,7 +48,7 @@ public interface DepartmentManager {
 
     WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId);
 
-    List<Long> listUserDeptDepartmentIdByUser(Long userId);
+    List<Long> listUserDeptDepartmentIdByUserId(Long userId);
 
     void deleteDepartmentUser(Long departmentId, Long userId);
 

@@ -10,6 +10,8 @@ import java.util.List;
  * Date: 2018-11-27 15:52
  */
 public interface TeamManager {
+    WbTeamDO getTeamByClientAndOuterId(String client, String outerCorpId);
+
     WbTeamDataDO getTeamDataByTeamId(Long teamId);
 
     WbTeamUserDO getTeamUserByTeamId(Long teamId);
@@ -30,11 +32,11 @@ public interface TeamManager {
 
     WbTeamDO saveTeamInfo(AutoCreateTeamVO teamVO);
 
-    void saveTeamCreator(Long teamId, Long userId);
+    void saveTeamCreatorRole(Long teamId, Long userId);
 
-    void saveTeamCommonUser(Long teamId, Long userId);
+    void saveTeamCommonUserRole(Long teamId, Long userId);
 
-    void removeTeamUser(Long teamId, Long userId);
+    void deleteTeamUserRole(Long teamId, Long userId);
 
     void updateTeamAdmin(Long teamId, Long userId, Boolean admin);
 }

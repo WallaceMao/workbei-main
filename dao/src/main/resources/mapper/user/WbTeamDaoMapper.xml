@@ -53,6 +53,21 @@
 			WHERE id=#{id}
 		 ]]>
     </select>
+    <select id="getTeamByClientAndOuterId" resultMap="teamMap">
+        SELECT
+            t.id,
+            t.version,
+            t.uuid,
+            t.date_created,
+            t.last_updated,
+            t.is_display,
+            t.name,
+            t.logo
+        FROM team t LEFT JOIN outer_data_team o ON t.id=o.team_id
+        <![CDATA[
+			WHERE o.client=#{client} AND o.outer_id=#{outerId}
+		 ]]>
+    </select>
 
     <!--teamData相关-->
     <resultMap type="com.workbei.model.domain.user.WbTeamDataDO" id="teamDataMap">

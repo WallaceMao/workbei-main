@@ -14,4 +14,7 @@ public interface WbRoleDao {
     WbRoleGroupDO getRoleGroupByName(@Param("name") String name);
 
     void saveOrUpdateUserRoleGroup(WbUserRoleGroupDO userRoleGroupDO);
+
+    WbUserRoleGroupDO getUserRoleGroupByUserId(
+            @Param("userId") Long userId);
 }

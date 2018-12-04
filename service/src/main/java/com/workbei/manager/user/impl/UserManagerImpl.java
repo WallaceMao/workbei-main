@@ -1,24 +1,25 @@
 package com.workbei.manager.user.impl;
 
 import com.workbei.dao.user.*;
+import com.workbei.exception.ExceptionCode;
+import com.workbei.exception.WorkbeiServiceException;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.manager.user.UserManager;
 import com.workbei.factory.UserFactory;
 import org.apache.commons.lang.RandomStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
+import static com.workbei.exception.ExceptionCode.*;
+
 /**
+ * user
  * @author Wallace Mao
  * Date: 2018-11-27 15:53
  */
 public class UserManagerImpl implements UserManager {
-    private static final Logger logger = LoggerFactory.getLogger(UserManagerImpl.class);
-
     @Autowired
     private WbUserDao wbUserDao;
     @Autowired
@@ -29,6 +30,31 @@ public class UserManagerImpl implements UserManager {
     @Override
     public void saveOrUpdateUser(WbUserDO userDO) {
         wbUserDao.saveOrUpdateUser(userDO);
+    }
+
+    @Override
+    public void saveOrUpdateAccount(WbAccountDO accountDO){
+        wbAccountDao.saveOrUpdateAccount(accountDO);
+    }
+
+    @Override
+    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO){
+        wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
+    }
+
+    @Override
+    public WbUserDO getUserById(Long id){
+        return wbUserDao.getUserById(id);
+    }
+
+    @Override
+    public WbAccountDO getAccountById(Long id){
+        return wbAccountDao.getAccountById(id);
+    }
+
+    @Override
+    public WbUserDO getUserByClientAndOuterId(String client, String outerCombineId) {
+        return wbUserDao.getUserByClientAndOuterId(client, outerCombineId);
     }
 
     @Override
@@ -62,28 +88,8 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public void saveOrUpdateAccount(WbAccountDO accountDO){
-        wbAccountDao.saveOrUpdateAccount(accountDO);
-    }
-
-    @Override
-    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO){
-        wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
-    }
-
-    @Override
     public WbOuterDataUserDO getOuterDataUserByClientAndOuterId(String client, String outerId){
         return wbOuterDataUserDao.getOuterDataUserByClientAndOuterId(client, outerId);
-    }
-
-    @Override
-    public WbUserDO getUserById(Long id){
-        return wbUserDao.getUserById(id);
-    }
-
-    @Override
-    public WbUserDO getUserByClientAndOuterId(String client, String outerCombineId) {
-        return wbUserDao.getUserByClientAndOuterId(client, outerCombineId);
     }
 
     @Override
@@ -91,11 +97,7 @@ public class UserManagerImpl implements UserManager {
         return wbAccountDao.getUserOauthByDdUnionId(ddUnionId);
     }
 
-    @Override
-    public WbAccountDO getAccountById(Long id){
-        return wbAccountDao.getAccountById(id);
-    }
-
+    //  聚合方法
     /**
      * 逻辑如下：
      * 1  如果params中有unionId，那么首先根据unionId查找是否有相同unionId的Account。
@@ -106,6 +108,13 @@ public class UserManagerImpl implements UserManager {
      */
     @Override
     public WbUserDO saveUserInfo(Long teamId, AutoCreateUserVO userVO){
+        //  如果outerDataUser中存在，那么就不创建，直接返回
+        WbUserDO userDO = getUserByClientAndOuterId(
+                userVO.getClient(), userVO.getOuterCombineId()
+        );
+        if(userDO != null){
+            return userDO;
+        }
         //  新增account
         //  如果unionId在数据库中存在，那么就根据unionId获取account，否则就新增account，并且保存unionId
         WbAccountDO accountDO = null;
@@ -140,7 +149,7 @@ public class UserManagerImpl implements UserManager {
             }
         }
         //  新增user
-        WbUserDO userDO = UserFactory.getUserDO();
+        userDO = UserFactory.getUserDO();
         userDO.setAccountId(accountDO.getId());
         userDO.setName(userVO.getName());
         userDO.setTeamId(teamId);
@@ -175,12 +184,24 @@ public class UserManagerImpl implements UserManager {
 
     /**
      * 暂时不支持修改ddUnionId
-     * @param userDO
      * @param userVO
      * @return
      */
     @Override
-    public WbUserDO updateUserInfo(WbUserDO userDO, AutoCreateUserVO userVO) {
+    public WbUserDO updateUserInfo(AutoCreateUserVO userVO) {
+        WbOuterDataUserDO outerDataUserDO = getOuterDataUserByClientAndOuterId(
+                userVO.getClient(), userVO.getOuterCombineId()
+        );
+        if(outerDataUserDO == null){
+            throw new WorkbeiServiceException(
+                    ExceptionCode.getMessage(USER_NOT_FOUND, userVO));
+        }
+        WbUserDO userDO = getUserById(outerDataUserDO.getUserId());
+        if(userDO == null){
+            throw new WorkbeiServiceException(
+                    ExceptionCode.getMessage(USER_NOT_FOUND, userVO));
+        }
+        Long userId = userDO.getId();
         WbUserDO updatedUserDO = null;
         WbAccountDO updatedAccountDO = null;
         WbUserOauthDO updatedUserOauthDO = null;

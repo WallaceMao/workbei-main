@@ -16,6 +16,13 @@ import java.util.*;
 import static com.workbei.exception.ExceptionCode.*;
 
 /**
+ * Department聚合，
+ * 包括的实体：
+ *  WbDepartmentDO
+ *  WbOuterDataDepartmentDO
+ * 包括的关联：
+ * WbUserDeptDO
+ * WbUserDeptAscriptionDO
  * @author Wallace Mao
  * Date: 2018-11-27 15:53
  */
@@ -34,6 +41,11 @@ public class DepartmentManagerImpl implements DepartmentManager {
         wbDepartmentDao.saveOrUpdateDepartment(department);
     }
 
+    /**
+     * 如果指定了parentCode，那么会在保存department后更新code
+     * @param department
+     * @param parentCode
+     */
     @Override
     public void saveOrUpdateDepartment(WbDepartmentDO department, String parentCode) {
         wbDepartmentDao.saveOrUpdateDepartment(department);
@@ -41,6 +53,21 @@ public class DepartmentManagerImpl implements DepartmentManager {
             department.setCode(parentCode + WbConstant.DEPARTMENT_CODE_SEPARATOR + department.getId());
             wbDepartmentDao.saveOrUpdateDepartment(department);
         }
+    }
+
+    @Override
+    public void saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO) {
+        wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
+    }
+
+    @Override
+    public void saveOrUpdateUserDept(WbUserDeptDO userDeptDO){
+        wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
+    }
+
+    @Override
+    public void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO){
+        wbDepartmentDao.saveOrUpdateUserDeptAscription(userDeptAscriptionDO);
     }
 
     @Override
@@ -54,11 +81,6 @@ public class DepartmentManagerImpl implements DepartmentManager {
     }
 
     @Override
-    public List<WbDepartmentDO> listDepartmentByTeamId(Long teamId){
-        return wbDepartmentDao.listDepartmentByTeamId(teamId);
-    }
-
-    @Override
     public WbDepartmentDO getTeamTopDepartment(Long teamId) {
         return wbDepartmentDao.getTopDepartment(teamId);
     }
@@ -66,11 +88,6 @@ public class DepartmentManagerImpl implements DepartmentManager {
     @Override
     public WbDepartmentDO getTeamUnassignedDepartment(Long teamId) {
         return wbDepartmentDao.getUnassignedDepartment(teamId);
-    }
-
-    @Override
-    public void saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO) {
-        wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
     }
 
     @Override
@@ -84,27 +101,23 @@ public class DepartmentManagerImpl implements DepartmentManager {
     }
 
     @Override
-    public void saveOrUpdateUserDept(WbUserDeptDO userDeptDO){
-        wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
-    }
-    @Override
     public WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId){
         return wbDepartmentDao.getUserDeptByDepartmentIdAndUserId(departmentId, userId);
     }
 
     @Override
-    public List<Long> listUserDeptDepartmentIdByUser(Long userId) {
-        return wbDepartmentDao.listUserDeptDepartmentIdByUserId(userId);
-    }
-
-    @Override
-    public void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO){
-        wbDepartmentDao.saveOrUpdateUserDeptAscription(userDeptAscriptionDO);
-    }
-
-    @Override
     public WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(Long departmentId, Long userId){
         return wbDepartmentDao.getUserDeptAscriptionByDepartmentIdAndUserId(departmentId, userId);
+    }
+
+    @Override
+    public List<WbDepartmentDO> listDepartmentByTeamId(Long teamId){
+        return wbDepartmentDao.listDepartmentByTeamId(teamId);
+    }
+
+    @Override
+    public List<Long> listUserDeptDepartmentIdByUserId(Long userId) {
+        return wbDepartmentDao.listUserDeptDepartmentIdByUserId(userId);
     }
 
     @Override
@@ -117,7 +130,13 @@ public class DepartmentManagerImpl implements DepartmentManager {
         return wbDepartmentDao.listUserDeptAscriptionUserIdByDepartmentId(departmentId);
     }
 
-    //--------------------业务方法
+    //--------------------聚合方法
+
+    /**
+     * 保存team的默认的top和unassigned的department
+     * @param teamId
+     * @param topDepartmentName
+     */
     @Override
     public void saveTeamDefaultDepartment(Long teamId, String topDepartmentName) {
         //  创建顶级部门
@@ -146,6 +165,11 @@ public class DepartmentManagerImpl implements DepartmentManager {
         wbDepartmentDao.saveOrUpdateDepartment(unassigned);
     }
 
+    /**
+     * 保存部门信息
+     * @param teamId
+     * @param departmentVO
+     */
     @Override
     public void saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO){
         //  查找父级部门
@@ -183,35 +207,13 @@ public class DepartmentManagerImpl implements DepartmentManager {
             outerDataDepartmentDO.setOuterId(departmentVO.getOuterCombineId());
             wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
         }
+        departmentVO.setId(dept.getId());
     }
 
     /**
-     * 首先新增userDept的关联
-     * 然后循环新增userDeptAscription的关联
-     * @param departmentId
-     * @param userId
+     * 修改departmentInfo
+     * @param departmentVO
      */
-    @Override
-    public void saveDepartmentUser(Long departmentId, Long userId) {
-        WbUserDeptDO userDeptDO = DepartmentFactory.getUserDeptDO();
-        userDeptDO.setUserId(userId);
-        userDeptDO.setDepartmentId(departmentId);
-        wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
-        saveUserDeptAscriptionRecursive(departmentId, userId);
-    }
-
-    /**
-     * 首先删除userDept的关联
-     * 然后循环删除userDeptAscription的关联
-     * @param departmentId
-     * @param userId
-     */
-    @Override
-    public void deleteDepartmentUser(Long departmentId, Long userId){
-        wbDepartmentDao.deleteUserDeptByUserIdAndDepartmentId(departmentId, userId);
-        deleteUserDeptAscriptionRecursive(departmentId, userId);
-    }
-
     @Override
     public void updateDepartmentInfo(AutoCreateDepartmentVO departmentVO) {
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
@@ -249,6 +251,10 @@ public class DepartmentManagerImpl implements DepartmentManager {
         }
     }
 
+    /**
+     * 删除departmentInfo
+     * @param departmentVO
+     */
     @Override
     public void deleteDepartmentInfo(AutoCreateDepartmentVO departmentVO) {
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
@@ -265,6 +271,33 @@ public class DepartmentManagerImpl implements DepartmentManager {
         }
         //  递归删除
         deleteDepartmentRecursive(departmentDO);
+    }
+
+    /**
+     * 首先新增userDept的关联
+     * 然后循环新增userDeptAscription的关联
+     * @param departmentId
+     * @param userId
+     */
+    @Override
+    public void saveDepartmentUser(Long departmentId, Long userId) {
+        WbUserDeptDO userDeptDO = DepartmentFactory.getUserDeptDO();
+        userDeptDO.setUserId(userId);
+        userDeptDO.setDepartmentId(departmentId);
+        wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
+        saveUserDeptAscriptionRecursive(departmentId, userId);
+    }
+
+    /**
+     * 首先删除userDept的关联
+     * 然后循环删除userDeptAscription的关联
+     * @param departmentId
+     * @param userId
+     */
+    @Override
+    public void deleteDepartmentUser(Long departmentId, Long userId){
+        wbDepartmentDao.deleteUserDeptByUserIdAndDepartmentId(departmentId, userId);
+        deleteUserDeptAscriptionRecursive(departmentId, userId);
     }
 
     private void saveUserDeptAscriptionRecursive(Long departmentId, Long userId){

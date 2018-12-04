@@ -1,10 +1,13 @@
 package com.workbei.model.view.autocreate;
 
+import java.io.Serializable;
+
 /**
  * @author Wallace Mao
  * Date: 2018-11-27 15:20
  */
-public class AutoCreateTeamVO {
+public class AutoCreateTeamVO implements Serializable {
+    private Long id;
     private String name;
     private String logo;
     //  对应outerDataTeam中的数据
@@ -12,6 +15,14 @@ public class AutoCreateTeamVO {
     private String client;
 
     private AutoCreateUserVO creator;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

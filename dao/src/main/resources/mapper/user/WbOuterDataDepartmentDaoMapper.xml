@@ -62,7 +62,7 @@
     </select>
 
     <select id="getOuterDataDepartmentDepartmentIdByClientAndOuterId" resultType="long">
-        SELECT departmeng_id  FROM outer_data_department
+        SELECT department_id  FROM outer_data_department
         <![CDATA[
 			WHERE `client`=#{client} AND outer_id=#{outerId}
 		 ]]>

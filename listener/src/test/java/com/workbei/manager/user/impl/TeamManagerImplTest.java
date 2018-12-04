@@ -156,7 +156,7 @@ public class TeamManagerImplTest extends BaseUnitTest {
     public void testSaveTeamCreator() throws Exception {
         Long teamId = globalTeam.getId();
         Long userId = globalUser.getId();
-        teamManager.saveTeamCreator(teamId, userId);
+        teamManager.saveTeamCreatorRole(teamId, userId);
         List<WbTeamUserRoleDO> roleList = teamManager.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
         assertThat(roleList).hasSize(2);
         WbTeamUserRoleDO teamUserRoleDO1 = roleList.get(0);
@@ -180,7 +180,7 @@ public class TeamManagerImplTest extends BaseUnitTest {
     public void testSaveTeamCommonUser() throws Exception {
         Long teamId = globalTeam.getId();
         Long userId = globalUser.getId();
-        teamManager.saveTeamCommonUser(teamId, userId);
+        teamManager.saveTeamCommonUserRole(teamId, userId);
         List<WbTeamUserRoleDO> roleList = teamManager.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
         assertThat(roleList).hasSize(0);
 
@@ -196,8 +196,8 @@ public class TeamManagerImplTest extends BaseUnitTest {
     public void testRemoveTeamCreator() throws Exception {
         Long teamId = globalTeam.getId();
         Long userId = globalUser.getId();
-        teamManager.saveTeamCreator(teamId, userId);
-        teamManager.removeTeamUser(teamId, userId);
+        teamManager.saveTeamCreatorRole(teamId, userId);
+        teamManager.deleteTeamUserRole(teamId, userId);
         List<WbTeamUserRoleDO> roleList = teamManager.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
         assertThat(roleList).hasSize(0);
 
@@ -215,9 +215,9 @@ public class TeamManagerImplTest extends BaseUnitTest {
     public void testRemoveTeamCommonUser() throws Exception {
         Long teamId = globalTeam.getId();
         Long userId = globalUser.getId();
-        teamManager.saveTeamCommonUser(teamId, userId);
+        teamManager.saveTeamCommonUserRole(teamId, userId);
 
-        teamManager.removeTeamUser(teamId, userId);
+        teamManager.deleteTeamUserRole(teamId, userId);
         List<WbTeamUserRoleDO> roleList = teamManager.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
         assertThat(roleList).hasSize(0);
 
@@ -235,7 +235,7 @@ public class TeamManagerImplTest extends BaseUnitTest {
     public void testUpdateAdminSetAdmin() throws Exception {
         Long teamId = globalTeam.getId();
         Long userId = globalUser.getId();
-        teamManager.saveTeamCommonUser(teamId, userId);
+        teamManager.saveTeamCommonUserRole(teamId, userId);
 
         teamManager.updateTeamAdmin(teamId, userId, true);
         WbTeamUserRoleDO adminRole = teamManager.getTeamUserRoleByTeamIdAndUserIdAndRole(

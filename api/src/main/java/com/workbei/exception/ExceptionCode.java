@@ -5,11 +5,16 @@ package com.workbei.exception;
  * Date: 2018-12-03 22:59
  */
 public enum ExceptionCode {
-    //  2xxxx department
-    DEPT_NOT_FOUND("20000", "department not found"),
-    DEPT_TOP_CANNOT_MOVE("20001", "can not move top department"),
-    DEPT_UNASSIGNED_CANNOT_MOVE("20002", "can not move unassigned department"),
-    DEPT_PARENT_CANNOT_MOVE_TO_CHILD("20003", "can not move department to its child");
+    APP_CLIENT_NOT_FOUND("10000", "app client not found"),
+    TEAM_NOT_FOUND("11000", "team not found"),
+    //  12xxx department
+    DEPT_NOT_FOUND("12000", "department not found"),
+    DEPT_TOP_CANNOT_MOVE("12001", "can not move top department"),
+    DEPT_UNASSIGNED_CANNOT_MOVE("12002", "can not move unassigned department"),
+    DEPT_PARENT_CANNOT_MOVE_TO_CHILD("12003", "can not move department to its child"),
+    //  13xxx user
+    USER_NOT_FOUND("13000", "user not found"),
+    USER_OUTER_DATA_NOT_FOUND("13001", "user not found");
 
     private String code;
     private String msg;
