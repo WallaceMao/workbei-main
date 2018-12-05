@@ -22,6 +22,10 @@ public class WbUserDO implements Serializable {
     // 是否存在
     private Boolean isDisplay;
 
+    private WbAccountDO account;
+
+    private WbTeamDO team;
+
     public Long getId() {
         return id;
     }
@@ -94,6 +98,22 @@ public class WbUserDO implements Serializable {
         isDisplay = display;
     }
 
+    public WbAccountDO getAccount() {
+        return account;
+    }
+
+    public void setAccount(WbAccountDO account) {
+        this.account = account;
+    }
+
+    public WbTeamDO getTeam() {
+        return team;
+    }
+
+    public void setTeam(WbTeamDO team) {
+        this.team = team;
+    }
+
     @Override
     public String toString() {
         return "WbUserDO{" +
@@ -106,6 +126,8 @@ public class WbUserDO implements Serializable {
                 ", position='" + position + '\'' +
                 ", name='" + name + '\'' +
                 ", isDisplay=" + isDisplay +
+                ", account=" + account +
+                ", team=" + team +
                 '}';
     }
 }

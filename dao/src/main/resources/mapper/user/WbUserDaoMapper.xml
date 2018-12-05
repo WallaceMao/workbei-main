@@ -27,7 +27,7 @@
             `name`=#{name},
             team_id=#{teamId}
     </insert>
-    <resultMap type="com.workbei.model.domain.user.WbUserDO" id="userMap">
+    <resultMap id="userMap" type="com.workbei.model.domain.user.WbUserDO">
         <id property="id" column="id" />
         <result property="version" column="version" />
         <result property="isParent" column="is_parent" />
@@ -37,6 +37,9 @@
         <result property="name" column="name" />
         <result property="accountId" column="account_id" />
         <result property="isDisplay" column="is_display" />
+        <association property="account"
+                     columnPrefix="act_"
+                     resultMap="com.workbei.dao.user.WbAccountDao.accountMap" />
     </resultMap>
     <sql id="select-all-fields-user">
         id,
@@ -72,6 +75,34 @@
 			WHERE o.client=#{client} AND o.outer_id=#{outerId}
 		 ]]>
     </select>
+    <select id="getUserWithAccountById" resultMap="userMap">
+        SELECT
+            u.id AS id,
+            u.version AS version,
+            u.is_parent AS is_parent,
+            u.position AS position,
+            u.team_id AS team_id,
+            u.username AS username,
+            u.`name` AS name,
+            u.account_id AS account_id,
+            u.is_display AS is_display,
+            a.id AS act_id,
+            a.uuid AS act_uuid,
+            a.birth AS act_birth,
+            a.phone_number AS act_phone_number,
+            a.`name` AS act_name,
+            a.account_locked AS act_account_locked,
+            a.`password` AS act_password,
+            a.is_check_email AS act_is_check_email,
+            a.email AS act_email,
+            a.avatar AS act_avatar
+        FROM `user` u
+            LEFT JOIN `account` a ON u.account_id=a.id
+        <![CDATA[
+        WHERE u.id=#{id}
+        ]]>
+    </select>
+
 
     <!--userGuide相关-->
     <insert id="saveOrUpdateUserGuide" useGeneratedKeys="true" keyProperty="id">
@@ -276,7 +307,7 @@
         <result property="narrowTheInbox" column="narrow_the_inbox" />
         <result property="narrowTheApplication" column="narrow_the_application" />
         <result property="festivalFlag" column="festival_flag" />
-        <result property="themeGg" column="theme_bg" />
+        <result property="themeBg" column="theme_bg" />
         <result property="firstDeleteFlag" column="first_delete_flag" />
         <result property="inboxMode" column="inbox_mode" />
     </resultMap>

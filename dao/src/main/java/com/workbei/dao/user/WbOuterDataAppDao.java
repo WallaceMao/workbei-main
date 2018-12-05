@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * Date: 2018-11-27 16:15
  */
 @Repository("wbOuterDataAppDao")
-public interface WbOuterDataAppDao {
+public interface WbOuterDataAppDao extends BaseCrudDao<WbOuterDataAppDO, Long> {
     WbOuterDataAppDO getOuterDataAppByToken(
             @Param("token") String token
     );

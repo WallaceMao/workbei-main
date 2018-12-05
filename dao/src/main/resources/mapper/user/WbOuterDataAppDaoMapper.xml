@@ -2,6 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.workbei.dao.user.WbOuterDataAppDao">
 
+    <insert id="saveOrUpdate" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO outer_data_app (
+            version,
+            `name`,
+            `key`,
+            token,
+            `white_ip_list`,
+            `note`
+        )VALUES(
+            0,
+            #{name},
+            #{key},
+            #{token},
+            #{whiteIpList},
+            #{note}
+        )ON DUPLICATE KEY UPDATE
+            version=version+1
+    </insert>
+    <delete id="deleteById">
+        DELETE FROM outer_data_app
+        <![CDATA[
+        WHERE id=#{id}
+        ]]>
+    </delete>
     <resultMap id="outerDataAppMap" type="com.workbei.model.domain.user.WbOuterDataAppDO">
         <id property="id" column="id" />
         <result property="version" column="version" />
@@ -11,18 +35,21 @@
         <result property="whiteIpList" column="white_ip_list" />
         <result property="note" column="note" />
     </resultMap>
-
     <sql id="select-all-fields">
         id,
         version,
         `name`,
         `key`,
         token,
-        outer_id,
-        `white_ip_list`
+        `white_ip_list`,
         `note`
     </sql>
-
+    <select id="getById" resultMap="outerDataAppMap">
+        SELECT <include refid="select-all-fields"/>  FROM outer_data_app
+        <![CDATA[
+			WHERE id=#{id}
+		 ]]>
+    </select>
     <select id="getOuterDataAppByToken" resultMap="outerDataAppMap">
         SELECT <include refid="select-all-fields"/>  FROM outer_data_app
         <![CDATA[

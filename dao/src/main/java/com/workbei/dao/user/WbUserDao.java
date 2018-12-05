@@ -11,10 +11,13 @@ import org.springframework.stereotype.Repository;
 @Repository("wbUserDao")
 public interface WbUserDao {
     void saveOrUpdateUser(WbUserDO user);
-    WbUserDO getUserById(@Param("id") Long id);
+    WbUserDO getUserById(
+            @Param("id") Long id);
     WbUserDO getUserByClientAndOuterId(
             @Param("client") String client,
             @Param("outerId") String outerId);
+    WbUserDO getUserWithAccountById(
+            @Param("id") Long id);
 
     void saveOrUpdateUserGuide(WbUserGuideDO userGuideDO);
     WbUserGuideDO getUserGuideByUserId(@Param("userId") Long userId);
