@@ -9,7 +9,6 @@ import com.workbei.factory.DepartmentFactory;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.manager.user.DepartmentManager;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -18,65 +17,59 @@ import static com.workbei.exception.ExceptionCode.*;
 /**
  * Department聚合，
  * 包括的实体：
- *  WbDepartmentDO
- *  WbOuterDataDepartmentDO
+ * WbDepartmentDO
+ * WbOuterDataDepartmentDO
  * 包括的关联：
  * WbUserDeptDO
  * WbUserDeptAscriptionDO
+ *
  * @author Wallace Mao
  * Date: 2018-11-27 15:53
  */
 public class DepartmentManagerImpl implements DepartmentManager {
-    @Autowired
     private WbDepartmentDao wbDepartmentDao;
-    @Autowired
     private WbOuterDataDepartmentDao wbOuterDataDepartmentDao;
+
+    public DepartmentManagerImpl(WbDepartmentDao wbDepartmentDao, WbOuterDataDepartmentDao wbOuterDataDepartmentDao) {
+        this.wbDepartmentDao = wbDepartmentDao;
+        this.wbOuterDataDepartmentDao = wbOuterDataDepartmentDao;
+    }
+
+    //  --------department--------
 
     /**
      * 注意，在使用该方法的时候，需要手动更新code值。如果不想手动更新，可以调用saveOrUpdateDepartment(WbDepartmentDO department, String parentCode)方法
+     *
      * @param department
      */
     @Override
-    public void saveOrUpdateDepartment(WbDepartmentDO department) {
+    public WbDepartmentDO saveOrUpdateDepartment(WbDepartmentDO department) {
         wbDepartmentDao.saveOrUpdateDepartment(department);
+        return department;
     }
 
     /**
      * 如果指定了parentCode，那么会在保存department后更新code
-     * @param department
+     *  @param department
      * @param parentCode
      */
     @Override
-    public void saveOrUpdateDepartment(WbDepartmentDO department, String parentCode) {
+    public WbDepartmentDO saveOrUpdateDepartment(WbDepartmentDO department, String parentCode) {
         wbDepartmentDao.saveOrUpdateDepartment(department);
-        if(parentCode != null && department.getId() != null){
+        if (parentCode != null && department.getId() != null) {
             department.setCode(parentCode + WbConstant.DEPARTMENT_CODE_SEPARATOR + department.getId());
             wbDepartmentDao.saveOrUpdateDepartment(department);
         }
+        return department;
     }
 
     @Override
-    public void saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO) {
-        wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
-    }
-
-    @Override
-    public void saveOrUpdateUserDept(WbUserDeptDO userDeptDO){
-        wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
-    }
-
-    @Override
-    public void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO){
-        wbDepartmentDao.saveOrUpdateUserDeptAscription(userDeptAscriptionDO);
-    }
-
-    @Override
-    public WbDepartmentDO getDepartmentById(Long id){
+    public WbDepartmentDO getDepartmentById(Long id) {
         return wbDepartmentDao.getDepartmentById(id);
     }
 
     @Override
-    public WbDepartmentDO getDepartmentByClientAndOuterId(String client, String outerId){
+    public WbDepartmentDO getDepartmentByClientAndOuterId(String client, String outerId) {
         return wbDepartmentDao.getDepartmentByClientAndOuterId(client, outerId);
     }
 
@@ -91,33 +84,54 @@ public class DepartmentManagerImpl implements DepartmentManager {
     }
 
     @Override
-    public WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndOuterId(String client, String outerId){
+    public List<WbDepartmentDO> listDepartmentByTeamId(Long teamId) {
+        return wbDepartmentDao.listDepartmentByTeamId(teamId);
+    }
+
+    //  --------outerDataDepartment--------
+    @Override
+    public WbOuterDataDepartmentDO saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO) {
+        wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
+        return outerDataDepartmentDO;
+    }
+
+    @Override
+    public WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndOuterId(String client, String outerId) {
         return wbOuterDataDepartmentDao.getOuterDataDepartmentByClientAndOuterId(client, outerId);
     }
 
     @Override
-    public Long getOuterDataDepartmentDepartmentIdByClientAndOuterId(String client, String outerId){
+    public Long getOuterDataDepartmentDepartmentIdByClientAndOuterId(String client, String outerId) {
         return wbOuterDataDepartmentDao.getOuterDataDepartmentDepartmentIdByClientAndOuterId(client, outerId);
     }
 
+    //  --------userDept--------
     @Override
-    public WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId){
+    public WbUserDeptDO saveOrUpdateUserDept(WbUserDeptDO userDeptDO) {
+        wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
+        return userDeptDO;
+    }
+
+    @Override
+    public WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId) {
         return wbDepartmentDao.getUserDeptByDepartmentIdAndUserId(departmentId, userId);
-    }
-
-    @Override
-    public WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(Long departmentId, Long userId){
-        return wbDepartmentDao.getUserDeptAscriptionByDepartmentIdAndUserId(departmentId, userId);
-    }
-
-    @Override
-    public List<WbDepartmentDO> listDepartmentByTeamId(Long teamId){
-        return wbDepartmentDao.listDepartmentByTeamId(teamId);
     }
 
     @Override
     public List<Long> listUserDeptDepartmentIdByUserId(Long userId) {
         return wbDepartmentDao.listUserDeptDepartmentIdByUserId(userId);
+    }
+
+    //  --------userDeptAscription--------
+    @Override
+    public WbUserDeptAscriptionDO saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO) {
+        wbDepartmentDao.saveOrUpdateUserDeptAscription(userDeptAscriptionDO);
+        return userDeptAscriptionDO;
+    }
+
+    @Override
+    public WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(Long departmentId, Long userId) {
+        return wbDepartmentDao.getUserDeptAscriptionByDepartmentIdAndUserId(departmentId, userId);
     }
 
     @Override
@@ -130,15 +144,15 @@ public class DepartmentManagerImpl implements DepartmentManager {
         return wbDepartmentDao.listUserDeptAscriptionUserIdByDepartmentId(departmentId);
     }
 
-    //--------------------聚合方法
+    //  --------aggregate method--------
 
     /**
      * 保存team的默认的top和unassigned的department
-     * @param teamId
+     *  @param teamId
      * @param topDepartmentName
      */
     @Override
-    public void saveTeamDefaultDepartment(Long teamId, String topDepartmentName) {
+    public WbDepartmentDO saveTeamDefaultDepartment(Long teamId, String topDepartmentName) {
         //  创建顶级部门
         WbDepartmentDO topDept = DepartmentFactory.getDepartmentDO();
         topDept.setName(topDepartmentName);
@@ -163,27 +177,29 @@ public class DepartmentManagerImpl implements DepartmentManager {
 
         unassigned.setCode(topDept.getId() + WbConstant.DEPARTMENT_CODE_SEPARATOR + unassigned.getId());
         wbDepartmentDao.saveOrUpdateDepartment(unassigned);
+
+        return topDept;
     }
 
     /**
      * 保存部门信息
-     * @param teamId
+     *  @param teamId
      * @param departmentVO
      */
     @Override
-    public void saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO){
+    public WbDepartmentDO saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO) {
         //  查找父级部门
-        WbDepartmentDO dept = null;
-        if(departmentVO.getTop()){
+        WbDepartmentDO dept;
+        if (departmentVO.getTop()) {
             //  说明是根部门，根部门不做处理，直接把topDepartment作为根部门
             dept = wbDepartmentDao.getTopDepartment(teamId);
-        }else{
+        } else {
             //  说明是普通部门
             WbDepartmentDO parentDept = wbDepartmentDao.getDepartmentByClientAndOuterId(
                     departmentVO.getClient(), departmentVO.getOuterParentCombineId()
             );
             //  如果父级部门没找到，那么就直接挂到topDepartment下
-            if(parentDept == null){
+            if (parentDept == null) {
                 parentDept = getTeamTopDepartment(teamId);
             }
             dept = DepartmentFactory.getDepartmentDO();
@@ -200,59 +216,62 @@ public class DepartmentManagerImpl implements DepartmentManager {
             wbDepartmentDao.saveOrUpdateDepartment(dept);
         }
 
-        if(departmentVO.getOuterCombineId() != null){
+        if (departmentVO.getOuterCombineId() != null) {
             WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
             outerDataDepartmentDO.setClient(departmentVO.getClient());
             outerDataDepartmentDO.setDepartmentId(dept.getId());
             outerDataDepartmentDO.setOuterId(departmentVO.getOuterCombineId());
             wbOuterDataDepartmentDao.saveOrUpdateOuterDataDepartment(outerDataDepartmentDO);
         }
-        departmentVO.setId(dept.getId());
+        return dept;
     }
 
     /**
      * 修改departmentInfo
+     *
      * @param departmentVO
      */
     @Override
-    public void updateDepartmentInfo(AutoCreateDepartmentVO departmentVO) {
+    public WbDepartmentDO updateDepartmentInfo(AutoCreateDepartmentVO departmentVO) {
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId()
         );
-        if(departmentDO == null){
+        if (departmentDO == null) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(DEPT_NOT_FOUND, "departmentVO: ", departmentVO));
         }
         //  修改基本信息
         boolean baseInfoChanged = false;
-        if(departmentVO.getName() != null){
+        if (departmentVO.getName() != null) {
             baseInfoChanged = true;
             departmentDO.setName(departmentVO.getName());
         }
-        if(departmentVO.getDisplayOrder() != null){
+        if (departmentVO.getDisplayOrder() != null) {
             baseInfoChanged = true;
             departmentDO.setDisplayOrder(departmentVO.getDisplayOrder());
         }
-        if(baseInfoChanged){
+        if (baseInfoChanged) {
             wbDepartmentDao.saveOrUpdateDepartment(departmentDO);
         }
         //  修改父部门信息
-        if(departmentVO.getOuterParentCombineId() != null){
+        if (departmentVO.getOuterParentCombineId() != null) {
             WbDepartmentDO parentDept = getDepartmentByClientAndOuterId(
                     departmentVO.getClient(), departmentVO.getOuterParentCombineId()
             );
             //  如果parentDept为null，那么就放到顶级部门下
-            if(parentDept == null){
+            if (parentDept == null) {
                 parentDept = wbDepartmentDao.getTopDepartment(departmentDO.getTeamId());
             }
-            if(!departmentDO.getId().equals(parentDept.getId())){
+            if (!departmentDO.getId().equals(parentDept.getId())) {
                 changeDepartment(departmentDO, parentDept);
             }
         }
+        return departmentDO;
     }
 
     /**
      * 删除departmentInfo
+     *
      * @param departmentVO
      */
     @Override
@@ -260,13 +279,13 @@ public class DepartmentManagerImpl implements DepartmentManager {
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId()
         );
-        if(departmentDO == null){
+        if (departmentDO == null) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(DEPT_NOT_FOUND, departmentVO));
         }
         //  将departmentDO所属的所有用户的ascription数据全部删除，只保留topDepartment
         List<Long> userIdList = wbDepartmentDao.listUserDeptAscriptionUserIdByDepartmentId(departmentDO.getId());
-        for(Long userId : userIdList){
+        for (Long userId : userIdList) {
             wbDepartmentDao.deleteUserDeptAscriptionByUserIdAndDepartmentType(userId, WbConstant.DEPARTMENT_TYPE_COMMON);
         }
         //  递归删除
@@ -276,36 +295,38 @@ public class DepartmentManagerImpl implements DepartmentManager {
     /**
      * 首先新增userDept的关联
      * 然后循环新增userDeptAscription的关联
-     * @param departmentId
+     *  @param departmentId
      * @param userId
      */
     @Override
-    public void saveDepartmentUser(Long departmentId, Long userId) {
+    public WbUserDeptDO saveDepartmentUser(Long departmentId, Long userId) {
         WbUserDeptDO userDeptDO = DepartmentFactory.getUserDeptDO();
         userDeptDO.setUserId(userId);
         userDeptDO.setDepartmentId(departmentId);
         wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
         saveUserDeptAscriptionRecursive(departmentId, userId);
+        return userDeptDO;
     }
 
     /**
      * 首先删除userDept的关联
      * 然后循环删除userDeptAscription的关联
+     *
      * @param departmentId
      * @param userId
      */
     @Override
-    public void deleteDepartmentUser(Long departmentId, Long userId){
+    public void deleteDepartmentUser(Long departmentId, Long userId) {
         wbDepartmentDao.deleteUserDeptByUserIdAndDepartmentId(departmentId, userId);
         deleteUserDeptAscriptionRecursive(departmentId, userId);
     }
 
-    private void saveUserDeptAscriptionRecursive(Long departmentId, Long userId){
-        if(departmentId == null){
+    private void saveUserDeptAscriptionRecursive(Long departmentId, Long userId) {
+        if (departmentId == null) {
             return;
         }
         WbDepartmentDO departmentDO = wbDepartmentDao.getDepartmentById(departmentId);
-        if(departmentDO == null){
+        if (departmentDO == null) {
             return;
         }
         WbUserDeptAscriptionDO userDeptAscriptionDO = DepartmentFactory.getUserDeptAscriptionDO();
@@ -315,30 +336,30 @@ public class DepartmentManagerImpl implements DepartmentManager {
         saveUserDeptAscriptionRecursive(departmentDO.getParentId(), userId);
     }
 
-    private void deleteUserDeptAscriptionRecursive(Long departmentId, Long userId){
-        if(departmentId == null){
+    private void deleteUserDeptAscriptionRecursive(Long departmentId, Long userId) {
+        if (departmentId == null) {
             return;
         }
         WbDepartmentDO departmentDO = wbDepartmentDao.getDepartmentById(departmentId);
-        if(departmentDO == null){
+        if (departmentDO == null) {
             return;
         }
         wbDepartmentDao.deleteUserDeptAscriptionByUserIdAndDepartmentId(departmentId, userId);
         deleteUserDeptAscriptionRecursive(departmentDO.getParentId(), userId);
     }
 
-    private void changeDepartment(WbDepartmentDO dept, WbDepartmentDO parentDept){
+    private void changeDepartment(WbDepartmentDO dept, WbDepartmentDO parentDept) {
         /*
         * 以下情况不能移动部门：
         * 1、要移动的部门是最顶级部门
         * 2、要移动的部门是未分配部门
         * 3、移动的父部门是要移动的部门的子部门
         * */
-        if(dept.getType().equals(WbConstant.DEPARTMENT_TYPE_TOP)){
+        if (dept.getType().equals(WbConstant.DEPARTMENT_TYPE_TOP)) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(DEPT_TOP_CANNOT_MOVE, "dept: ", dept));
         }
-        if(dept.getType().equals(WbConstant.DEPARTMENT_TYPE_UNASSIGNED)){
+        if (dept.getType().equals(WbConstant.DEPARTMENT_TYPE_UNASSIGNED)) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(DEPT_UNASSIGNED_CANNOT_MOVE, "dept: ", dept));
         }
@@ -355,23 +376,23 @@ public class DepartmentManagerImpl implements DepartmentManager {
         List<Long> newParentIdList = getParentDepartmentIdList(dept);
         Set<Long> deleteDeptIdSet = new HashSet<>(oldParentIdList.size());
         Set<Long> createDeptIdSet = new HashSet<>(newParentIdList.size());
-        for(Long oldDeptId : oldParentIdList){
-            if(!newParentIdList.contains(oldDeptId)){
+        for (Long oldDeptId : oldParentIdList) {
+            if (!newParentIdList.contains(oldDeptId)) {
                 deleteDeptIdSet.add(oldDeptId);
             }
         }
-        for(Long newDeptId : newParentIdList){
-            if(!oldParentIdList.contains(newDeptId)){
+        for (Long newDeptId : newParentIdList) {
+            if (!oldParentIdList.contains(newDeptId)) {
                 createDeptIdSet.add(newDeptId);
             }
         }
         //  读取当前部门下面的所有用户，根据之前查找到的需要删除的和需要新增的userDeptAscription，做相应操作
         List<Long> ascriptionIdList = wbDepartmentDao.listUserDeptAscriptionUserIdByDepartmentId(deptId);
-        for(Long ascriptionUserId : ascriptionIdList){
-            for(Long deleteDeptId : deleteDeptIdSet){
+        for (Long ascriptionUserId : ascriptionIdList) {
+            for (Long deleteDeptId : deleteDeptIdSet) {
                 wbDepartmentDao.deleteUserDeptAscriptionByUserIdAndDepartmentId(deleteDeptId, ascriptionUserId);
             }
-            for(Long createDeptId : createDeptIdSet){
+            for (Long createDeptId : createDeptIdSet) {
                 WbUserDeptAscriptionDO userDeptAscriptionDO = DepartmentFactory.getUserDeptAscriptionDO();
                 userDeptAscriptionDO.setUserId(ascriptionUserId);
                 userDeptAscriptionDO.setDepartmentId(createDeptId);
@@ -382,13 +403,14 @@ public class DepartmentManagerImpl implements DepartmentManager {
 
     /**
      * 从departmentDO开始，重新生成该部门及其子部门的code和level
+     *
      * @param dept
      */
-    private void refreshSubDepartmentRecursive(WbDepartmentDO dept, List<Long> excludeIdList){
+    private void refreshSubDepartmentRecursive(WbDepartmentDO dept, List<Long> excludeIdList) {
         Long deptId = dept.getId();
         //  递归修改
         //  判断是否产生了循环（例如父部门被移动到另子部门下）
-        if(excludeIdList.contains(deptId)){
+        if (excludeIdList.contains(deptId)) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(DEPT_PARENT_CANNOT_MOVE_TO_CHILD, dept)
             );
@@ -401,12 +423,12 @@ public class DepartmentManagerImpl implements DepartmentManager {
 
         excludeIdList.add(deptId);
         List<WbDepartmentDO> childDeptList = wbDepartmentDao.listDepartmentByParentId(deptId);
-        for(WbDepartmentDO childDept : childDeptList){
+        for (WbDepartmentDO childDept : childDeptList) {
             refreshSubDepartmentRecursive(childDept, excludeIdList);
         }
     }
 
-    private List<Long> getParentDepartmentIdList(WbDepartmentDO dept){
+    private List<Long> getParentDepartmentIdList(WbDepartmentDO dept) {
         WbDepartmentDO oldParentDept = wbDepartmentDao.getDepartmentById(dept.getParentId());
         //  获取到dept原来的所有父部门的id，用来做比对更新userDeptAscription
         List<Long> parentIdList = new ArrayList<>();
@@ -416,29 +438,30 @@ public class DepartmentManagerImpl implements DepartmentManager {
 
     /**
      * 查找departmentDO所有的父级department的id
+     *
      * @param departmentDO
      * @return
      */
-    private void collectParentDepartmentIdRecursive(WbDepartmentDO departmentDO, List<Long> parentIdList){
+    private void collectParentDepartmentIdRecursive(WbDepartmentDO departmentDO, List<Long> parentIdList) {
         parentIdList.add(departmentDO.getId());
-        if(departmentDO.getType().equals(WbConstant.DEPARTMENT_TYPE_TOP)){
+        if (departmentDO.getType().equals(WbConstant.DEPARTMENT_TYPE_TOP)) {
             return;
         }
         WbDepartmentDO parentDept = wbDepartmentDao.getDepartmentById(departmentDO.getParentId());
         collectParentDepartmentIdRecursive(parentDept, parentIdList);
     }
 
-    private void deleteDepartmentRecursive(WbDepartmentDO departmentDO){
+    private void deleteDepartmentRecursive(WbDepartmentDO departmentDO) {
         //  如果有子部门，先逐个调用子部门进行删除
         List<WbDepartmentDO> deptList = wbDepartmentDao.listDepartmentByParentId(departmentDO.getId());
-        for(WbDepartmentDO dept : deptList){
+        for (WbDepartmentDO dept : deptList) {
             deleteDepartmentRecursive(dept);
         }
         //  最后删除本部门
         deleteSingleDepartment(departmentDO);
     }
 
-    private void deleteSingleDepartment(WbDepartmentDO departmentDO){
+    private void deleteSingleDepartment(WbDepartmentDO departmentDO) {
         Long teamId = departmentDO.getTeamId();
         Long deptId = departmentDO.getId();
         //  删除userDept，实际是将该部门的用户移动到未分配部门下

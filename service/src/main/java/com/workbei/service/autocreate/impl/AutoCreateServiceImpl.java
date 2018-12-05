@@ -3,14 +3,11 @@ package com.workbei.service.autocreate.impl;
 import com.workbei.constant.WbConstant;
 import com.workbei.exception.ExceptionCode;
 import com.workbei.exception.WorkbeiServiceException;
+import com.workbei.manager.user.*;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
-import com.workbei.manager.user.DepartmentManager;
-import com.workbei.manager.user.RoleManager;
-import com.workbei.manager.user.TeamManager;
-import com.workbei.manager.user.UserManager;
 import com.workbei.service.autocreate.AutoCreateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,14 +20,19 @@ import java.util.*;
  */
 @Service
 public class AutoCreateServiceImpl implements AutoCreateService {
-    @Autowired
-    private TeamManager teamManager;
-    @Autowired
-    private DepartmentManager departmentManager;
-    @Autowired
-    private UserManager userManager;
-    @Autowired
     private RoleManager roleManager;
+    private AccountManager accountManager;
+    private TeamManager teamManager;
+    private DepartmentManager departmentManager;
+    private UserManager userManager;
+
+    public AutoCreateServiceImpl(RoleManager roleManager, AccountManager accountManager, TeamManager teamManager, DepartmentManager departmentManager, UserManager userManager) {
+        this.roleManager = roleManager;
+        this.accountManager = accountManager;
+        this.teamManager = teamManager;
+        this.departmentManager = departmentManager;
+        this.userManager = userManager;
+    }
 
     /**
      * 创建团队：
@@ -57,9 +59,17 @@ public class AutoCreateServiceImpl implements AutoCreateService {
             departmentManager.saveTeamDefaultDepartment(teamDO.getId(), teamDO.getName());
             //  新建user
             if(teamVO.getCreator() != null){
-                WbUserDO creatorDO = userManager.saveUserInfo(teamDO.getId(), teamVO.getCreator());
+                AutoCreateUserVO creatorVO = teamVO.getCreator();
+                WbAccountDO accountDO = null;
+                if(creatorVO.getOuterUnionId() != null){
+                    accountDO = accountManager.getAccountByDdUnionId(creatorVO.getOuterUnionId());
+                }
+                if(accountDO == null){
+                    accountDO = accountManager.saveAccountInfo(creatorVO);
+                }
+                WbUserDO creatorDO = userManager.saveUserInfo(teamDO.getId(), accountDO.getId(), teamVO.getCreator());
                 //  保存人员的roleGroup
-                roleManager.saveOrUpdateUserCommonRoleGroup(creatorDO);
+                roleManager.saveOrUpdateUserCommonRoleGroup(creatorDO.getId());
                 //  保存team与人员的关联
                 teamManager.saveTeamCreatorRole(teamDO.getId(), creatorDO.getId());
                 //  保存部门与人员的关联
@@ -82,12 +92,24 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                     ExceptionCode.getMessage(ExceptionCode.TEAM_NOT_FOUND, userVO)
             );
         }
-        WbUserDO userDO = userManager.saveUserInfo(teamDO.getId(), userVO);
-        userVO.setId(userDO.getId());
+        //  新增account
+        //  如果unionId在数据库中存在，那么就根据unionId获取account，否则就新增account，并且保存unionId
+        WbAccountDO accountDO = null;
+        if(userVO.getOuterUnionId() != null){
+            accountDO = accountManager.getAccountByDdUnionId(userVO.getOuterUnionId());
+        }
+        if(accountDO == null){
+            accountDO = accountManager.saveAccountInfo(userVO);
+        }
+        Long teamId = teamDO.getId();
+        Long accountId = accountDO.getId();
+        WbUserDO userDO = userManager.saveUserInfo(teamId, accountId, userVO);
+        Long userId = userDO.getId();
+        userVO.setId(userId);
         //  保存人员的roleGroup
-        roleManager.saveOrUpdateUserCommonRoleGroup(userDO);
+        roleManager.saveOrUpdateUserCommonRoleGroup(userId);
         //  保存team与人员的关联
-        teamManager.saveTeamCommonUserRole(teamDO.getId(), userDO.getId());
+        teamManager.saveTeamCommonUserRole(teamId, userId);
         //  保存部门与人员的关联
         if(userVO.getOuterCombineDeptIdList() != null){
             List<String> deptIdList = userVO.getOuterCombineDeptIdList();
@@ -97,7 +119,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                 if(departmentDO == null){
                     continue;
                 }
-                departmentManager.saveDepartmentUser(departmentDO.getId(), userDO.getId());
+                departmentManager.saveDepartmentUser(departmentDO.getId(), userId);
             }
         }
     }
@@ -108,6 +130,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
             userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
         WbUserDO userDO = userManager.updateUserInfo(userVO);
+        accountManager.updateAccountInfo(userVO);
         Long userId = userDO.getId();
         //  更新部门
         if(userVO.getOuterCombineDeptIdList() != null){

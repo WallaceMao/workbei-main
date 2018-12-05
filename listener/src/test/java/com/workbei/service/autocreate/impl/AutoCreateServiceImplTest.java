@@ -3,10 +3,7 @@ package com.workbei.service.autocreate.impl;
 import com.workbei.BaseUnitTest;
 import com.workbei.constant.WbConstant;
 import com.workbei.exception.ExceptionCode;
-import com.workbei.manager.user.DepartmentManager;
-import com.workbei.manager.user.RoleManager;
-import com.workbei.manager.user.TeamManager;
-import com.workbei.manager.user.UserManager;
+import com.workbei.manager.user.*;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
@@ -33,6 +30,8 @@ import static org.assertj.core.api.Assertions.*;
 public class AutoCreateServiceImplTest extends BaseUnitTest {
     @Autowired
     private AutoCreateService autoCreateService;
+    @Autowired
+    private AccountManager accountManager;
     @Autowired
     private TeamManager teamManager;
     @Autowired
@@ -177,6 +176,73 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
     }
 
     @Test
+    public void testCreateUserWithUnionIdExist() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        WbAccountDO orgAccountDO = TestUserFactory.getAccountDO();
+        accountManager.saveOrUpdateAccount(orgAccountDO);
+        WbUserOauthDO userOauthDO = TestUserFactory.getUserOauthDO(orgAccountDO.getId());
+        accountManager.saveOrUpdateUserOauth(userOauthDO);
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        userVO.setOuterUnionId(userOauthDO.getDdUnionId());
+        Long teamId = teamVO.getId();
+        autoCreateService.createUser(userVO);
+
+        WbUserDO userDO = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
+        assertThat(userDO).isNotNull();
+        assertThat(userDO.getId()).isNotNull();
+        assertThat(userDO.getAccountId()).isNotNull();
+        assertThat(userDO.getUsername()).isNotNull();
+        assertThat(userDO.getDisplay()).isTrue();
+        assertThat(userDO.getParent()).isFalse();
+        assertThat(userDO.getName()).isEqualTo(userVO.getName());
+        assertThat(userDO.getTeamId()).isEqualTo(teamId);
+
+        WbAccountDO accountDO = accountManager.getAccountById(userDO.getAccountId());
+        assertThat(accountDO).isNotNull();
+        assertThat(accountDO.getId()).isEqualTo(orgAccountDO.getId());
+        assertThat(accountDO.getUuid()).isEqualTo(orgAccountDO.getUuid());
+    }
+
+    @Test
+    public void testSaveUserInfoWithoutUnionId() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        WbAccountDO orgAccountDO = TestUserFactory.getAccountDO();
+        accountManager.saveOrUpdateAccount(orgAccountDO);
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        Long teamId = teamVO.getId();
+        autoCreateService.createUser(userVO);
+
+        WbUserDO userDO = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
+        assertThat(userDO).isNotNull();
+        assertThat(userDO.getId()).isNotNull();
+        assertThat(userDO.getAccountId()).isNotNull();
+        assertThat(userDO.getUsername()).isNotNull();
+        assertThat(userDO.getDisplay()).isTrue();
+        assertThat(userDO.getParent()).isFalse();
+        assertThat(userDO.getName()).isEqualTo(userVO.getName());
+        assertThat(userDO.getTeamId()).isEqualTo(teamId);
+
+        WbAccountDO accountDO = accountManager.getAccountById(userDO.getAccountId());
+        assertThat(accountDO).isNotNull();
+        assertThat(accountDO.getId()).isNotNull();
+        assertThat(accountDO.getAvatar()).isEqualTo(userVO.getAvatar());
+        assertThat(accountDO.getName()).isEqualTo(userVO.getName());
+        assertThat(accountDO.getUuid()).isNotNull();
+
+        //  如果没有unionId，那么不会保存userOauth
+        WbUserOauthDO userOauthDO = accountManager.getUserOauthByAccountId(accountDO.getId());
+        assertThat(userOauthDO).isNull();
+    }
+
+    @Test
     public void testCreateUser() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
@@ -250,7 +316,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
 
         WbUserDO userDO = userManager.getUserById(userVO.getId());
         assertThat(userDO.getName()).isEqualTo(userVO.getName());
-        WbAccountDO accountDO = userManager.getAccountById(userDO.getAccountId());
+        WbAccountDO accountDO = accountManager.getAccountById(userDO.getAccountId());
         assertThat(accountDO.getName()).isEqualTo(userVO.getName());
         assertThat(accountDO.getAvatar()).isEqualTo(userVO.getAvatar());
 

@@ -5,12 +5,34 @@
 
     <import resource="classpath:spring-dao.xml" />
 
+    <!--manager-->
+    <bean id="roleManager" class="com.workbei.manager.user.impl.RoleManagerImpl" >
+        <constructor-arg ref="wbRoleDao"/>
+    </bean>
+    <bean id="accountManager" class="com.workbei.manager.user.impl.AccountManagerImpl" >
+        <constructor-arg ref="wbAccountDao" />
+    </bean>
+    <bean id="teamManager" class="com.workbei.manager.user.impl.TeamManagerImpl" >
+        <constructor-arg ref="wbTeamDao"/>
+        <constructor-arg ref="wbOuterDataTeamDao"/>
+    </bean>
+    <bean id="departmentManager" class="com.workbei.manager.user.impl.DepartmentManagerImpl" >
+        <constructor-arg ref="wbDepartmentDao"/>
+        <constructor-arg ref="wbOuterDataDepartmentDao"/>
+    </bean>
+    <bean id="userManager" class="com.workbei.manager.user.impl.UserManagerImpl" >
+        <constructor-arg ref="wbUserDao"/>
+        <constructor-arg ref="wbOuterDataUserDao"/>
+    </bean>
+
     <!--基础service-->
     <bean id="demoService" class="com.workbei.service.demo.impl.DemoServiceImpl" />
     <bean id="solutionBizService" class="com.workbei.service.solution.impl.SolutionServiceImpl" />
-    <bean id="autoCreateBizService" class="com.workbei.service.autocreate.impl.AutoCreateServiceImpl" />
-    <bean id="teamManageService" class="com.workbei.manager.user.impl.TeamManagerImpl" />
-    <bean id="departmentManageService" class="com.workbei.manager.user.impl.DepartmentManagerImpl" />
-    <bean id="userManageService" class="com.workbei.manager.user.impl.UserManagerImpl" />
-    <bean id="roleManageService" class="com.workbei.manager.user.impl.RoleManagerImpl" />
+    <bean id="autoCreateBizService" class="com.workbei.service.autocreate.impl.AutoCreateServiceImpl" >
+        <constructor-arg ref="roleManager"/>
+        <constructor-arg ref="accountManager"/>
+        <constructor-arg ref="teamManager"/>
+        <constructor-arg ref="departmentManager"/>
+        <constructor-arg ref="userManager"/>
+    </bean>
 </beans>

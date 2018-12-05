@@ -14,7 +14,9 @@ public enum ExceptionCode {
     DEPT_PARENT_CANNOT_MOVE_TO_CHILD("12003", "can not move department to its child"),
     //  13xxx user
     USER_NOT_FOUND("13000", "user not found"),
-    USER_OUTER_DATA_NOT_FOUND("13001", "user not found");
+    USER_OUTER_DATA_NOT_FOUND("13001", "user not found"),
+    //  14xxx account
+    ACCOUNT_NOT_FOUND("14000", "account not found");
 
     private String code;
     private String msg;

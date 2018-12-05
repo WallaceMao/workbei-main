@@ -67,6 +67,43 @@
 			WHERE id=#{id}
 		 ]]>
     </select>
+    <select id="getAccountByClientAndOuterId" resultMap="accountMap">
+        SELECT
+            a.id,
+            a.uuid,
+            a.birth,
+            a.phone_number,
+            a.`name`,
+            a.account_locked,
+            a.`password`,
+            a.is_check_email,
+            a.email,
+            a.avatar
+        FROM `user` u
+            LEFT JOIN `account` a ON u.account_id=a.id
+            LEFT JOIN `outer_data_user` o ON o.user_id=u.id
+        <![CDATA[
+        WHERE o.outer_id=#{outerId}
+		 ]]>
+    </select>
+    <select id="getAccountByIdDdUnionId" resultMap="accountMap">
+        SELECT
+            a.id,
+            a.uuid,
+            a.birth,
+            a.phone_number,
+            a.`name`,
+            a.account_locked,
+            a.`password`,
+            a.is_check_email,
+            a.email,
+            a.avatar
+        FROM `account` a
+            LEFT JOIN `user_oauth` o ON o.account_id=a.id
+        <![CDATA[
+        WHERE o.dd_union_id=#{ddUnionId}
+        ]]>
+    </select>
 
     <!--userOauth相关-->
     <insert id="saveOrUpdateUserOauth" useGeneratedKeys="true" keyProperty="id">

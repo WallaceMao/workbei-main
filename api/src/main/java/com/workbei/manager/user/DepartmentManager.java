@@ -13,50 +13,53 @@ import java.util.List;
  * Date: 2018-11-27 15:52
  */
 public interface DepartmentManager {
+    //  --------department--------
+    WbDepartmentDO saveOrUpdateDepartment(WbDepartmentDO department);
 
-    void saveOrUpdateDepartment(WbDepartmentDO commonDepartment);
+    WbDepartmentDO saveOrUpdateDepartment(WbDepartmentDO department, String parentCode);
 
-    void saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO);
+    WbDepartmentDO getDepartmentById(Long id);
+
+    WbDepartmentDO getDepartmentByClientAndOuterId(String client, String outerId);
+
+    WbDepartmentDO getTeamTopDepartment(Long teamId);
+
+    WbDepartmentDO getTeamUnassignedDepartment(Long teamId);
+
+    List<WbDepartmentDO> listDepartmentByTeamId(Long teamId);
+
+    //  --------outerDataDepartment--------
+    WbOuterDataDepartmentDO saveOrUpdateOuterDataDepartment(WbOuterDataDepartmentDO outerDataDepartmentDO);
 
     WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndOuterId(String client, String outerId);
 
     Long getOuterDataDepartmentDepartmentIdByClientAndOuterId(String client, String outerId);
 
-    void saveOrUpdateDepartment(WbDepartmentDO department, String parentCode);
-
-    WbDepartmentDO getDepartmentById(Long id);
-
-    void saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO);
-
-    void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
-
-    WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(Long departmentId, Long userId);
-
-    void saveTeamDefaultDepartment(Long teamId, String topDepartmentName);
-
-    WbDepartmentDO getTeamUnassignedDepartment(Long teamId);
-
-    void saveDepartmentUser(Long departmentId, Long userId);
-
-    WbDepartmentDO getTeamTopDepartment(Long teamId);
-
-    WbDepartmentDO getDepartmentByClientAndOuterId(String client, String outerId);
-
-    List<WbDepartmentDO> listDepartmentByTeamId(Long teamId);
-
-    void saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
+    //  --------userDept--------
+    WbUserDeptDO saveOrUpdateUserDept(WbUserDeptDO userDeptDO);
 
     WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId);
 
     List<Long> listUserDeptDepartmentIdByUserId(Long userId);
 
-    void deleteDepartmentUser(Long departmentId, Long userId);
+    //  --------userDeptAscription--------
+    WbUserDeptAscriptionDO saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
 
-    void updateDepartmentInfo(AutoCreateDepartmentVO departmentVO);
-
-    void deleteDepartmentInfo(AutoCreateDepartmentVO departmentVO);
+    WbUserDeptAscriptionDO getUserDeptAscriptionByDepartmentIdAndUserId(Long departmentId, Long userId);
 
     List<Long> listUserDeptAscriptionDepartmentIdByUserId(Long userId);
 
     List<Long> listUserDeptAscriptionUserIdByDepartmentId(Long departmentId);
+
+    WbDepartmentDO saveTeamDefaultDepartment(Long teamId, String topDepartmentName);
+
+    WbDepartmentDO saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO);
+
+    WbDepartmentDO updateDepartmentInfo(AutoCreateDepartmentVO departmentVO);
+
+    void deleteDepartmentInfo(AutoCreateDepartmentVO departmentVO);
+
+    WbUserDeptDO saveDepartmentUser(Long departmentId, Long userId);
+
+    void deleteDepartmentUser(Long departmentId, Long userId);
 }

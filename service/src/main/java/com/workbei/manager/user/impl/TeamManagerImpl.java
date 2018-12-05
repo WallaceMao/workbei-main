@@ -21,69 +21,82 @@ import java.util.List;
  * 负责管理的关联:
  * WbTeamUserRoleDO
  * WbJoinAndQuitTeamRecordDO
+ *
  * @author Wallace Mao
  * Date: 2018-11-27 15:53
  */
 public class TeamManagerImpl implements TeamManager {
-    @Autowired
     private WbTeamDao wbTeamDao;
-    @Autowired
     private WbOuterDataTeamDao wbOuterDataTeamDao;
 
+    public TeamManagerImpl(WbTeamDao wbTeamDao, WbOuterDataTeamDao wbOuterDataTeamDao) {
+        this.wbTeamDao = wbTeamDao;
+        this.wbOuterDataTeamDao = wbOuterDataTeamDao;
+    }
+
+    //  --------team--------
     @Override
-    public void saveOrUpdateTeam(WbTeamDO teamDO){
+    public WbTeamDO saveOrUpdateTeam(WbTeamDO teamDO) {
         wbTeamDao.saveOrUpdateTeam(teamDO);
+        return teamDO;
     }
 
     @Override
-    public void saveOrUpdateOuterDataTeam(WbOuterDataTeamDO outerDataTeamDO){
-        wbOuterDataTeamDao.saveOrUpdateOuterDataTeam(outerDataTeamDO);
-    }
-
-    @Override
-    public WbTeamDO getTeamById(Long teamId){
+    public WbTeamDO getTeamById(Long teamId) {
         return wbTeamDao.getTeamById(teamId);
     }
 
     @Override
-    public WbTeamDO getTeamByClientAndOuterId(String client, String outerCorpId){
+    public WbTeamDO getTeamByClientAndOuterId(String client, String outerCorpId) {
         return wbTeamDao.getTeamByClientAndOuterId(client, outerCorpId);
     }
 
+    //  --------teamData--------
     @Override
-    public WbTeamDataDO getTeamDataByTeamId(Long teamId){
+    public WbTeamDataDO getTeamDataByTeamId(Long teamId) {
         return wbTeamDao.getTeamDataByTeamId(teamId);
     }
 
+    //  --------teamUser--------
     @Override
-    public WbTeamUserDO getTeamUserByTeamId(Long teamId){
+    public WbTeamUserDO getTeamUserByTeamId(Long teamId) {
         return wbTeamDao.getTeamUserByTeamId(teamId);
     }
 
+    //  --------teamUserRole--------
     @Override
-    public WbTeamUserRoleDO getTeamUserRoleByTeamIdAndUserIdAndRole(Long teamId, Long userId, String role){
+    public WbTeamUserRoleDO getTeamUserRoleByTeamIdAndUserIdAndRole(Long teamId, Long userId, String role) {
         return wbTeamDao.getTeamUserRoleByTeamIdAndUserIdAndRole(teamId, userId, role);
     }
 
     @Override
-    public WbOuterDataTeamDO getOuterDataTeamByClientAndOuterId(String client, String outerCorpId){
-        return wbOuterDataTeamDao.getOuterDataTeamByClientAndOuterId(client, outerCorpId);
-    }
-
-    @Override
-    public List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndUserId(Long teamId, Long userId){
+    public List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndUserId(Long teamId, Long userId) {
         return wbTeamDao.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
     }
 
+    //  --------outerDataTeam--------
     @Override
-    public List<WbJoinAndQuitTeamRecordDO> listJoinAndQuitTeamRecordByTeamIdAndUserId(Long teamId, Long userId){
+    public WbOuterDataTeamDO saveOrUpdateOuterDataTeam(WbOuterDataTeamDO outerDataTeamDO) {
+        wbOuterDataTeamDao.saveOrUpdateOuterDataTeam(outerDataTeamDO);
+        return outerDataTeamDO;
+    }
+
+    @Override
+    public WbOuterDataTeamDO getOuterDataTeamByClientAndOuterId(String client, String outerCorpId) {
+        return wbOuterDataTeamDao.getOuterDataTeamByClientAndOuterId(client, outerCorpId);
+    }
+
+    //  --------joinAndQuiteTeamRecord--------
+    @Override
+    public List<WbJoinAndQuitTeamRecordDO> listJoinAndQuitTeamRecordByTeamIdAndUserId(Long teamId, Long userId) {
         return wbTeamDao.listJoinAndQuitTeamRecordByTeamIdAndUserId(teamId, userId);
     }
 
-    //  以下为聚合方法
+    //  --------aggregate method--------
 
     /**
      * 保存team的基本信息，同时也会跟team相关的聚合类
+     *
      * @param teamVO
      * @return
      */
@@ -92,7 +105,7 @@ public class TeamManagerImpl implements TeamManager {
         //  保存公司
         WbTeamDO teamDO = TeamFactory.getTeamDO();
         teamDO.setName(teamVO.getName());
-        if(teamVO.getLogo() != null){
+        if (teamVO.getLogo() != null) {
             teamDO.setLogo(teamVO.getLogo());
         }
         wbTeamDao.saveOrUpdateTeam(teamDO);
@@ -102,7 +115,7 @@ public class TeamManagerImpl implements TeamManager {
         teamDataDO.setTeamId(teamId);
         teamDataDO.setClient(teamVO.getClient());
         String contactName = WbConstant.APP_DEFAULT_TEAM_CONTACT_NAME;
-        if(teamVO.getCreator() != null && teamVO.getCreator().getName() != null){
+        if (teamVO.getCreator() != null && teamVO.getCreator().getName() != null) {
             contactName = teamVO.getCreator().getName();
         }
         teamDataDO.setContacts(contactName);
@@ -110,7 +123,7 @@ public class TeamManagerImpl implements TeamManager {
         WbTeamUserDO teamUserDO = TeamFactory.getTeamUserDO();
         teamUserDO.setTeamId(teamId);
         wbTeamDao.saveOrUpdateTeamUser(teamUserDO);
-        if(teamVO.getOuterCorpId() != null){
+        if (teamVO.getOuterCorpId() != null) {
             WbOuterDataTeamDO outerDataTeamDO = TeamFactory.getOuterDataTeamDO();
             outerDataTeamDO.setTeamId(teamDO.getId());
             outerDataTeamDO.setClient(teamVO.getClient());
@@ -123,11 +136,12 @@ public class TeamManagerImpl implements TeamManager {
 
     /**
      * 新增团队创建者的角色
+     *
      * @param teamId
      * @param userId
      */
     @Override
-    public void saveTeamCreatorRole(Long teamId, Long userId) {
+    public WbTeamUserRoleDO saveTeamCreatorRole(Long teamId, Long userId) {
         //  设置teamUserRole
         WbTeamUserRoleDO creatorRole = TeamFactory.getTeamUserRoleDO();
         creatorRole.setTeamId(teamId);
@@ -145,15 +159,18 @@ public class TeamManagerImpl implements TeamManager {
         joinAndQuitTeamRecordDO.setUserId(userId);
         joinAndQuitTeamRecordDO.setType(WbConstant.TEAM_RECORD_TYPE_CREATE);
         wbTeamDao.saveOrUpdateJoinAndQuitTeamRecord(joinAndQuitTeamRecordDO);
+
+        return creatorRole;
     }
 
     /**
      * 新增普通用户的团队角色
-     *  @param teamId
+     *
+     * @param teamId
      * @param userId
      */
     @Override
-    public void saveTeamCommonUserRole(Long teamId, Long userId){
+    public WbTeamUserRoleDO saveTeamCommonUserRole(Long teamId, Long userId) {
         WbTeamUserRoleDO userRole = TeamFactory.getTeamUserRoleDO();
         userRole.setTeamId(teamId);
         userRole.setUserId(userId);
@@ -165,10 +182,13 @@ public class TeamManagerImpl implements TeamManager {
         joinAndQuitTeamRecordDO.setUserId(userId);
         joinAndQuitTeamRecordDO.setType(WbConstant.TEAM_RECORD_TYPE_JOIN);
         wbTeamDao.saveOrUpdateJoinAndQuitTeamRecord(joinAndQuitTeamRecordDO);
+
+        return userRole;
     }
 
     /**
      * 删除团队用户的角色，同时打出日志
+     *
      * @param teamId
      * @param userId
      */
@@ -186,33 +206,36 @@ public class TeamManagerImpl implements TeamManager {
 
     /**
      * 更新团队的管理员角色
+     *
      * @param teamId
      * @param userId
      * @param admin
      */
     @Override
-    public void updateTeamAdmin(Long teamId, Long userId, Boolean admin) {
+    public WbTeamUserRoleDO updateTeamAdmin(Long teamId, Long userId, Boolean admin) {
         WbTeamUserRoleDO adminRole = wbTeamDao.getTeamUserRoleByTeamIdAndUserIdAndRole(
                 teamId,
                 userId,
                 WbConstant.TEAM_USER_ROLE_ADMIN);
-        if(admin){
-            if(adminRole == null){
+        if (admin) {
+            if (adminRole == null) {
                 //  新增角色
-                WbTeamUserRoleDO teamUserRoleDO = TeamFactory.getTeamUserRoleDO();
-                teamUserRoleDO.setTeamId(teamId);
-                teamUserRoleDO.setUserId(userId);
-                teamUserRoleDO.setRole(WbConstant.TEAM_USER_ROLE_ADMIN);
-                wbTeamDao.saveOrUpdateTeamUserRole(teamUserRoleDO);
+                adminRole = TeamFactory.getTeamUserRoleDO();
+                adminRole.setTeamId(teamId);
+                adminRole.setUserId(userId);
+                adminRole.setRole(WbConstant.TEAM_USER_ROLE_ADMIN);
+                wbTeamDao.saveOrUpdateTeamUserRole(adminRole);
             }
-        }else{
-            if(adminRole != null){
+        } else {
+            if (adminRole != null) {
                 wbTeamDao.deleteTeamUserRoleByTeamIdAndUserIdAndRole(
                         teamId,
                         userId,
                         WbConstant.TEAM_USER_ROLE_ADMIN
                 );
+                adminRole = null;
             }
         }
+        return adminRole;
     }
 }

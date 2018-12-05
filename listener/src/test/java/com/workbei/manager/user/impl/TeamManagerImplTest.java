@@ -2,6 +2,7 @@ package com.workbei.manager.user.impl;
 
 import com.workbei.BaseUnitTest;
 import com.workbei.constant.WbConstant;
+import com.workbei.manager.user.AccountManager;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
@@ -24,6 +25,8 @@ import static org.assertj.core.api.Assertions.*;
 @Rollback
 public class TeamManagerImplTest extends BaseUnitTest {
     @Autowired
+    private AccountManager accountManager;
+    @Autowired
     private TeamManager teamManager;
     @Autowired
     private UserManager userManager;
@@ -37,7 +40,7 @@ public class TeamManagerImplTest extends BaseUnitTest {
         WbTeamDO teamDO = TestTeamFactory.getTeamDO();
         teamManager.saveOrUpdateTeam(teamDO);
         WbAccountDO accountDO = TestUserFactory.getAccountDO();
-        userManager.saveOrUpdateAccount(accountDO);
+        accountManager.saveOrUpdateAccount(accountDO);
         WbUserDO userDO = TestUserFactory.getUserDO();
         userDO.setTeamId(teamDO.getId());
         userDO.setAccountId(accountDO.getId());

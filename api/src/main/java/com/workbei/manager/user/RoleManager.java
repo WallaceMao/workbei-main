@@ -1,7 +1,6 @@
 package com.workbei.manager.user;
 
 import com.workbei.model.domain.user.WbRoleGroupDO;
-import com.workbei.model.domain.user.WbUserDO;
 import com.workbei.model.domain.user.WbUserRoleGroupDO;
 
 /**
@@ -9,9 +8,11 @@ import com.workbei.model.domain.user.WbUserRoleGroupDO;
  * Date: 2018-12-02 22:17
  */
 public interface RoleManager {
+    //  --------roleGroup--------
     WbRoleGroupDO getCommonRoleGroup();
 
-    void saveOrUpdateUserCommonRoleGroup(WbUserDO userDO);
+    //  --------userRoleGroup--------
+    void saveOrUpdateUserCommonRoleGroup(Long userId);
 
     WbUserRoleGroupDO getUserRoleGroupByUserId(Long userId);
 }

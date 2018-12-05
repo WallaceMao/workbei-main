@@ -8,35 +8,29 @@ import com.workbei.model.view.autocreate.AutoCreateUserVO;
  * Date: 2018-11-27 15:52
  */
 public interface UserManager {
-    WbOuterDataUserDO getOuterDataUserByClientAndOuterId(String client, String outerId);
+    //  --------user--------
+    void saveOrUpdateUser(WbUserDO userDO);
 
     WbUserDO getUserById(Long id);
 
     WbUserDO getUserByClientAndOuterId(String client, String outerCombineId);
 
-    WbUserOauthDO getUserOauthByDdUnionId(String ddUnionId);
-
-    WbAccountDO getAccountById(Long id);
-
-    void saveOrUpdateAccount(WbAccountDO accountDO);
-
-    void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO);
-
-    WbUserDO saveUserInfo(Long teamId, AutoCreateUserVO userVO);
-
-    WbUserDO updateUserInfo(AutoCreateUserVO userVO);
-
-    void saveOrUpdateUser(WbUserDO userDO);
-
-    WbUserRegisterDO getUserRegisterByAccountId(Long accountId);
-
-    WbUserOauthDO getUserOauthByAccountId(Long accountId);
-
+    //  --------userGuide--------
     WbUserGuideDO getUserGuideByUserId(Long userId);
 
+    //  --------userDisplay-------
     WbUserDisplayOrderDO getUserDisplayOrderByUserId(Long userId);
 
+    //  --------userUiSetting--------
     WbUserUiSettingDO getUserUiSettingByUserId(Long userId);
 
+    //  --------userFunctionSetting--------
     WbUserFunctionSettingDO getUserFunctionSettingByUserId(Long userId);
+
+    //  --------outerDataUser--------
+    WbOuterDataUserDO getOuterDataUserByClientAndOuterId(String client, String outerId);
+
+    WbUserDO saveUserInfo(Long teamId, Long accountId, AutoCreateUserVO userVO);
+
+    WbUserDO updateUserInfo(AutoCreateUserVO userVO);
 }

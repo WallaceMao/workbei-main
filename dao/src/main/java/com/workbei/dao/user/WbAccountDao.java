@@ -15,6 +15,11 @@ public interface WbAccountDao {
     void saveOrUpdateAccount(WbAccountDO account);
     WbAccountDO getAccountById(
             @Param("id") Long id);
+    WbAccountDO getAccountByClientAndOuterId(
+            @Param("client") String client,
+            @Param("outerId") String outerId);
+    WbAccountDO getAccountByIdDdUnionId(
+            @Param("ddUnionId") String ddUnionId);
 
     void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO);
     WbUserOauthDO getUserOauthByAccountId(

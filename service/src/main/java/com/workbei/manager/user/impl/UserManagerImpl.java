@@ -7,10 +7,6 @@ import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.manager.user.UserManager;
 import com.workbei.factory.UserFactory;
-import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
 
 import static com.workbei.exception.ExceptionCode.*;
 
@@ -20,26 +16,18 @@ import static com.workbei.exception.ExceptionCode.*;
  * Date: 2018-11-27 15:53
  */
 public class UserManagerImpl implements UserManager {
-    @Autowired
     private WbUserDao wbUserDao;
-    @Autowired
     private WbOuterDataUserDao wbOuterDataUserDao;
-    @Autowired
-    private WbAccountDao wbAccountDao;
 
+    public UserManagerImpl(WbUserDao wbUserDao, WbOuterDataUserDao wbOuterDataUserDao) {
+        this.wbUserDao = wbUserDao;
+        this.wbOuterDataUserDao = wbOuterDataUserDao;
+    }
+
+    //  --------user--------
     @Override
     public void saveOrUpdateUser(WbUserDO userDO) {
         wbUserDao.saveOrUpdateUser(userDO);
-    }
-
-    @Override
-    public void saveOrUpdateAccount(WbAccountDO accountDO){
-        wbAccountDao.saveOrUpdateAccount(accountDO);
-    }
-
-    @Override
-    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO){
-        wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
     }
 
     @Override
@@ -48,109 +36,65 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public WbAccountDO getAccountById(Long id){
-        return wbAccountDao.getAccountById(id);
-    }
-
-    @Override
     public WbUserDO getUserByClientAndOuterId(String client, String outerCombineId) {
         return wbUserDao.getUserByClientAndOuterId(client, outerCombineId);
     }
 
-    @Override
-    public WbUserRegisterDO getUserRegisterByAccountId(Long accountId) {
-        return wbAccountDao.getUserRegisterByAccountId(accountId);
-    }
-
-    @Override
-    public WbUserOauthDO getUserOauthByAccountId(Long accountId) {
-        return wbAccountDao.getUserOauthByAccountId(accountId);
-    }
-
+    //  --------userGuide--------
     @Override
     public WbUserGuideDO getUserGuideByUserId(Long userId) {
         return wbUserDao.getUserGuideByUserId(userId);
     }
 
+    //  --------userDisplay-------
     @Override
     public WbUserDisplayOrderDO getUserDisplayOrderByUserId(Long userId) {
         return wbUserDao.getUserDisplayOrderByUserId(userId);
     }
 
+    //  --------userUiSetting--------
     @Override
     public WbUserUiSettingDO getUserUiSettingByUserId(Long userId) {
         return wbUserDao.getUserUiSettingByUserId(userId);
     }
 
+    //  --------userFunctionSetting--------
     @Override
     public WbUserFunctionSettingDO getUserFunctionSettingByUserId(Long userId) {
         return wbUserDao.getUserFunctionSettingByUserId(userId);
     }
 
+    //  --------outerDataUser--------
     @Override
     public WbOuterDataUserDO getOuterDataUserByClientAndOuterId(String client, String outerId){
         return wbOuterDataUserDao.getOuterDataUserByClientAndOuterId(client, outerId);
     }
 
-    @Override
-    public WbUserOauthDO getUserOauthByDdUnionId(String ddUnionId){
-        return wbAccountDao.getUserOauthByDdUnionId(ddUnionId);
-    }
-
-    //  聚合方法
+    //  --------aggregate method
     /**
      * 逻辑如下：
      * 1  如果params中有unionId，那么首先根据unionId查找是否有相同unionId的Account。
      *    如果用户之前使用钉钉扫码登录过web端，那么可能会出现这种情况。
      * 2  如果没有unionId
+     *
+     * @param accountId
      * @param userVO
      * @return
      */
     @Override
-    public WbUserDO saveUserInfo(Long teamId, AutoCreateUserVO userVO){
+    public WbUserDO saveUserInfo(Long teamId, Long accountId, AutoCreateUserVO userVO){
         //  如果outerDataUser中存在，那么就不创建，直接返回
-        WbUserDO userDO = getUserByClientAndOuterId(
-                userVO.getClient(), userVO.getOuterCombineId()
-        );
-        if(userDO != null){
-            return userDO;
+        if(teamId == null){
+            throw new WorkbeiServiceException(
+                    ExceptionCode.getMessage(ExceptionCode.TEAM_NOT_FOUND, null, accountId, userVO));
         }
-        //  新增account
-        //  如果unionId在数据库中存在，那么就根据unionId获取account，否则就新增account，并且保存unionId
-        WbAccountDO accountDO = null;
-        if(userVO.getOuterUnionId() != null){
-            WbUserOauthDO userOauthDO = wbAccountDao.getUserOauthByDdUnionId(userVO.getOuterUnionId());
-            if(userOauthDO != null){
-                accountDO = wbAccountDao.getAccountById(userOauthDO.getAccountId());
-            }
-        }
-        if(accountDO == null){
-            //  保存account
-            accountDO = UserFactory.getAccountDO();
-            accountDO.setPassword(RandomStringUtils.randomAlphabetic(6));
-            accountDO.setName(userVO.getName());
-            accountDO.setAvatar(userVO.getAvatar());
-            wbAccountDao.saveOrUpdateAccount(accountDO);
-
-            //  保存userRegister
-            WbUserRegisterDO userRegister = UserFactory.getUserRegisterDO();
-            userRegister.setClient(userVO.getClient());
-            userRegister.setMode(userVO.getClient());
-            userRegister.setRegDate(new Date());
-            userRegister.setAccountId(accountDO.getId());
-            wbAccountDao.saveOrUpdateUserRegister(userRegister);
-
-            //  保存userOauth
-            if(userVO.getOuterUnionId() != null){
-                WbUserOauthDO userOauthDO = UserFactory.getUserOauthDO();
-                userOauthDO.setAccountId(accountDO.getId());
-                userOauthDO.setDdUnionId(userVO.getOuterUnionId());
-                wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
-            }
+        if(accountId == null){
+            throw new WorkbeiServiceException(
+                    ExceptionCode.getMessage(ExceptionCode.ACCOUNT_NOT_FOUND, teamId, null, userVO));
         }
         //  新增user
-        userDO = UserFactory.getUserDO();
-        userDO.setAccountId(accountDO.getId());
+        WbUserDO userDO = UserFactory.getUserDO();
+        userDO.setAccountId(accountId);
         userDO.setName(userVO.getName());
         userDO.setTeamId(teamId);
 
@@ -189,51 +133,23 @@ public class UserManagerImpl implements UserManager {
      */
     @Override
     public WbUserDO updateUserInfo(AutoCreateUserVO userVO) {
-        WbOuterDataUserDO outerDataUserDO = getOuterDataUserByClientAndOuterId(
+        WbUserDO userDO = getUserByClientAndOuterId(
                 userVO.getClient(), userVO.getOuterCombineId()
         );
-        if(outerDataUserDO == null){
-            throw new WorkbeiServiceException(
-                    ExceptionCode.getMessage(USER_NOT_FOUND, userVO));
-        }
-        WbUserDO userDO = getUserById(outerDataUserDO.getUserId());
         if(userDO == null){
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(USER_NOT_FOUND, userVO));
         }
-        Long userId = userDO.getId();
         WbUserDO updatedUserDO = null;
-        WbAccountDO updatedAccountDO = null;
-        WbUserOauthDO updatedUserOauthDO = null;
 
         if(userVO.getName() != null){
             updatedUserDO = userDO;
             updatedUserDO.setName(userVO.getName());
-            updatedAccountDO = wbAccountDao.getAccountById(userDO.getAccountId());
-            updatedAccountDO.setName(userVO.getName());
         }
-        if(userVO.getAvatar() != null){
-            updatedAccountDO = updatedAccountDO == null ? wbAccountDao.getAccountById(userDO.getAccountId()) : updatedAccountDO;
-            updatedAccountDO.setAvatar(userVO.getAvatar());
-        }
-//        if(userVO.getOuterUnionId() != null){
-//            updatedUserOauthDO = wbAccountDao.getUserOauthByDdUnionId(userVO.getOuterUnionId());
-//            if(updatedUserOauthDO == null){
-//                updatedUserOauthDO
-//            }
-//            updatedUserOauthDO.setDdUnionId(userVO.getOuterUnionId());
-//        }
         //  执行更新
         if(updatedUserDO != null){
             wbUserDao.saveOrUpdateUser(updatedUserDO);
         }
-        if(updatedAccountDO != null){
-            wbAccountDao.saveOrUpdateAccount(updatedAccountDO);
-        }
-//        if(updatedUserOauthDO != null){
-//            wbAccountDao.saveOrUpdateUserOauth(updatedUserOauthDO);
-//        }
-
         return userDO;
     }
 }
