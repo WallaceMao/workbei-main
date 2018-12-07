@@ -82,4 +82,8 @@ public class LogFormatter {
 
         return logData.toString();
     }
+
+    public static KeyValue getKV(String key, Object value){
+        return new KeyValue(key, value);
+    }
 }

@@ -5,7 +5,9 @@ package com.workbei.exception;
  * Date: 2018-12-03 22:59
  */
 public enum ExceptionCode {
+    APP_SYSTEM_ERROR("-1", "system error"),
     APP_CLIENT_NOT_FOUND("10000", "app client not found"),
+    APP_REQUEST_PARAM_ERROR("10001", "request params not found"),
     TEAM_NOT_FOUND("11000", "team not found"),
     //  12xxx department
     DEPT_NOT_FOUND("12000", "department not found"),

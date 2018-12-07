@@ -44,7 +44,7 @@ public class SolutionListenerAlimqImpl implements MessageListener, SolutionListe
             bizLogger.error(LogFormatter.format(
                     LogFormatter.LogEvent.EXCEPTION,
                     "SolutionListenerAlimqImpl",
-                    new LogFormatter.KeyValue("message", message)
+                    new LogFormatter.KeyValue("util", message)
             ), e);
             //消费失败
             return Action.ReconsumeLater;

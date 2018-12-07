@@ -41,7 +41,7 @@ public class SolutionListenerActivemqImpl implements MessageListener, SolutionLi
             bizLogger.error(LogFormatter.format(
                     LogFormatter.LogEvent.EXCEPTION,
                     "SolutionListenerAlimqImpl",
-                    new LogFormatter.KeyValue("message", message)
+                    new LogFormatter.KeyValue("util", message)
             ), e);
         }
     }
