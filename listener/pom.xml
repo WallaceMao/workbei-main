@@ -128,5 +128,11 @@
             <artifactId>commons-lang</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--用来解析json路径，验证controller集成测试的返回值-->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

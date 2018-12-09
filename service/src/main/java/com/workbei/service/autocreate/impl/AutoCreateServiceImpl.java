@@ -218,7 +218,8 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                     ExceptionCode.getMessage(ExceptionCode.TEAM_NOT_FOUND, departmentVO)
             );
         }
-        departmentManager.saveDepartmentInfo(teamDO.getId(), departmentVO);
+        WbDepartmentDO departmentDO = departmentManager.saveDepartmentInfo(teamDO.getId(), departmentVO);
+        departmentVO.setId(departmentDO.getId());
     }
 
     @Override

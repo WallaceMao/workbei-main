@@ -1,4 +1,4 @@
-package com.workbei.controller.mannual;
+package com.workbei.controller.manual;
 
 import com.workbei.service.solution.SolutionService;
 import org.slf4j.Logger;

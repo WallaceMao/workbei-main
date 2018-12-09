@@ -17,4 +17,12 @@
 
     <!--引入对service中bean的依赖-->
     <import resource="classpath:spring-beans.xml" />
+
+    <!--测试环境下，mock测试类-->
+    <!--<bean id="autoCreateService" class="org.mockito.Mockito" factory-method="mock">-->
+        <!--<constructor-arg value="com.workbei.service.autocreate.AutoCreateService" />-->
+    <!--</bean>-->
+    <!--<bean id="solutionService" class="org.mockito.Mockito" factory-method="mock">-->
+        <!--<constructor-arg value="com.workbei.service.solution.SolutionService" />-->
+    <!--</bean>-->
 </beans>

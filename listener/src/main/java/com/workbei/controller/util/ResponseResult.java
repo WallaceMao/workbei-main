@@ -10,13 +10,22 @@ import java.util.Map;
  * Date: 2018-12-07 0:18
  */
 public class ResponseResult {
-    public static Map fail(){
+    public static Map fail() {
         return fail(HttpResultCode.failCode());
     }
-    public static Map fail(HttpResultCode code){
+
+    public static Map fail(HttpResultCode code) {
         Map<String, String> map = new HashMap<>();
         map.put("errcode", code.getCode());
         map.put("errmsg", code.getMsg());
+        return map;
+    }
+
+    public static Map success(){
+        HttpResultCode successCode = HttpResultCode.successCode();
+        Map<String, String> map = new HashMap<>();
+        map.put("errcode", successCode.getCode());
+        map.put("errmsg", successCode.getMsg());
         return map;
     }
 }
