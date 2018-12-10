@@ -12,6 +12,7 @@ import com.workbei.service.autocreate.AutoCreateService;
 import com.workbei.util.TestDepartmentFactory;
 import com.workbei.util.TestTeamFactory;
 import com.workbei.util.TestUserFactory;
+import org.apache.commons.lang.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,8 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
         AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        //  测试当client为null的情况，可以使用系统默认的client
+        userVO.setClient(null);
         teamVO.setCreator(userVO);
         autoCreateService.createTeam(teamVO);
         WbUserDO creatorDO = userManager.getUserByClientAndOuterId(
@@ -137,7 +140,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO departmentVO = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         autoCreateService.createDepartment(departmentVO);
         departmentVO.setName("at_new_department_name" + now.getTime());
-        departmentVO.setDisplayOrder((double)now.getTime());
+        departmentVO.setDisplayOrder((double) now.getTime());
         departmentVO.setClient(null);
         autoCreateService.updateDepartment(departmentVO);
 
@@ -253,7 +256,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO1.setTop(true);
         autoCreateService.createDepartment(deptVO1);
-        AutoCreateDepartmentVO deptVO2= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO2);
 
@@ -280,6 +283,44 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(savedDeptList).contains(deptVO1.getId(), deptVO2.getId());
     }
 
+    /**
+     * 幂等性测试，当outerId已经存在的情况下
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCreateUserWithOuterIdExist() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        deptList.add("at_test_random_dept_comid_" + now.getTime());
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+
+        assertThat(userVO.getId()).isNotNull();
+        Long userId = userVO.getId();
+
+        AutoCreateUserVO userVOCopy = (AutoCreateUserVO) SerializationUtils.clone(userVO);
+        userVOCopy.setId(null);
+        autoCreateService.createUser(userVOCopy);
+        assertThat(userVOCopy.getId()).isEqualTo(userId);
+    }
+
     @Test
     public void testUpdateUser() throws Exception {
         Date now = new Date();
@@ -291,10 +332,10 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO1.setTop(true);
         autoCreateService.createDepartment(deptVO1);
-        AutoCreateDepartmentVO deptVO2= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO2);
-        AutoCreateDepartmentVO deptVO3= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO3);
 
@@ -336,10 +377,10 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO1.setTop(true);
         autoCreateService.createDepartment(deptVO1);
-        AutoCreateDepartmentVO deptVO2= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO2);
-        AutoCreateDepartmentVO deptVO3= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO3);
 
@@ -367,10 +408,10 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO1.setTop(true);
         autoCreateService.createDepartment(deptVO1);
-        AutoCreateDepartmentVO deptVO2= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO2);
-        AutoCreateDepartmentVO deptVO3= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO3);
 
@@ -396,6 +437,47 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(userDeptList).hasSize(0);
     }
 
+    /**
+     * 测试用户移除团队，然后重新加入团队
+     */
+    @Test
+    public void testUpdateUserLeaveTeamAndRejoinTeam() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO3);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+        Long userId = userVO.getId();
+
+        userVO.setClient(null);
+        autoCreateService.updateUserLeaveTeam(userVO);
+
+        AutoCreateUserVO userVOCopy = (AutoCreateUserVO) SerializationUtils.clone(userVO);
+        userVOCopy.setId(null);
+        autoCreateService.createUser(userVOCopy);
+        assertThat(userVOCopy.getId()).isEqualTo(userId);
+        WbUserDO userDO = userManager.getUserById(userId);
+        assertThat(userDO.getTeamId()).isEqualTo(teamId);
+    }
+
     @Test
     public void testUpdateUserSetAdminWithUserNotExist() throws Exception {
         Date now = new Date();
@@ -407,7 +489,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO1.setTop(true);
         autoCreateService.createDepartment(deptVO1);
-        AutoCreateDepartmentVO deptVO2= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO2);
 
@@ -435,7 +517,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO1.setTop(true);
         autoCreateService.createDepartment(deptVO1);
-        AutoCreateDepartmentVO deptVO2= TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
         autoCreateService.createDepartment(deptVO2);
 
