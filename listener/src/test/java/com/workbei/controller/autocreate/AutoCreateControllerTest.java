@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.workbei.WebBaseTest;
 import com.workbei.constant.WbConstant;
 import com.workbei.http.HttpResultCode;
+import com.workbei.manager.app.AppManager;
+import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
@@ -14,6 +16,7 @@ import com.workbei.util.RegExpUtil;
 import com.workbei.util.TestDepartmentFactory;
 import com.workbei.util.TestTeamFactory;
 import com.workbei.util.TestUserFactory;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.workbei.constant.TestConstant.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,26 +34,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional(transactionManager = "transactionManager")
 @Rollback
 public class AutoCreateControllerTest extends WebBaseTest {
-    private static String URL_CREATE_TEAM = "/v3w/tokenAuth/team";
-    private static String URL_CREATE_DEPARTMENT = "/v3w/tokenAuth/department";
-    private static String URL_UPDATE_DEPARTMENT = "/v3w/tokenAuth/department/{outerId}";
-    private static String URL_DELETE_DEPARTMENT = "/v3w/tokenAuth/department/{outerId}";
-    private static String URL_CREATE_USER = "/v3w/tokenAuth/user";
-    private static String URL_UPDATE_USER = "/v3w/tokenAuth/user/{outerId}";
-    private static String URL_UPDATE_USER_SET_ADMIN = "/v3w/tokenAuth/user/{outerId}/admin/{isAdmin}";
-    private static String URL_UPDATE_USER_REMOVE_TEAM = "/v3w/tokenAuth/user/{outerId}/team/null";
-    private static String HEADER_AUTH_CODE = "abc";
 
     @Autowired
     private AutoCreateService autoCreateService;
+    @Autowired
+    private AppManager appManager;
+
+    private WbOuterDataAppDO globalApp = null;
+
+    @Before
+    public void setUp() throws Exception {
+        Date now = new Date();
+        WbOuterDataAppDO appDO = new WbOuterDataAppDO();
+        appDO.setName("appName_" + now.getTime());
+        appDO.setKey(WbConstant.APP_DEFAULT_CLIENT);
+        appDO.setToken("appToken_" + now.getTime());
+        appDO.setWhiteIpList("127.0.0.1");
+        appManager.saveOrUpdateOuterDataApp(appDO);
+        globalApp = appDO;
+    }
 
     @Test
     public void createTeamWithError() throws Exception {
-        //  默认无权限，返回401
-        MvcResult result;
-        mockMvc.perform(post(URL_CREATE_TEAM))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
 
         JSONObject json = new JSONObject();
         json.put("client", WbConstant.APP_DEFAULT_CLIENT);
@@ -68,7 +74,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         mockMvc.perform(post(URL_CREATE_TEAM)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(str)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -78,11 +84,6 @@ public class AutoCreateControllerTest extends WebBaseTest {
 
     @Test
     public void createDepartmentWithError() throws Exception {
-        //  默认无权限，返回401
-        MvcResult result;
-        mockMvc.perform(post(URL_CREATE_DEPARTMENT))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
 
         JSONObject json = new JSONObject();
         checkSaveValidator(URL_CREATE_DEPARTMENT, json.toString(), HttpResultCode.DEPT_OUTER_CORP_ID_NULL);
@@ -113,7 +114,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         mockMvc.perform(post(URL_CREATE_DEPARTMENT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(str)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -150,7 +151,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         AutoCreateDepartmentVO departmentVO = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         autoCreateService.createDepartment(departmentVO);
         departmentVO.setName("at_new_department_name" + now.getTime());
-        departmentVO.setDisplayOrder((double)now.getTime());
+        departmentVO.setDisplayOrder((double) now.getTime());
 
         Map<String, Object> pathParams = new HashMap<>();
         pathParams.put("outerId", departmentVO.getOuterCombineId());
@@ -160,7 +161,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         mockMvc.perform(put(updateDepartmentPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(str)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -181,7 +182,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         String deleteDepartmentPath = RegExpUtil.replacePathVariable(URL_DELETE_DEPARTMENT, pathParams);
 
         mockMvc.perform(delete(deleteDepartmentPath)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -190,12 +191,6 @@ public class AutoCreateControllerTest extends WebBaseTest {
 
     @Test
     public void testCreateUserWithError() throws Exception {
-        //  默认无权限，返回401
-        MvcResult result;
-        mockMvc.perform(post(URL_CREATE_USER))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-
         JSONObject json = new JSONObject();
         checkSaveValidator(URL_CREATE_USER, json.toString(), HttpResultCode.USER_OUTER_CORP_ID_NULL);
         json.put("outerCorpId", "dingaaaaaxxxx");
@@ -226,7 +221,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         mockMvc.perform(post(URL_CREATE_USER)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(str)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -275,7 +270,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
         mockMvc.perform(put(updateUserPath)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(str)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -303,7 +298,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
 
         mockMvc.perform(put(updateUserSetAdminPath)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -330,18 +325,18 @@ public class AutoCreateControllerTest extends WebBaseTest {
 
         mockMvc.perform(put(updateUserRemoveTeamPath)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
     }
 
-    private void checkSaveValidator(String url, String content, HttpResultCode expectedCode) throws Exception{
+    private void checkSaveValidator(String url, String content, HttpResultCode expectedCode) throws Exception {
         mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -350,11 +345,11 @@ public class AutoCreateControllerTest extends WebBaseTest {
                 .andReturn();
     }
 
-    private void checkUpdateValidator(String url, String content, HttpResultCode expectedCode) throws Exception{
+    private void checkUpdateValidator(String url, String content, HttpResultCode expectedCode) throws Exception {
         mockMvc.perform(put(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", HEADER_AUTH_CODE))
+                .header("Authorization", globalApp.getToken()))
 //                .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

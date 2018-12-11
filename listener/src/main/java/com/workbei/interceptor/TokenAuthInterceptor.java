@@ -1,5 +1,8 @@
 package com.workbei.interceptor;
 
+import com.workbei.controller.util.IpUtil;
+import com.workbei.service.tokenauth.TokenAuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -11,12 +14,31 @@ import javax.servlet.http.HttpServletResponse;
  * Date: 2018-12-08 16:05
  */
 public class TokenAuthInterceptor extends HandlerInterceptorAdapter {
+    private TokenAuthService tokenAuthService;
+
+    @Autowired
+    public TokenAuthInterceptor(TokenAuthService tokenAuthService) {
+        this.tokenAuthService = tokenAuthService;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
         String auth = request.getHeader("Authorization");
-        if(StringUtils.isEmpty(auth)){
+        // 检查是否为空
+        if (StringUtils.isEmpty(auth)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
+        // 检查ip是否在白名单中
+        String whiteIpList = tokenAuthService.getAppWhiteIpList(auth);
+        if (!IpUtil.checkIpInSubNetwork(whiteIpList, IpUtil.getRequestIp(request))) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
+        // 检查token在数据库中是否存在
+        if (!tokenAuthService.checkToken(auth)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }

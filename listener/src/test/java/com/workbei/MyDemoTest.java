@@ -1,21 +1,16 @@
 package com.workbei;
 
-import com.workbei.dao.user.WbOuterDataAppDao;
+import com.workbei.dao.app.WbOuterDataAppDao;
 import com.workbei.dao.user.WbUserDao;
 import com.workbei.manager.user.AccountManager;
 import com.workbei.manager.user.UserManager;
-import com.workbei.manager.user.impl.UserManagerImplTest;
 import com.workbei.model.domain.user.WbAccountDO;
 import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.model.domain.user.WbUserDO;
-import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.util.TestUserFactory;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;

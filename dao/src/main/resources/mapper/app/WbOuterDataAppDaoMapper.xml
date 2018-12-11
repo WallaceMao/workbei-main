@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.workbei.dao.user.WbOuterDataAppDao">
+<mapper namespace="com.workbei.dao.app.WbOuterDataAppDao">
 
     <insert id="saveOrUpdate" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO outer_data_app (
