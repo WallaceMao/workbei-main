@@ -131,7 +131,10 @@ public class AccountManagerImpl implements AccountManager {
             updatedUserOauthDO = updatedUserOauthDO == null
                     ? getUserOauthByAccountId(accountDO.getId())
                     : updatedUserOauthDO;
-            updatedUserOauthDO.setDdUnionId(userVO.getOuterUnionId());
+            // fix NPE
+            if (updatedUserOauthDO != null) {
+                updatedUserOauthDO.setDdUnionId(userVO.getOuterUnionId());
+            }
         }
         if (updatedAccountDO != null) {
             saveOrUpdateAccount(updatedAccountDO);

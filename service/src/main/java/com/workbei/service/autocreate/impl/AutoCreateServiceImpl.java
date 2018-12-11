@@ -61,14 +61,14 @@ public class AutoCreateServiceImpl implements AutoCreateService {
             //  新建user
             if (teamVO.getCreator() != null) {
                 AutoCreateUserVO creatorVO = teamVO.getCreator();
+                if (creatorVO.getClient() == null) {
+                    creatorVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+                }
                 WbAccountDO accountDO = null;
                 if (creatorVO.getOuterUnionId() != null) {
                     accountDO = accountManager.getAccountByDdUnionId(creatorVO.getOuterUnionId());
                 }
                 if (accountDO == null) {
-                    if (creatorVO.getClient() == null) {
-                        creatorVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
-                    }
                     accountDO = accountManager.saveAccountInfo(creatorVO);
                 }
                 WbUserDO creatorDO = userManager.saveUserInfo(teamDO.getId(), accountDO.getId(), teamVO.getCreator());
