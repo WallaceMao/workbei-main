@@ -6,6 +6,7 @@ import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.service.autocreate.AutoCreateService;
 import com.workbei.util.TestTeamFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Ignore
 public class AutoCreateControllerMockTest extends WebBaseTest {
     private static String URL_CREATE_TEAM = "/v3w/autoCreate/team";
     private static String HEADER_AUTH_CODE = "abc";

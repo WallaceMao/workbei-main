@@ -2,11 +2,13 @@ package com.workbei.manager.user.impl;
 
 import com.workbei.BaseUnitTest;
 import com.workbei.constant.WbConstant;
-import com.workbei.model.domain.user.WbAccountDO;
-import com.workbei.model.domain.user.WbUserDO;
-import com.workbei.model.domain.user.WbUserOauthDO;
-import com.workbei.model.domain.user.WbUserRegisterDO;
+import com.workbei.manager.user.AccountManager;
+import com.workbei.manager.user.TeamManager;
+import com.workbei.manager.user.UserManager;
+import com.workbei.model.domain.user.*;
+import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
+import com.workbei.util.TestTeamFactory;
 import com.workbei.util.TestUserFactory;
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
@@ -26,7 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rollback
 public class AccountManagerImplTest extends BaseUnitTest {
     @Autowired
-    private AccountManagerImpl accountManager;
+    private AccountManager accountManager;
+    @Autowired
+    private UserManager userManager;
+    @Autowired
+    private TeamManager teamManager;
 
     @Test
     public void testSaveAccountInfo() throws Exception {
@@ -69,10 +75,15 @@ public class AccountManagerImplTest extends BaseUnitTest {
     @Test
     public void testUpdateAccountInfo() throws Exception {
         Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        WbTeamDO teamSaved = teamManager.saveTeamInfo(teamVO);
+
         AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
         userVO.setOuterUnionId("at_user_union_id_" + now.getTime());
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
         accountManager.saveAccountInfo(userVO);
         WbAccountDO savedAccountDO = accountManager.getAccountByDdUnionId(userVO.getOuterUnionId());
+        userManager.saveUserInfo(teamSaved.getId(), savedAccountDO.getId(), userVO);
 
         WbAccountDO accountDO = (WbAccountDO) SerializationUtils.clone(savedAccountDO);
         Long accountId = accountDO.getId();
@@ -85,6 +96,8 @@ public class AccountManagerImplTest extends BaseUnitTest {
         Thread.sleep(100);
         AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
         userVO2.setOuterUnionId("at_user_union_id_" + new Date().getTime());
+        userVO2.setOuterCombineId(userVO.getOuterCombineId());
+        userVO2.setOuterCorpId(teamVO.getOuterCorpId());
         accountManager.updateAccountInfo(userVO2);
         WbAccountDO accountDO2 = accountManager.getAccountById(savedAccountDO.getId());
         Long accountId2 = accountDO2.getId();
@@ -95,7 +108,7 @@ public class AccountManagerImplTest extends BaseUnitTest {
         assertThat(accountDO2.getAvatar()).isEqualTo(userVO2.getAvatar());
         assertThat(accountDO2.getAvatar()).isNotEqualTo(accountDO.getAvatar());
         assertThat(accountDO2).isEqualToIgnoringGivenFields(accountDO, "name", "avatar");
-        assertThat(userOauthDO2).isEqualToIgnoringGivenFields(userOauthDO, "ddUnionId");
+        assertThat(userOauthDO2).isEqualToIgnoringGivenFields(userOauthDO, "ddUnionId", "version", "lastUpdated");
         assertThat(userRegisterDO2).isEqualToComparingFieldByFieldRecursively(userRegisterDO);
     }
 }

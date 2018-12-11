@@ -20,7 +20,7 @@ import static com.workbei.exception.ExceptionCode.ACCOUNT_NOT_FOUND;
  * @author Wallace Mao
  * Date: 2018-12-05 12:12
  */
-public class AccountManagerImpl implements AccountManager{
+public class AccountManagerImpl implements AccountManager {
     private WbAccountDao wbAccountDao;
 
     public AccountManagerImpl(WbAccountDao wbAccountDao) {
@@ -29,12 +29,12 @@ public class AccountManagerImpl implements AccountManager{
 
     //  --------account-------
     @Override
-    public void saveOrUpdateAccount(WbAccountDO accountDO){
+    public void saveOrUpdateAccount(WbAccountDO accountDO) {
         wbAccountDao.saveOrUpdateAccount(accountDO);
     }
 
     @Override
-    public WbAccountDO getAccountById(Long id){
+    public WbAccountDO getAccountById(Long id) {
         return wbAccountDao.getAccountById(id);
     }
 
@@ -44,7 +44,7 @@ public class AccountManagerImpl implements AccountManager{
     }
 
     @Override
-    public WbAccountDO getAccountByDdUnionId(String ddUnionId){
+    public WbAccountDO getAccountByDdUnionId(String ddUnionId) {
         return wbAccountDao.getAccountByIdDdUnionId(ddUnionId);
     }
 
@@ -56,7 +56,7 @@ public class AccountManagerImpl implements AccountManager{
 
     //  --------userOauth--------
     @Override
-    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO){
+    public void saveOrUpdateUserOauth(WbUserOauthDO userOauthDO) {
         wbAccountDao.saveOrUpdateUserOauth(userOauthDO);
     }
 
@@ -66,13 +66,13 @@ public class AccountManagerImpl implements AccountManager{
     }
 
     @Override
-    public WbUserOauthDO getUserOauthByDdUnionId(String ddUnionId){
+    public WbUserOauthDO getUserOauthByDdUnionId(String ddUnionId) {
         return wbAccountDao.getUserOauthByDdUnionId(ddUnionId);
     }
 
     //  --------
     @Override
-    public WbAccountDO saveAccountInfo(AutoCreateUserVO userVO){
+    public WbAccountDO saveAccountInfo(AutoCreateUserVO userVO) {
         //  保存account
         WbAccountDO accountDO = UserFactory.getAccountDO();
         accountDO.setPassword(RandomStringUtils.randomAlphabetic(6));
@@ -89,7 +89,7 @@ public class AccountManagerImpl implements AccountManager{
         wbAccountDao.saveOrUpdateUserRegister(userRegister);
 
         //  保存userOauth
-        if(userVO.getOuterUnionId() != null){
+        if (userVO.getOuterUnionId() != null) {
             WbUserOauthDO userOauthDO = UserFactory.getUserOauthDO();
             userOauthDO.setAccountId(accountDO.getId());
             userOauthDO.setDdUnionId(userVO.getOuterUnionId());
@@ -98,40 +98,45 @@ public class AccountManagerImpl implements AccountManager{
         return accountDO;
     }
 
+    /**
+     * 根据userVO更新accountInfo
+     * @param userVO
+     * @return
+     */
     @Override
-    public WbAccountDO updateAccountInfo(AutoCreateUserVO userVO){
+    public WbAccountDO updateAccountInfo(AutoCreateUserVO userVO) {
         WbAccountDO accountDO = getAccountByClientAndOuterId(
                 userVO.getClient(), userVO.getOuterCombineId()
         );
-        if(accountDO == null){
+        if (accountDO == null) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(ACCOUNT_NOT_FOUND, userVO));
         }
         WbAccountDO updatedAccountDO = null;
         WbUserOauthDO updatedUserOauthDO = null;
 
-        if(userVO.getName() != null){
+        if (userVO.getName() != null) {
             updatedAccountDO = updatedAccountDO == null
                     ? accountDO
                     : updatedAccountDO;
             updatedAccountDO.setName(userVO.getName());
         }
-        if(userVO.getAvatar() != null){
+        if (userVO.getAvatar() != null) {
             updatedAccountDO = updatedAccountDO == null
                     ? accountDO
                     : updatedAccountDO;
             updatedAccountDO.setAvatar(userVO.getAvatar());
         }
-        if(userVO.getOuterUnionId() != null){
+        if (userVO.getOuterUnionId() != null) {
             updatedUserOauthDO = updatedUserOauthDO == null
                     ? getUserOauthByAccountId(accountDO.getId())
                     : updatedUserOauthDO;
             updatedUserOauthDO.setDdUnionId(userVO.getOuterUnionId());
         }
-        if(updatedAccountDO != null){
+        if (updatedAccountDO != null) {
             saveOrUpdateAccount(updatedAccountDO);
         }
-        if(updatedUserOauthDO != null){
+        if (updatedUserOauthDO != null) {
             saveOrUpdateUserOauth(updatedUserOauthDO);
         }
         return updatedAccountDO;

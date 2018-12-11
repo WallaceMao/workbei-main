@@ -185,7 +185,7 @@ public class TeamManagerImplTest extends BaseUnitTest {
         Long userId = globalUser.getId();
         teamManager.saveTeamCommonUserRole(teamId, userId);
         List<WbTeamUserRoleDO> roleList = teamManager.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
-        assertThat(roleList).hasSize(0);
+        assertThat(roleList).hasSize(1);
 
         List<WbJoinAndQuitTeamRecordDO> recordList = teamManager.listJoinAndQuitTeamRecordByTeamIdAndUserId(
                 teamId, userId);

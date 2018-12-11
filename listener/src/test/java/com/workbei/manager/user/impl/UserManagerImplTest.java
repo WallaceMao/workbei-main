@@ -139,6 +139,8 @@ public class UserManagerImplTest extends BaseUnitTest {
         Thread.sleep(100);
         AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
         userVO2.setOuterUnionId("at_user_union_id_" + new Date().getTime());
+        userVO2.setOuterCorpId(userVO.getOuterCorpId());
+        userVO2.setOuterCombineId(userVO.getOuterCombineId());
         WbUserDO userDOForUpdate = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
         userManager.updateUserInfo(userVO2);
         WbUserDO userDO2 = userManager.getUserById(userDOForUpdate.getId());
@@ -152,7 +154,7 @@ public class UserManagerImplTest extends BaseUnitTest {
 
         assertThat(userDO2.getName()).isEqualTo(userVO2.getName());
         assertThat(userDO2.getName()).isNotEqualTo(userDO.getName());
-        assertThat(userDO2).isEqualToIgnoringGivenFields(userDO, "name");
+        assertThat(userDO2).isEqualToIgnoringGivenFields(userDO, "name", "version");
         assertThat(outerDataUserDO2).isEqualToComparingFieldByFieldRecursively(outerDataUserDO);
         assertThat(userGuideDO2).isEqualToComparingFieldByFieldRecursively(userGuideDO);
         assertThat(userDisplayOrderDO2).isEqualToComparingFieldByFieldRecursively(userDisplayOrderDO);

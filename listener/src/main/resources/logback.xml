@@ -8,7 +8,7 @@
     <logger name="org.springframework" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
-    <logger name="com.workbei" level="DEBUG" additivity="false">
+    <logger name="com.workbei" level="INFO" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
     <root level="ERROR">
