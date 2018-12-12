@@ -82,6 +82,7 @@ public class UserFactory {
         userUiSettingDO.setFestivalFlag(true);
         userUiSettingDO.setDayAlertTime("09:00");
         userUiSettingDO.setPhoneThemeSkin("basic0");
+        userUiSettingDO.setFirstDeleteFlag(false);
         userUiSettingDO.setInboxMode("simple");
 
         return userUiSettingDO;
