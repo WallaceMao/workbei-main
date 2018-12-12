@@ -1,4 +1,5 @@
-FROM registry-vpc.cn-hangzhou.aliyuncs.com/workbei-public/tomcat:9.0.13-jre8
+#FROM registry-vpc.cn-hangzhou.aliyuncs.com/workbei-public/tomcat:9.0.13-jre8
+FROM registry.cn-hangzhou.aliyuncs.com/workbei-public/tomcat:9.0.13-jre8
 
 LABEL name="workbei-main" \
        description="workbei main api" \
