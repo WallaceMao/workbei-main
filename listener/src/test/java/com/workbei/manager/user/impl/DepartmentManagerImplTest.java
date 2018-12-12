@@ -606,8 +606,8 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId("at_department_outer_comid_" + new Date().getTime());
-        assertThatThrownBy(() -> departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO))
-                .hasMessageStartingWith(ExceptionCode.getMessage(DEPT_NOT_FOUND));
+        assertThatCode(() -> departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO))
+                .doesNotThrowAnyException();
     }
 
     /**

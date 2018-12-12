@@ -209,7 +209,7 @@ public class AutoCreateController {
     ) {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
-                "createDepartment",
+                "deleteDepartment",
                 getKV("outerId", outerId)
         ));
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();

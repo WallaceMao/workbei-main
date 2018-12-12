@@ -279,9 +279,11 @@ public class DepartmentManagerImpl implements DepartmentManager {
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId()
         );
+        // 为保持幂等性，多次删除这里直接return
         if (departmentDO == null) {
-            throw new WorkbeiServiceException(
-                    ExceptionCode.getMessage(DEPT_NOT_FOUND, departmentVO));
+            return;
+            // throw new WorkbeiServiceException(
+            //         ExceptionCode.getMessage(DEPT_NOT_FOUND, departmentVO));
         }
         //  将departmentDO所属的所有用户的ascription数据全部删除，只保留topDepartment
         List<Long> userIdList = wbDepartmentDao.listUserDeptAscriptionUserIdByDepartmentId(departmentDO.getId());
