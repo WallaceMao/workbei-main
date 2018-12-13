@@ -73,6 +73,30 @@ public class AccountManagerImplTest extends BaseUnitTest {
     }
 
     @Test
+    public void testSaveAccountInfoWithNoAvatar() throws Exception {
+        Date now = new Date();
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterUnionId("at_user_union_id_" + now.getTime());
+        // 如果传入的头像为null，那么需要使用系统默认头像
+        userVO.setAvatar(null);
+        WbAccountDO resultAccountDO = accountManager.saveAccountInfo(userVO);
+        WbAccountDO accountDO = accountManager.getAccountById(resultAccountDO.getId());
+
+        assertThat(accountDO).isNotNull();
+        assertThat(accountDO.getAvatar()).isEqualTo(WbConstant.USER_DEFAULT_USER_AVATAR);
+
+        AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
+        userVO2.setOuterUnionId("at_user_union_id_" + now.getTime());
+        // 如果传入的头像为""(空字符串)，那么需要使用系统默认头像
+        userVO2.setAvatar("");
+        WbAccountDO resultAccountDO2 = accountManager.saveAccountInfo(userVO2);
+        WbAccountDO accountDO2 = accountManager.getAccountById(resultAccountDO2.getId());
+
+        assertThat(accountDO2).isNotNull();
+        assertThat(accountDO2.getAvatar()).isEqualTo(WbConstant.USER_DEFAULT_USER_AVATAR);
+    }
+
+    @Test
     public void testUpdateAccountInfo() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
@@ -110,5 +134,53 @@ public class AccountManagerImplTest extends BaseUnitTest {
         assertThat(accountDO2).isEqualToIgnoringGivenFields(accountDO, "name", "avatar");
         assertThat(userOauthDO2).isEqualToIgnoringGivenFields(userOauthDO, "ddUnionId", "version", "lastUpdated");
         assertThat(userRegisterDO2).isEqualToComparingFieldByFieldRecursively(userRegisterDO);
+    }
+
+    @Test
+    public void testUpdateAccountInfoWithNoAvatar() {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        WbTeamDO teamSaved = teamManager.saveTeamInfo(teamVO);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterUnionId("at_user_union_id_" + now.getTime());
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        accountManager.saveAccountInfo(userVO);
+        WbAccountDO savedAccountDO = accountManager.getAccountByDdUnionId(userVO.getOuterUnionId());
+        userManager.saveUserInfo(teamSaved.getId(), savedAccountDO.getId(), userVO);
+
+        WbAccountDO accountDO = (WbAccountDO) SerializationUtils.clone(savedAccountDO);
+        Long accountId = accountDO.getId();
+        WbUserOauthDO userOauthDO = (WbUserOauthDO) SerializationUtils.clone(
+                accountManager.getUserOauthByAccountId(accountId));
+
+        AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
+        userVO2.setOuterCombineId(userVO.getOuterCombineId());
+        userVO2.setOuterCorpId(teamVO.getOuterCorpId());
+        // 更新时，如果avatar为null，那么不更新
+        userVO2.setAvatar(null);
+        userVO2.setName(null);
+        userVO2.setOuterUnionId(null);
+        accountManager.updateAccountInfo(userVO2);
+        WbAccountDO accountDO2 = accountManager.getAccountById(savedAccountDO.getId());
+        assertThat(accountDO2.getAvatar()).isEqualTo(accountDO.getAvatar());
+        assertThat(accountDO2.getName()).isEqualTo(accountDO.getName());
+        WbUserOauthDO userOauthDO2 = accountManager.getUserOauthByAccountId(accountDO2.getId());
+        assertThat(userOauthDO2.getDdUnionId()).isEqualTo(userOauthDO.getDdUnionId());
+
+        AutoCreateUserVO userVO3 = TestUserFactory.getAutoCreateUserVO();
+        userVO3.setOuterUnionId("at_user_union_id_" + new Date().getTime());
+        userVO3.setOuterCombineId(userVO.getOuterCombineId());
+        userVO3.setOuterCorpId(teamVO.getOuterCorpId());
+        // 更新时如果avatar为空字符串，那么也不更新
+        userVO3.setAvatar("");
+        userVO3.setName("");
+        userVO3.setOuterUnionId("");
+        accountManager.updateAccountInfo(userVO3);
+        WbAccountDO accountDO3 = accountManager.getAccountById(savedAccountDO.getId());
+        assertThat(accountDO3.getAvatar()).isEqualTo(accountDO.getAvatar());
+        assertThat(accountDO3.getName()).isEqualTo(accountDO.getName());
+        WbUserOauthDO userOauthDO3 = accountManager.getUserOauthByAccountId(accountDO3.getId());
+        assertThat(userOauthDO3.getDdUnionId()).isEqualTo(userOauthDO.getDdUnionId());
     }
 }

@@ -21,3 +21,11 @@ ALTER TABLE `user_ui_setting` ADD UNIQUE INDEX `uq_user_ui_setting`(`user_id`) U
 
 #  修改user表的username为128位
 ALTER TABLE `user` MODIFY COLUMN `username` varchar(128);
+
+ALTER TABLE `team_status`
+  DROP INDEX `index_TeamStatus_team`,
+  ADD UNIQUE INDEX `uq_team_status_team`(`team_id`) USING BTREE;
+ALTER TABLE `outer_data_app`
+  MODIFY COLUMN `key` varchar(168) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+ALTER TABLE `outer_data_app` ADD UNIQUE INDEX `uq_outer_data_app_key`(`key`) USING BTREE;
+ALTER TABLE `user_role_group` ADD UNIQUE INDEX `uq_user_role_group_user_role`(`user_id`, `role_group_id`) USING BTREE;

@@ -37,7 +37,7 @@ public class UserFactory {
         WbUserDO userDO = new WbUserDO();
         userDO.setUsername(UuidUtil.generateUserUuid());
         userDO.setDisplay(true);
-        userDO.setParent(false);
+        userDO.setParent(true);
         return userDO;
     }
 

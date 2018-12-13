@@ -273,22 +273,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
-                <configuration>
-                    <argLine>
-                        --illegal-access=permit
-                    </argLine>
-                </configuration>
+                <!--<configuration>-->
+                    <!--&lt;!&ndash;jdk11配置的参数&ndash;&gt;-->
+                    <!--<argLine>-->
+                        <!--&#45;&#45;illegal-access=permit-->
+                    <!--</argLine>-->
+                <!--</configuration>-->
             </plugin>
             <!--test阶段：集成测试-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.22.1</version>
-                <configuration>
-                    <argLine>
-                        --illegal-access=permit
-                    </argLine>
-                </configuration>
+                <!--<configuration>-->
+                    <!--&lt;!&ndash;jdk11配置的参数&ndash;&gt;-->
+                    <!--<argLine>-->
+                        <!--&#45;&#45;illegal-access=permit-->
+                    <!--</argLine>-->
+                <!--</configuration>-->
             </plugin>
             <!--install阶段-->
             <plugin>

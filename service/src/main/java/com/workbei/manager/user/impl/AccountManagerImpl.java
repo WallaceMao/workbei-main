@@ -1,5 +1,6 @@
 package com.workbei.manager.user.impl;
 
+import com.workbei.constant.WbConstant;
 import com.workbei.dao.user.WbAccountDao;
 import com.workbei.exception.ExceptionCode;
 import com.workbei.exception.WorkbeiServiceException;
@@ -10,6 +11,7 @@ import com.workbei.model.domain.user.WbUserDO;
 import com.workbei.model.domain.user.WbUserOauthDO;
 import com.workbei.model.domain.user.WbUserRegisterDO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
+import com.workbei.util.StringUtil;
 import org.apache.commons.lang.RandomStringUtils;
 
 import java.util.Date;
@@ -77,6 +79,9 @@ public class AccountManagerImpl implements AccountManager {
         WbAccountDO accountDO = UserFactory.getAccountDO();
         accountDO.setPassword(RandomStringUtils.randomAlphabetic(6));
         accountDO.setName(userVO.getName());
+        if (StringUtil.isEmpty(userVO.getAvatar())) {
+            userVO.setAvatar(WbConstant.USER_DEFAULT_USER_AVATAR);
+        }
         accountDO.setAvatar(userVO.getAvatar());
         wbAccountDao.saveOrUpdateAccount(accountDO);
 
@@ -115,19 +120,19 @@ public class AccountManagerImpl implements AccountManager {
         WbAccountDO updatedAccountDO = null;
         WbUserOauthDO updatedUserOauthDO = null;
 
-        if (userVO.getName() != null) {
+        if (!StringUtil.isEmpty(userVO.getName())) {
             updatedAccountDO = updatedAccountDO == null
                     ? accountDO
                     : updatedAccountDO;
             updatedAccountDO.setName(userVO.getName());
         }
-        if (userVO.getAvatar() != null) {
+        if (!StringUtil.isEmpty(userVO.getAvatar())) {
             updatedAccountDO = updatedAccountDO == null
                     ? accountDO
                     : updatedAccountDO;
             updatedAccountDO.setAvatar(userVO.getAvatar());
         }
-        if (userVO.getOuterUnionId() != null) {
+        if (!StringUtil.isEmpty(userVO.getOuterUnionId())) {
             updatedUserOauthDO = updatedUserOauthDO == null
                     ? getUserOauthByAccountId(accountDO.getId())
                     : updatedUserOauthDO;
