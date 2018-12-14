@@ -129,13 +129,20 @@ public class AutoCreateServiceImpl implements AutoCreateService {
         //  保存部门与人员的关联
         if (userVO.getOuterCombineDeptIdList() != null) {
             List<String> deptIdList = userVO.getOuterCombineDeptIdList();
+            boolean hasDept = false;
             for (String outerDeptId : deptIdList) {
                 WbDepartmentDO departmentDO =
                         departmentManager.getDepartmentByClientAndOuterId(userVO.getClient(), outerDeptId);
                 if (departmentDO == null) {
                     continue;
                 }
+                hasDept = true;
                 departmentManager.saveDepartmentUser(departmentDO.getId(), userId);
+            }
+            // 如果没有找到部门，那么将用户保存到未分配部门中
+            if (!hasDept) {
+                WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
+                departmentManager.saveDepartmentUser(unassignedDepartment.getId(), userId);
             }
         }
     }
@@ -175,6 +182,12 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                 if (!newDeptList.contains(oldDeptId)) {
                     departmentManager.deleteDepartmentUser(oldDeptId, userId);
                 }
+            }
+            // 如果最终这个用户没有任何部门关联，那么会将其放到未分配部门中
+            List<Long> finalDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
+            if (finalDeptList.size() == 0) {
+                WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(userDO.getTeamId());
+                departmentManager.saveDepartmentUser(unassignedDepartment.getId(), userId);
             }
         }
     }

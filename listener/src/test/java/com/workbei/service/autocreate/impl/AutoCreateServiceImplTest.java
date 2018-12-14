@@ -200,7 +200,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(userDO.getAccountId()).isNotNull();
         assertThat(userDO.getUsername()).isNotNull();
         assertThat(userDO.getDisplay()).isTrue();
-        assertThat(userDO.getParent()).isFalse();
+        assertThat(userDO.getParent()).isTrue();
         assertThat(userDO.getName()).isEqualTo(userVO.getName());
         assertThat(userDO.getTeamId()).isEqualTo(teamId);
 
@@ -211,7 +211,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
     }
 
     @Test
-    public void testSaveUserInfoWithoutUnionId() throws Exception {
+    public void testCreateUserWithoutUnionId() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
@@ -229,7 +229,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(userDO.getAccountId()).isNotNull();
         assertThat(userDO.getUsername()).isNotNull();
         assertThat(userDO.getDisplay()).isTrue();
-        assertThat(userDO.getParent()).isFalse();
+        assertThat(userDO.getParent()).isTrue();
         assertThat(userDO.getName()).isEqualTo(userVO.getName());
         assertThat(userDO.getTeamId()).isEqualTo(teamId);
 
@@ -321,6 +321,34 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(userVOCopy.getId()).isEqualTo(userId);
     }
 
+    /**
+     * 创建用户时，如果用户的部门列表中的部门id在系统中都不存在，那么会将该部门放到未分配部门中
+     * @throws Exception
+     */
+    @Test
+    public void testCreateUserWithoutDepartment() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        final Long teamId = teamVO.getId();
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        // 设置为一个不存在的部门id
+        deptList.add("at_test_random_dept_comid_" + now.getTime());
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+
+        assertThat(userVO.getId()).isNotNull();
+        Long userId = userVO.getId();
+        List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
+        WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
+        assertThat(savedDeptList).hasSize(1);
+        assertThat(savedDeptList).contains(unassignedDepartment.getId());
+    }
+
     @Test
     public void testUpdateUser() throws Exception {
         Date now = new Date();
@@ -364,6 +392,47 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userVO.getId());
         assertThat(savedDeptList).hasSize(2);
         assertThat(savedDeptList).contains(deptVO1.getId(), deptVO3.getId());
+    }
+
+    /**
+     * 如果更新时用户的
+     */
+    @Test
+    public void testUpdateUserWithoutDepartment() {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO3);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+
+        List<String> newDeptList = new ArrayList<>();
+        // 如果用户的deptId不存在，那么会将该用户放入到未分配部门中
+        deptList.add("at_test_random_dept_comid_" + now.getTime());
+        userVO.setOuterCombineDeptIdList(newDeptList);
+        autoCreateService.updateUser(userVO);
+
+        List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userVO.getId());
+        WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
+        assertThat(savedDeptList).hasSize(1);
+        assertThat(savedDeptList).containsExactly(unassignedDepartment.getId());
     }
 
     @Test

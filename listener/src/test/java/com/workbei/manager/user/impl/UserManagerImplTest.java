@@ -60,7 +60,7 @@ public class UserManagerImplTest extends BaseUnitTest {
         assertThat(userDO.getAccountId()).isNotNull();
         assertThat(userDO.getUsername()).isNotNull();
         assertThat(userDO.getDisplay()).isTrue();
-        assertThat(userDO.getParent()).isFalse();
+        assertThat(userDO.getParent()).isTrue();
         assertThat(userDO.getName()).isEqualTo(userVO.getName());
         assertThat(userDO.getTeamId()).isEqualTo(teamId);
 
