@@ -201,9 +201,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                 userVO.getClient(), userVO.getOuterCombineId()
         );
         if (userDO == null) {
-            throw new WorkbeiServiceException(
-                    ExceptionCode.getMessage(ExceptionCode.USER_NOT_FOUND, userVO)
-            );
+            return;
         }
         Long userId = userDO.getId();
         //  删除user与team中的department的关联
