@@ -280,7 +280,7 @@ public class AutoCreateController {
             @ApiResponse(code = 200, message = "成功"),
     })
     @PutMapping("/user/{outerId}")
-    public Map updateUser(
+    public AutoCreateUserVO updateUser(
             @PathVariable("outerId") String outerId,
             @RequestBody AutoCreateUserVO userVO,
             BindingResult result
@@ -296,7 +296,7 @@ public class AutoCreateController {
         }
         checker.check(userVO, updateUserValidator, result);
         autoCreateService.updateUser(userVO);
-        return ResponseResult.success();
+        return userVO;
     }
 
     @ApiOperation(value = "更新的管理员状态", httpMethod = "PUT")
