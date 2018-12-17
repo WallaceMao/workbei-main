@@ -152,7 +152,12 @@ public class AutoCreateServiceImpl implements AutoCreateService {
         if (userVO.getClient() == null) {
             userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbUserDO userDO = userManager.updateUserInfo(userVO);
+        // 判断如果user不存在，那么走createUser的方法
+        WbUserDO userDO = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
+        if (userDO == null) {
+            createUser(userVO);
+        }
+        userDO = userManager.updateUserInfo(userVO);
         accountManager.updateAccountInfo(userVO);
         Long userId = userDO.getId();
         //  更新部门
@@ -256,6 +261,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
         if (departmentVO.getClient() == null) {
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
+        // 修改部门的时候，如果部门不存在，那么直接创建
         departmentManager.updateDepartmentInfo(departmentVO);
     }
 

@@ -48,3 +48,11 @@
 
 ## Mockito
 一般情况下，可以直接对数据库操作，不需要mock，如果遇到需要mock的情况，那么就使用Mockito
+
+# 开发文档
+## logback配置文件
+通过设置系统参数：`-Dlogback.configurationFile=logback-dev.xml`。logback会去classpath下查找logback-dev.xml文件
+
+## 设置swagger
+出于安全考虑，只在开发环境下开启swagger服务。
+通过设置系统参数：`-Dspring.profiles.active=dev`。制定开发环境下的profile，开启swagger

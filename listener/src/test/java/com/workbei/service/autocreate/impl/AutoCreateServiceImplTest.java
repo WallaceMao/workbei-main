@@ -436,6 +436,46 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
     }
 
     @Test
+    public void testUpdateUserWithUserNotFound() {
+        // 如果update的时候，用户不存在，那么应该走新增的流程
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        deptList.add("at_test_random_dept_comid_" + now.getTime());
+        userVO.setOuterCombineDeptIdList(deptList);
+        // 用户更新的时候如果不存在，那么会直接创建
+        autoCreateService.updateUser(userVO);
+
+        assertThat(userVO.getId()).isNotNull();
+        Long userId = userVO.getId();
+        WbRoleGroupDO roleGroupDO = roleManager.getCommonRoleGroup();
+        WbUserRoleGroupDO userRoleGroupDO = roleManager.getUserRoleGroupByUserId(userId);
+        assertThat(userRoleGroupDO.getRoleGroupId()).isEqualTo(roleGroupDO.getId());
+        WbTeamUserRoleDO userRole = teamManager.getTeamUserRoleByTeamIdAndUserIdAndRole(
+                teamId, userId, WbConstant.TEAM_USER_ROLE_COMMON
+        );
+        assertThat(userRole).isNotNull();
+        List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
+        assertThat(savedDeptList).hasSize(2);
+        assertThat(savedDeptList).contains(deptVO1.getId(), deptVO2.getId());
+    }
+
+    @Test
     public void testUpdateUserLeaveTeamWithUserNotExist() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
@@ -462,8 +502,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         autoCreateService.createUser(userVO);
 
         userVO.setOuterCombineId("at_user_outer_random_comid_" + now.getTime());
-        assertThatThrownBy(() -> autoCreateService.updateUserLeaveTeam(userVO))
-                .hasMessageStartingWith(ExceptionCode.getMessage(USER_NOT_FOUND));
+        assertThatCode(() -> autoCreateService.updateUserLeaveTeam(userVO)).doesNotThrowAnyException();
     }
 
     @Test

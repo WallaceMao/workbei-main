@@ -24,6 +24,7 @@ public class ManualController {
     @RequestMapping(value = "/ping", method = RequestMethod.GET)
     @ResponseBody
     public String ping(){
+        bizLogger.info("----pong----");
         return "pong";
     }
 
