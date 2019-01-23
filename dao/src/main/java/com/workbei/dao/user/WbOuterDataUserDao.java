@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("wbOuterDataUserDao")
 public interface WbOuterDataUserDao {
-    void saveOrUpdateOuterDataUser(WbOuterDataUserDO outerDataTeamDO);
-    void saveOrUpdateOuterDataTeam(WbOuterDataTeamDO outerDataTeamDO);
+    void saveOrUpdateOuterDataUser(WbOuterDataUserDO outerDataUserDO);
+
     void deleteOuterDataUserByOuterId(
             @Param("outerId") String outerId
     );
@@ -20,4 +20,8 @@ public interface WbOuterDataUserDao {
             @Param("client") String client,
             @Param("outerId") String outerId
     );
+
+    WbOuterDataUserDO getOuterDataUserByClientAndUserId(
+            @Param("client") String client,
+            @Param("userId") Long userId);
 }

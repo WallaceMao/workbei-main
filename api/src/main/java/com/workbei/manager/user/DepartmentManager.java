@@ -33,6 +33,8 @@ public interface DepartmentManager {
 
     WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndOuterId(String client, String outerId);
 
+    WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndDepartmentId(String client, Long departmentId);
+
     Long getOuterDataDepartmentDepartmentIdByClientAndOuterId(String client, String outerId);
 
     //  --------userDept--------
@@ -41,6 +43,8 @@ public interface DepartmentManager {
     WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId);
 
     List<Long> listUserDeptDepartmentIdByUserId(Long userId);
+    
+    List<WbUserDeptDO> listUserDeptByUserId(Long userId);
 
     //  --------userDeptAscription--------
     WbUserDeptAscriptionDO saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);

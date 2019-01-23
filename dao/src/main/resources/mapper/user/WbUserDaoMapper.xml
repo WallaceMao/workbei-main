@@ -52,6 +52,12 @@
         account_id,
         is_display
     </sql>
+    <select id="listUserByTeamId" resultMap="userMap">
+        SELECT <include refid="select-all-fields-user"/>  FROM `user`
+        <![CDATA[
+			WHERE team_id=#{teamId}
+		 ]]>
+    </select>
     <select id="getUserById" resultMap="userMap">
         SELECT <include refid="select-all-fields-user"/>  FROM `user`
         <![CDATA[

@@ -46,6 +46,8 @@ public interface WbDepartmentDao {
             @Param("departmentId") Long departmentId,
             @Param("userId") Long userId);
     List<Long> listUserDeptDepartmentIdByUserId(@Param("userId") Long id);
+    List<WbUserDeptDO> listUserDeptByUserId(
+            @Param("userId") Long userId);
 
     void saveOrUpdateUserDeptAscription(WbUserDeptAscriptionDO userDeptAscriptionDO);
     void deleteUserDeptAscriptionByUserIdAndDepartmentId(

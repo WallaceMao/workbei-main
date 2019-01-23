@@ -9,7 +9,6 @@ import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.service.autocreate.AutoCreateService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -64,13 +63,8 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                 if (creatorVO.getClient() == null) {
                     creatorVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
                 }
-                WbAccountDO accountDO = null;
-                if (creatorVO.getOuterUnionId() != null) {
-                    accountDO = accountManager.getAccountByDdUnionId(creatorVO.getOuterUnionId());
-                }
-                if (accountDO == null) {
-                    accountDO = accountManager.saveAccountInfo(creatorVO);
-                }
+                WbAccountDO accountDO = searchOrSaveAccount(creatorVO);
+
                 WbUserDO creatorDO = userManager.saveUserInfo(teamDO.getId(), accountDO.getId(), teamVO.getCreator());
                 //  保存人员的roleGroup
                 roleManager.saveOrUpdateUserCommonRoleGroup(creatorDO.getId());
@@ -84,67 +78,16 @@ public class AutoCreateServiceImpl implements AutoCreateService {
         teamVO.setId(teamDO.getId());
     }
 
+    /**
+     * 创建用户，如果用户存在，那么走的是更新方法
+     * @param userVO
+     */
     @Override
     public void createUser(AutoCreateUserVO userVO) {
         if (userVO.getClient() == null) {
             userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbTeamDO teamDO = teamManager.getTeamByClientAndOuterId(
-                userVO.getClient(), userVO.getOuterCorpId());
-        if (teamDO == null) {
-            throw new WorkbeiServiceException(
-                    ExceptionCode.getMessage(ExceptionCode.TEAM_NOT_FOUND, userVO)
-            );
-        }
-        Long teamId = teamDO.getId();
-        //  如果根据outerId能找到user，那么会直接重用user
-        WbUserDO userDO = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
-        if (userDO == null) {
-            //  只有当userDO找不到的情况下，才执行新增逻辑
-            //  1. 新增account
-            //  如果unionId在数据库中存在，那么就根据unionId获取account，否则就新增account，并且保存unionId
-            WbAccountDO accountDO = null;
-            if (userVO.getOuterUnionId() != null) {
-                accountDO = accountManager.getAccountByDdUnionId(userVO.getOuterUnionId());
-            }
-            if (accountDO == null) {
-                accountDO = accountManager.saveAccountInfo(userVO);
-            }
-            Long accountId = accountDO.getId();
-            //  2. 新增user
-            userDO = userManager.saveUserInfo(teamId, accountId, userVO);
-        }
-        //  如果userDO.teamId为null，那么保存teamId
-        if (userDO.getTeamId() == null) {
-            userDO.setTeamId(teamId);
-            userManager.saveOrUpdateUser(userDO);
-        }
-
-        Long userId = userDO.getId();
-        userVO.setId(userId);
-        //  保存人员的roleGroup
-        roleManager.saveOrUpdateUserCommonRoleGroup(userId);
-        //  保存team与人员的关联
-        teamManager.saveTeamCommonUserRole(teamId, userId);
-        //  保存部门与人员的关联
-        if (userVO.getOuterCombineDeptIdList() != null) {
-            List<String> deptIdList = userVO.getOuterCombineDeptIdList();
-            boolean hasDept = false;
-            for (String outerDeptId : deptIdList) {
-                WbDepartmentDO departmentDO =
-                        departmentManager.getDepartmentByClientAndOuterId(userVO.getClient(), outerDeptId);
-                if (departmentDO == null) {
-                    continue;
-                }
-                hasDept = true;
-                departmentManager.saveDepartmentUser(departmentDO.getId(), userId);
-            }
-            // 如果没有找到部门，那么将用户保存到未分配部门中
-            if (!hasDept) {
-                WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
-                departmentManager.saveDepartmentUser(unassignedDepartment.getId(), userId);
-            }
-        }
+        createOrUpdateUser(userVO);
     }
 
     @Override
@@ -152,49 +95,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
         if (userVO.getClient() == null) {
             userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        // 判断如果user不存在，那么走createUser的方法
-        WbUserDO userDO = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
-        if (userDO == null) {
-            createUser(userVO);
-        }
-        userDO = userManager.updateUserInfo(userVO);
-        accountManager.updateAccountInfo(userVO);
-        Long userId = userDO.getId();
-        //  更新部门
-        if (userVO.getOuterCombineDeptIdList() != null) {
-            List<String> newOuterDeptIdList = userVO.getOuterCombineDeptIdList();
-            List<Long> newDeptList = new ArrayList<>(newOuterDeptIdList.size());
-            List<Long> oldDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
-
-            //  遍历newOuterDeptIdList，获取到对应的newDeptId
-            for (String outerDeptId : newOuterDeptIdList) {
-                Long deptId = departmentManager.getOuterDataDepartmentDepartmentIdByClientAndOuterId(
-                        userVO.getClient(), outerDeptId
-                );
-                if (deptId != null) {
-                    newDeptList.add(deptId);
-                }
-            }
-            //  遍历newDeptList，如果newDeptId在oldDeptId中不存在，说明是新增的
-            for (Long newDeptId : newDeptList) {
-                if (!oldDeptList.contains(newDeptId)) {
-                    departmentManager.saveDepartmentUser(newDeptId, userId);
-                }
-            }
-
-            //  遍历oldDeptList，如果oldDeptId在newDeptId中不存在，说明是需要删除的
-            for (Long oldDeptId : oldDeptList) {
-                if (!newDeptList.contains(oldDeptId)) {
-                    departmentManager.deleteDepartmentUser(oldDeptId, userId);
-                }
-            }
-            // 如果最终这个用户没有任何部门关联，那么会将其放到未分配部门中
-            List<Long> finalDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
-            if (finalDeptList.size() == 0) {
-                WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(userDO.getTeamId());
-                departmentManager.saveDepartmentUser(unassignedDepartment.getId(), userId);
-            }
-        }
+        createOrUpdateUser(userVO);
     }
 
     @Override
@@ -245,13 +146,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
         if (departmentVO.getClient() == null) {
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
-        WbTeamDO teamDO = teamManager.getTeamByClientAndOuterId(
-                departmentVO.getClient(), departmentVO.getOuterCorpId());
-        if (teamDO == null) {
-            throw new WorkbeiServiceException(
-                    ExceptionCode.getMessage(ExceptionCode.TEAM_NOT_FOUND, departmentVO)
-            );
-        }
+        WbTeamDO teamDO = checkTeam(departmentVO.getClient(), departmentVO.getOuterCorpId());
         WbDepartmentDO departmentDO = departmentManager.saveDepartmentInfo(teamDO.getId(), departmentVO);
         departmentVO.setId(departmentDO.getId());
     }
@@ -276,5 +171,145 @@ public class AutoCreateServiceImpl implements AutoCreateService {
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
         }
         departmentManager.deleteDepartmentInfo(departmentVO);
+    }
+
+    private void createOrUpdateUser(AutoCreateUserVO userVO) {
+        WbTeamDO teamDO = checkTeam(userVO.getClient(), userVO.getOuterCorpId());
+        Long teamId = teamDO.getId();
+
+        // 判断如果user不存在，那么走createUser的方法
+        WbUserDO userDO = userManager.getUserByClientAndOuterId(userVO.getClient(), userVO.getOuterCombineId());
+        if (userDO == null) {
+            createNotExistedUser(userVO, teamDO);
+        }else {
+            updateExistedUser(userVO, teamDO);
+        }
+    }
+    /**
+     * 创建用户
+     */
+    private void createNotExistedUser(AutoCreateUserVO userVO, WbTeamDO teamDO){
+        Long teamId = teamDO.getId();
+        //  1. 新增account
+        WbAccountDO accountDO = searchOrSaveAccount(userVO);
+        Long accountId = accountDO.getId();
+        //  2. 新增user
+        WbUserDO userDO = userManager.saveUserInfo(teamId, accountId, userVO);
+
+        Long userId = userDO.getId();
+        userVO.setId(userId);
+        //  保存人员的roleGroup
+        roleManager.saveOrUpdateUserCommonRoleGroup(userId);
+        //  保存team与人员的关联
+        teamManager.saveTeamCommonUserRole(teamId, userId);
+        //  保存部门与人员的关联
+        if (userVO.getOuterCombineDeptIdList() != null) {
+            correctDepartment(userVO.getClient(), userDO, userVO.getOuterCombineDeptIdList());
+
+            // deprecated：统一使用correctDepartment的算法，不在单独处理
+            // List<String> deptIdList = userVO.getOuterCombineDeptIdList();
+            // boolean hasDept = false;
+            // for (String outerDeptId : deptIdList) {
+            //     WbDepartmentDO departmentDO =
+            //             departmentManager.getDepartmentByClientAndOuterId(userVO.getClient(), outerDeptId);
+            //     if (departmentDO == null) {
+            //         continue;
+            //     }
+            //     hasDept = true;
+            //     departmentManager.saveDepartmentUser(departmentDO.getId(), userId);
+            // }
+            // // 如果没有找到部门，那么将用户保存到未分配部门中
+            // if (!hasDept) {
+            //     WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
+            //     departmentManager.saveDepartmentUser(unassignedDepartment.getId(), userId);
+            // }
+        }
+    }
+
+    /**
+     * 更新用户
+     */
+    private void updateExistedUser(AutoCreateUserVO userVO, WbTeamDO teamDO){
+        Long teamId = teamDO.getId();
+
+        WbUserDO userDO = userManager.updateUserInfo(userVO);
+        accountManager.updateAccountInfo(userVO);
+        userVO.setId(userDO.getId());
+
+        //  如果userDO.teamId为null，那么保存teamId
+        if (userDO.getTeamId() == null) {
+            userDO.setTeamId(teamId);
+            userManager.saveOrUpdateUser(userDO);
+        }
+        //  更新部门
+        if (userVO.getOuterCombineDeptIdList() != null) {
+            correctDepartment(userVO.getClient(), userDO, userVO.getOuterCombineDeptIdList());
+        }
+    }
+
+    /**
+     * 校正部门
+     * @param userDO
+     * @param newOuterDeptIdList
+     */
+    private void correctDepartment(String client, WbUserDO userDO, List<String> newOuterDeptIdList){
+        Long userId = userDO.getId();
+        List<Long> newDeptList = new ArrayList<>(newOuterDeptIdList.size());
+        List<Long> oldDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
+
+        //  遍历newOuterDeptIdList，获取到对应的newDeptId
+        for (String outerDeptId : newOuterDeptIdList) {
+            Long deptId = departmentManager.getOuterDataDepartmentDepartmentIdByClientAndOuterId(
+                    client, outerDeptId
+            );
+            if (deptId != null) {
+                newDeptList.add(deptId);
+            }
+        }
+        //  遍历newDeptList，如果newDeptId在oldDeptId中不存在，说明是新增的
+        for (Long newDeptId : newDeptList) {
+            if (!oldDeptList.contains(newDeptId)) {
+                departmentManager.saveDepartmentUser(newDeptId, userId);
+            }
+        }
+
+        //  遍历oldDeptList，如果oldDeptId在newDeptId中不存在，说明是需要删除的
+        for (Long oldDeptId : oldDeptList) {
+            if (!newDeptList.contains(oldDeptId)) {
+                departmentManager.deleteDepartmentUser(oldDeptId, userId);
+            }
+        }
+        // 如果最终这个用户没有任何部门关联，那么会将其放到未分配部门中
+        List<Long> finalDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
+        if (finalDeptList.size() == 0) {
+            WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(userDO.getTeamId());
+            departmentManager.saveDepartmentUser(unassignedDepartment.getId(), userId);
+        }
+    }
+
+    /**
+     * 如果unionId在数据库中存在，那么就根据unionId获取account，否则就新增account，并且保存unionId
+     * @param userVO
+     * @return
+     */
+    private WbAccountDO searchOrSaveAccount(AutoCreateUserVO userVO) {
+        WbAccountDO accountDO = null;
+        if (userVO.getOuterUnionId() != null) {
+            accountDO = accountManager.getAccountByDdUnionId(userVO.getOuterUnionId());
+        }
+        if (accountDO == null) {
+            accountDO = accountManager.saveAccountInfo(userVO);
+        }
+        return accountDO;
+    }
+
+    private WbTeamDO checkTeam(String client, String corpId) {
+        WbTeamDO teamDO = teamManager.getTeamByClientAndOuterId(client, corpId);
+        if (teamDO == null) {
+            throw new WorkbeiServiceException(
+                    ExceptionCode.getMessage(ExceptionCode.TEAM_NOT_FOUND, corpId)
+            );
+        }
+        return teamDO;
     }
 }

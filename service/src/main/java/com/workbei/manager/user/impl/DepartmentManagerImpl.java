@@ -101,6 +101,10 @@ public class DepartmentManagerImpl implements DepartmentManager {
     }
 
     @Override
+    public WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndDepartmentId(String client, Long departmentId) {
+        return wbOuterDataDepartmentDao.getOuterDataDepartmentByClientAndDepartmentId(client, departmentId);
+    }
+    @Override
     public Long getOuterDataDepartmentDepartmentIdByClientAndOuterId(String client, String outerId) {
         return wbOuterDataDepartmentDao.getOuterDataDepartmentDepartmentIdByClientAndOuterId(client, outerId);
     }
@@ -120,6 +124,11 @@ public class DepartmentManagerImpl implements DepartmentManager {
     @Override
     public List<Long> listUserDeptDepartmentIdByUserId(Long userId) {
         return wbDepartmentDao.listUserDeptDepartmentIdByUserId(userId);
+    }
+
+    @Override
+    public List<WbUserDeptDO> listUserDeptByUserId(Long userId) {
+        return wbDepartmentDao.listUserDeptByUserId(userId);
     }
 
     //  --------userDeptAscription--------

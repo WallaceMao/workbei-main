@@ -61,6 +61,13 @@
 		 ]]>
     </select>
 
+    <select id="getOuterDataDepartmentByClientAndDepartmentId" resultMap="outerDataDepartmentMap">
+        SELECT <include refid="select-all-fields"/>  FROM outer_data_department
+        <![CDATA[
+			WHERE department_id=#{departmentId} AND `client`=#{client}
+		 ]]>
+    </select>
+
     <select id="getOuterDataDepartmentDepartmentIdByClientAndOuterId" resultType="long">
         SELECT department_id  FROM outer_data_department
         <![CDATA[

@@ -54,4 +54,10 @@
 			WHERE outer_id=#{outerId} AND `client`=#{client}
 		 ]]>
     </select>
+    <select id="getOuterDataUserByClientAndUserId" resultMap="outerDataUserMap">
+        SELECT <include refid="select-all-fields"/>  FROM outer_data_user
+        <![CDATA[
+			WHERE user_id=#{userId} AND `client`=#{client}
+		 ]]>
+    </select>
 </mapper>

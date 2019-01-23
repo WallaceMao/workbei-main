@@ -173,8 +173,26 @@
 			WHERE user_id=#{userId}
 		 ]]>
     </select>
+    <select id="listUserDeptByUserId" resultMap="userDeptMap">
+        SELECT <include refid="select-all-fields-user-dept" />  FROM user_dept
+        <![CDATA[
+        WHERE user_id=#{userId}
+        ]]>
+    </select>
 
     <!--部门归属相关-->
+    <resultMap type="com.workbei.model.domain.user.WbUserDeptAscriptionDO" id="userDeptAscriptionMap">
+        <id property="id" column="id" />
+        <result property="version" column="version" />
+        <result property="departmentId" column="department_id" />
+        <result property="userId" column="user_id" />
+    </resultMap>
+    <sql id="select-all-fields-user-dept-ascription">
+        id,
+        version,
+        department_id,
+        user_id
+    </sql>
     <insert id="saveOrUpdateUserDeptAscription" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_dept_ascription (
         version,
@@ -206,6 +224,12 @@
         WHERE user_id=#{userId} AND d.type = #{departmentType}
         ]]>
     </delete>
+    <select id="getUserDeptAscriptionByDepartmentIdAndUserId" resultMap="userDeptAscriptionMap">
+        SELECT <include refid="select-all-fields-user-dept-ascription" />  FROM user_dept_ascription
+        <![CDATA[
+        WHERE department_id=#{departmentId} AND user_id=#{userId}
+        ]]>
+    </select>
     <select id="listUserDeptAscriptionUserIdByDepartmentId" resultType="long">
         SELECT user_id  FROM user_dept_ascription
         <![CDATA[

@@ -8,6 +8,8 @@ import com.workbei.model.view.autocreate.AutoCreateUserVO;
 import com.workbei.manager.user.UserManager;
 import com.workbei.factory.UserFactory;
 
+import java.util.List;
+
 import static com.workbei.exception.ExceptionCode.*;
 
 /**
@@ -28,6 +30,11 @@ public class UserManagerImpl implements UserManager {
     @Override
     public void saveOrUpdateUser(WbUserDO userDO) {
         wbUserDao.saveOrUpdateUser(userDO);
+    }
+
+    @Override
+    public List<WbUserDO> listUserByTeamId(Long teamId) {
+        return wbUserDao.listUserByTeamId(teamId);
     }
 
     @Override
@@ -68,6 +75,11 @@ public class UserManagerImpl implements UserManager {
     @Override
     public WbOuterDataUserDO getOuterDataUserByClientAndOuterId(String client, String outerId){
         return wbOuterDataUserDao.getOuterDataUserByClientAndOuterId(client, outerId);
+    }
+
+    @Override
+    public WbOuterDataUserDO getOuterDataUserByClientAndUserId(String client, Long userId) {
+        return wbOuterDataUserDao.getOuterDataUserByClientAndUserId(client, userId);
     }
 
     //  --------aggregate method

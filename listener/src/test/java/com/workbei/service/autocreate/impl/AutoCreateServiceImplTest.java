@@ -349,6 +349,55 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(savedDeptList).contains(unassignedDepartment.getId());
     }
 
+    /**
+     * 如果create的user已存在，那么要走update流程
+     * @throws Exception
+     */
+    @Test
+    public void testCreateUserWithUserAlreadyExist() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO3);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+
+        userVO.setName("at_new_user_name" + now.getTime());
+        userVO.setAvatar("at_new_user_avatar" + now.getTime());
+        List<String> newDeptList = new ArrayList<>();
+        newDeptList.add(deptVO1.getOuterCombineId());
+        newDeptList.add(deptVO3.getOuterCombineId());
+        userVO.setOuterCombineDeptIdList(newDeptList);
+        autoCreateService.createUser(userVO);
+
+        WbUserDO userDO = userManager.getUserById(userVO.getId());
+        assertThat(userDO.getName()).isEqualTo(userVO.getName());
+        WbAccountDO accountDO = accountManager.getAccountById(userDO.getAccountId());
+        assertThat(accountDO.getName()).isEqualTo(userVO.getName());
+        assertThat(accountDO.getAvatar()).isEqualTo(userVO.getAvatar());
+
+        List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userVO.getId());
+        assertThat(savedDeptList).hasSize(2);
+        assertThat(savedDeptList).contains(deptVO1.getId(), deptVO3.getId());
+    }
+
     @Test
     public void testUpdateUser() throws Exception {
         Date now = new Date();

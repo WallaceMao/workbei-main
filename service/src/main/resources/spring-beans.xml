@@ -32,6 +32,7 @@
     <bean id="demoService" class="com.workbei.service.demo.impl.DemoServiceImpl"/>
     <bean id="solutionBizService" class="com.workbei.service.solution.impl.SolutionServiceImpl"/>
     <bean id="tokenAuthService" class="com.workbei.service.tokenauth.impl.TokenAuthServiceImpl"/>
+    <bean id="queryService" class="com.workbei.service.autocreate.impl.QueryServiceImpl"/>
     <bean id="autoCreateService" class="com.workbei.service.autocreate.impl.AutoCreateServiceImpl">
         <constructor-arg ref="roleManager"/>
         <constructor-arg ref="accountManager"/>

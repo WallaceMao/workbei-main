@@ -25,4 +25,9 @@ public interface WbOuterDataDepartmentDao {
             @Param("client") String client,
             @Param("outerId") String outerId
     );
+
+    WbOuterDataDepartmentDO getOuterDataDepartmentByClientAndDepartmentId(
+            @Param("client") String client,
+            @Param("departmentId") Long departmentId
+    );
 }

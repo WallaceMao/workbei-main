@@ -16,6 +16,7 @@ public class AutoCreateDepartmentVO implements Serializable {
     private String outerParentCombineId;
     private String outerCombineId;
     private Boolean isTop = false;
+    private Boolean isUnassigned = false;
 
     //  不再使用parentId和teamId来传值
     @Deprecated
@@ -85,6 +86,14 @@ public class AutoCreateDepartmentVO implements Serializable {
 
     public void setTop(Boolean top) {
         isTop = top;
+    }
+
+    public Boolean getUnassigned() {
+        return isUnassigned;
+    }
+
+    public void setUnassigned(Boolean unassigned) {
+        isUnassigned = unassigned;
     }
 
     public String getParentId() {

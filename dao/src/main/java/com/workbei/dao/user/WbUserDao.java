@@ -4,6 +4,8 @@ import com.workbei.model.domain.user.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Wallace Mao
  * Date: 2018-11-12 1:17
@@ -30,4 +32,7 @@ public interface WbUserDao {
 
     void saveOrUpdateUserFunctionSetting(WbUserFunctionSettingDO userFunctionSettingDO);
     WbUserFunctionSettingDO getUserFunctionSettingByUserId(@Param("userId") Long userId);
+
+    List<WbUserDO> listUserByTeamId(
+            @Param("teamId") Long teamId);
 }
