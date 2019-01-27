@@ -137,7 +137,7 @@ public class AccountManagerImplTest extends BaseUnitTest {
     }
 
     @Test
-    public void testUpdateAccountInfoWithNoAvatar() {
+    public void testUpdateAccountInfoWithNoAvatar() throws Exception{
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         WbTeamDO teamSaved = teamManager.saveTeamInfo(teamVO);

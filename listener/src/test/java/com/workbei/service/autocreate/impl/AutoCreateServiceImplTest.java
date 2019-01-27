@@ -447,7 +447,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
      * 如果更新时用户的
      */
     @Test
-    public void testUpdateUserWithoutDepartment() {
+    public void testUpdateUserWithoutDepartment() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
@@ -485,7 +485,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
     }
 
     @Test
-    public void testUpdateUserWithUserNotFound() {
+    public void testUpdateUserWithUserNotFound() throws Exception {
         // 如果update的时候，用户不存在，那么应该走新增的流程
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();

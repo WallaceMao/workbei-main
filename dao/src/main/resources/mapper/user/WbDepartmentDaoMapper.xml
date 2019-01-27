@@ -4,16 +4,16 @@
 
     <!--部门相关-->
     <resultMap type="com.workbei.model.domain.user.WbDepartmentDO" id="departmentMap">
-        <id property="id" column="id" />
-        <result property="uuid" column="uuid" />
-        <result property="version" column="version" />
-        <result property="level" column="level" />
-        <result property="displayOrder" column="display_order" />
-        <result property="code" column="code" />
-        <result property="teamId" column="team_id" />
-        <result property="name" column="name" />
-        <result property="type" column="type" />
-        <result property="parentId" column="parent_id" />
+        <id property="id" column="id"/>
+        <result property="uuid" column="uuid"/>
+        <result property="version" column="version"/>
+        <result property="level" column="level"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="code" column="code"/>
+        <result property="teamId" column="team_id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="parentId" column="parent_id"/>
     </resultMap>
     <sql id="select-all-fields-department">
         id,
@@ -28,72 +28,82 @@
         parent_id
     </sql>
     <insert id="saveOrUpdateDepartment" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO department (
-            uuid,
-            version,
-            `level`,
-            display_order,
-            `code`,
-            `team_id`,
-            `name`,
-            type,
-            parent_id
-        )VALUES(
-            #{uuid},
-            0,
-            #{level},
-            #{displayOrder},
-            #{code},
-            #{teamId},
-            #{name},
-            #{type},
-            #{parentId}
-        )ON DUPLICATE KEY UPDATE
-            version=version+1,
-            `level`=#{level},
-            `display_order`=#{displayOrder},
-            `code`=#{code},
-            `name`=#{name},
-            `parent_id`=#{parentId}
+        INSERT INTO department (uuid,
+                                version,
+                                `level`,
+                                display_order,
+                                `code`,
+                                `team_id`,
+                                `name`,
+                                type,
+                                parent_id)
+        VALUES (#{uuid},
+                0,
+                #{level},
+                #{displayOrder},
+                #{code},
+                #{teamId},
+                #{name},
+                #{type},
+                #{parentId})
+        ON DUPLICATE KEY UPDATE version=version + 1,
+                                `level`=#{level},
+                                `display_order`=#{displayOrder},
+                                `code`=#{code},
+                                `name`=#{name},
+                                `parent_id`=#{parentId}
     </insert>
     <delete id="deleteDepartmentById">
-        DELETE FROM department
+        DELETE
+        FROM department
         <![CDATA[
-        WHERE id=#{id}
+        WHERE id = #{id}
         ]]>
     </delete>
     <select id="listDepartmentByTeamId" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields-department"/>  FROM department
+        SELECT
+        <include refid="select-all-fields-department"/>
+        FROM department
         <![CDATA[
 			WHERE team_id=#{teamId}
 		 ]]>
     </select>
     <select id="getDepartmentById" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields-department"/>  FROM department
+        SELECT
+        <include refid="select-all-fields-department"/>
+        FROM department
         <![CDATA[
 			WHERE id=#{id}
 		 ]]>
     </select>
     <select id="getTopDepartment" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields-department"/>  FROM department
+        SELECT
+        <include refid="select-all-fields-department"/>
+        FROM department
         <![CDATA[
 			WHERE team_id=#{teamId} and type='top'
 		 ]]>
     </select>
     <select id="getTopDepartmentId" resultType="long">
-        SELECT id  FROM department
+        SELECT id
+        FROM department
         <![CDATA[
-			WHERE team_id=#{teamId} and type='top'
-		 ]]>
+        WHERE team_id = #{teamId}
+          and type = 'top'
+        ]]>
     </select>
     <select id="getUnassignedDepartment" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields-department"/>  FROM department
+        SELECT
+        <include refid="select-all-fields-department"/>
+        FROM department
         <![CDATA[
 			WHERE team_id=#{teamId} and type='unassigned'
 		 ]]>
     </select>
     <select id="getDepartmentListByIds" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields-department"/> FROM department
+        SELECT
+        <include refid="select-all-fields-department"/>
+        FROM department
         WHERE id IN
         <foreach collection="ids" item="item" index="index"
                  open="(" separator="," close=")">
@@ -101,59 +111,66 @@
         </foreach>
     </select>
     <select id="listDepartmentByParentId" resultMap="departmentMap">
-        SELECT <include refid="select-all-fields-department"/>  FROM department
+        SELECT
+        <include refid="select-all-fields-department"/>
+        FROM department
         <![CDATA[
 			WHERE parent_id=#{parentId}
 		 ]]>
     </select>
     <select id="getDepartmentByClientAndOuterId" resultMap="departmentMap">
-        SELECT
-        d.id,
-        d.uuid,
-        d.`level`,
-        d.display_order,
-        d.`code`,
-        d.`team_id`,
-        d.`name`,
-        d.type,
-        d.parent_id
+        SELECT d.id,
+               d.uuid,
+               d.`level`,
+               d.display_order,
+               d.`code`,
+               d.`team_id`,
+               d.`name`,
+               d.type,
+               d.parent_id
         FROM department d
-        INNER JOIN outer_data_department o ON d.id=o.department_id
+                 INNER JOIN outer_data_department o ON d.id = o.department_id
         <![CDATA[
-			WHERE o.client=#{client} AND o.outer_id=#{outerId}
-		 ]]>
+        WHERE o.client = #{client}
+          AND o.outer_id = #{outerId}
+        ]]>
     </select>
 
     <!--userDept相关-->
     <insert id="saveOrUpdateUserDept" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_dept (
-        version,
-        department_id,
-        user_id
-        )VALUES(
-        0,
-        #{departmentId},
-        #{userId}
-        )ON DUPLICATE KEY UPDATE
-            version=version+1
+        INSERT INTO user_dept (version,
+                               department_id,
+                               user_id)
+        VALUES (0,
+                #{departmentId},
+                #{userId})
+        ON DUPLICATE KEY UPDATE version=version + 1
     </insert>
-    <delete id="deleteUserDeptByUserIdAndDepartmentId">
-        DELETE FROM user_dept
+    <delete id="deleteUserDeptByDepartmentId">
+        DELETE
+        FROM user_dept
         <![CDATA[
-        WHERE user_id=#{userId} AND department_id=#{departmentId}
+        WHERE department_id = #{departmentId}
+        ]]>
+    </delete>
+    <delete id="deleteUserDeptByDepartmentIdAndUserId">
+        DELETE
+        FROM user_dept
+        <![CDATA[
+        WHERE user_id = #{userId}
+          AND department_id = #{departmentId}
         ]]>
     </delete>
     <update id="updateUserDeptDepartmentId">
-        UPDATE user_dept SET
-        department_id=#{targetId}
-        WHERE
-        department_id=#{sourceId}
+        UPDATE user_dept
+        SET department_id=#{targetId}
+        WHERE department_id = #{sourceId}
     </update>
     <resultMap type="com.workbei.model.domain.user.WbUserDeptDO" id="userDeptMap">
-        <id property="id" column="id" />
-        <result property="version" column="version" />
-        <result property="departmentId" column="department_id" />
-        <result property="userId" column="user_id" />
+        <id property="id" column="id"/>
+        <result property="version" column="version"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="userId" column="user_id"/>
     </resultMap>
     <sql id="select-all-fields-user-dept">
         id,
@@ -162,30 +179,52 @@
         user_id
     </sql>
     <select id="getUserDeptByDepartmentIdAndUserId" resultMap="userDeptMap">
-        SELECT <include refid="select-all-fields-user-dept" />  FROM user_dept
+        SELECT
+        <include refid="select-all-fields-user-dept"/>
+        FROM user_dept
         <![CDATA[
 			WHERE department_id=#{departmentId} AND user_id=#{userId}
 		 ]]>
     </select>
     <select id="listUserDeptDepartmentIdByUserId" resultType="long">
-        SELECT department_id  FROM user_dept
+        SELECT department_id
+        FROM user_dept
         <![CDATA[
-			WHERE user_id=#{userId}
-		 ]]>
+        WHERE user_id = #{userId}
+        ]]>
+    </select>
+    <select id="listUserDeptUserIdByDepartmentId" resultType="long">
+        SELECT user_id
+        FROM user_dept
+        <![CDATA[
+        WHERE department_id = #{departmentId}
+        ]]>
     </select>
     <select id="listUserDeptByUserId" resultMap="userDeptMap">
-        SELECT <include refid="select-all-fields-user-dept" />  FROM user_dept
+        SELECT
+        <include refid="select-all-fields-user-dept"/>
+        FROM user_dept
         <![CDATA[
         WHERE user_id=#{userId}
         ]]>
     </select>
+    <select id="listUserUserIdWithoutDepartment" resultType="long">
+        SELECT id
+        FROM `user` u
+        <![CDATA[
+        WHERE team_id = #{teamId}
+        ]]>
+          AND NOT EXISTS(
+                SELECT id FROM user_dept ud WHERE ud.user_id = u.id
+            )
+    </select>
 
     <!--部门归属相关-->
     <resultMap type="com.workbei.model.domain.user.WbUserDeptAscriptionDO" id="userDeptAscriptionMap">
-        <id property="id" column="id" />
-        <result property="version" column="version" />
-        <result property="departmentId" column="department_id" />
-        <result property="userId" column="user_id" />
+        <id property="id" column="id"/>
+        <result property="version" column="version"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="userId" column="user_id"/>
     </resultMap>
     <sql id="select-all-fields-user-dept-ascription">
         id,
@@ -194,52 +233,65 @@
         user_id
     </sql>
     <insert id="saveOrUpdateUserDeptAscription" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_dept_ascription (
-        version,
-        department_id,
-        user_id
-        )VALUES(
-        0,
-        #{departmentId},
-        #{userId}
-        )ON DUPLICATE KEY UPDATE
-            version=version+1
+        INSERT INTO user_dept_ascription (version,
+                                          department_id,
+                                          user_id)
+        VALUES (0,
+                #{departmentId},
+                #{userId})
+        ON DUPLICATE KEY UPDATE version=version + 1
     </insert>
-    <delete id="deleteUserDeptAscriptionByUserIdAndDepartmentId">
-        DELETE FROM user_dept_ascription
+    <delete id="deleteUserDeptAscriptionByDepartmentIdAndUserId">
+        DELETE
+        FROM user_dept_ascription
         <![CDATA[
-        WHERE user_id=#{userId} AND department_id=#{departmentId}
+        WHERE user_id = #{userId}
+          AND department_id = #{departmentId}
         ]]>
     </delete>
     <delete id="deleteUserDeptAscriptionByDepartmentId">
-        DELETE FROM user_dept_ascription
+        DELETE
+        FROM user_dept_ascription
         <![CDATA[
-        WHERE department_id=#{departmentId}
+        WHERE department_id = #{departmentId}
         ]]>
     </delete>
     <delete id="deleteUserDeptAscriptionByUserIdAndDepartmentType">
-        DELETE t FROM user_dept_ascription t
-            LEFT JOIN department d ON t.department_id=d.id
+        DELETE t
+        FROM user_dept_ascription t
+                 LEFT JOIN department d ON t.department_id = d.id
         <![CDATA[
-        WHERE user_id=#{userId} AND d.type = #{departmentType}
+        WHERE user_id = #{userId}
+          AND d.type = #{departmentType}
+        ]]>
+    </delete>
+    <delete id="deleteUserDeptAscriptionByUserId">
+        DELETE
+        FROM user_dept_ascription
+        <![CDATA[
+        WHERE user_id = #{userId}
         ]]>
     </delete>
     <select id="getUserDeptAscriptionByDepartmentIdAndUserId" resultMap="userDeptAscriptionMap">
-        SELECT <include refid="select-all-fields-user-dept-ascription" />  FROM user_dept_ascription
+        SELECT
+        <include refid="select-all-fields-user-dept-ascription"/>
+        FROM user_dept_ascription
         <![CDATA[
         WHERE department_id=#{departmentId} AND user_id=#{userId}
         ]]>
     </select>
     <select id="listUserDeptAscriptionUserIdByDepartmentId" resultType="long">
-        SELECT user_id  FROM user_dept_ascription
+        SELECT user_id
+        FROM user_dept_ascription
         <![CDATA[
-			WHERE department_id=#{departmentId}
-		 ]]>
+        WHERE department_id = #{departmentId}
+        ]]>
     </select>
     <select id="listUserDeptAscriptionDepartmentIdByUserId" resultType="long">
-        SELECT department_id  FROM user_dept_ascription
+        SELECT department_id
+        FROM user_dept_ascription
         <![CDATA[
-			WHERE user_id=#{userId}
-		 ]]>
+        WHERE user_id = #{userId}
+        ]]>
     </select>
 </mapper>

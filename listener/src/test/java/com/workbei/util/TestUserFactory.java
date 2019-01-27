@@ -14,7 +14,10 @@ import java.util.Date;
  * Date: 2018-12-01 17:01
  */
 public class TestUserFactory {
-    public static AutoCreateUserVO getAutoCreateUserVO(){
+    private static final Long MILLS_DELAY = 1L;
+
+    public static AutoCreateUserVO getAutoCreateUserVO() throws Exception{
+        Thread.sleep(MILLS_DELAY);
         AutoCreateUserVO user = new AutoCreateUserVO();
         Date now = new Date();
         user.setName("auto_test_user_name_" + now.getTime());

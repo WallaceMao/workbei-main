@@ -43,7 +43,9 @@ public interface DepartmentManager {
     WbUserDeptDO getUserDeptByDepartmentIdAndUserId(Long departmentId, Long userId);
 
     List<Long> listUserDeptDepartmentIdByUserId(Long userId);
-    
+
+    List<Long> listUserDeptUserIdByDepartmentId(Long departmentId);
+
     List<WbUserDeptDO> listUserDeptByUserId(Long userId);
 
     //  --------userDeptAscription--------
