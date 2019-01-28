@@ -126,6 +126,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         departmentVO.setTop(true);
         departmentManager.saveDepartmentInfo(teamId, departmentVO);
         WbDepartmentDO topDepartment = departmentManager.getTeamTopDepartment(teamId);
+        assertThat(topDepartment.getType()).isEqualTo(WbConstant.DEPARTMENT_TYPE_TOP);
         WbOuterDataDepartmentDO outerDataDepartmentDO = departmentManager.getOuterDataDepartmentByClientAndOuterId(
                 departmentVO.getClient(), departmentVO.getOuterCombineId());
         assertThat(outerDataDepartmentDO).isNotNull();
@@ -196,6 +197,26 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         assertThat(outerDataDepartmentDO.getOuterId()).isEqualTo(departmentVO.getOuterCombineId());
     }
 
+    /**
+     * 在保存部门的时候，如果部门已经存在，那么应该走更新流程
+     */
+    @Test
+    public void testSaveDepartmentInfoAlreadyExists() {
+        Long teamId = globalTeam.getId();
+        AutoCreateDepartmentVO departmentVO = TestDepartmentFactory.getAutoCreateDepartmentVO(
+                globalOuterDataTeam.getOuterId());
+        departmentVO.setOuterParentCombineId(globalCommonOuterDataDepartment.getOuterId());
+        departmentManager.saveDepartmentInfo(teamId, departmentVO);
+        WbDepartmentDO departmentDO = departmentManager.getDepartmentByClientAndOuterId(
+                departmentVO.getClient(), departmentVO.getOuterCombineId());
+        assertThat(departmentDO).isNotNull();
+        //  重复保存
+        WbDepartmentDO repeatSavedDept = departmentManager.saveDepartmentInfo(teamId, departmentVO);
+
+        assertThat(repeatSavedDept).isNotNull();
+        assertThat(departmentDO.getId()).isEqualTo(repeatSavedDept.getId());
+    }
+
     @Test
     public void testSaveDepartmentUser() throws Exception {
         Long userId = RandomUtils.nextLong();
@@ -217,13 +238,21 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
                 globalTopDepartment.getId());
     }
 
+    /**
+     * 在更新department的时候，如果部门不存在，那么会抛出异常
+     */
     @Test
-    public void testUpdateDepartmentInfoBase() throws Exception {
+    public void testUpdateDepartmentInfoNotExists() {
         AutoCreateDepartmentVO autoCreateDepartmentVO = TestDepartmentFactory.getAutoCreateDepartmentVO(
                 globalOuterDataTeam.getOuterId());
         assertThatThrownBy(() -> departmentManager.updateDepartmentInfo(autoCreateDepartmentVO))
                 .hasMessageStartingWith(ExceptionCode.getMessage(DEPT_NOT_FOUND));
+    }
 
+    @Test
+    public void testUpdateDepartmentInfoBase() throws Exception {
+        AutoCreateDepartmentVO autoCreateDepartmentVO = TestDepartmentFactory.getAutoCreateDepartmentVO(
+                globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(globalCommonOuterDataDepartment.getOuterId());
         WbDepartmentDO oldDepartment = (WbDepartmentDO) SerializationUtils.clone(globalCommonDepartment);

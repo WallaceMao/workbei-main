@@ -202,33 +202,8 @@ public class DepartmentManagerImpl implements DepartmentManager {
      */
     @Override
     public WbDepartmentDO saveDepartmentInfo(Long teamId, AutoCreateDepartmentVO departmentVO) {
-        //  查找父级部门
-        WbDepartmentDO dept;
-        if (departmentVO.getTop()) {
-            //  说明是根部门，根部门不做处理，直接把topDepartment作为根部门
-            dept = wbDepartmentDao.getTopDepartment(teamId);
-        } else {
-            //  说明是普通部门
-            WbDepartmentDO parentDept = wbDepartmentDao.getDepartmentByClientAndOuterId(
-                    departmentVO.getClient(), departmentVO.getOuterParentCombineId()
-            );
-            //  如果父级部门没找到，那么就直接挂到topDepartment下
-            if (parentDept == null) {
-                parentDept = getTeamTopDepartment(teamId);
-            }
-            dept = DepartmentFactory.getDepartmentDO();
-            dept.setName(departmentVO.getName());
-            dept.setLevel(parentDept.getLevel() + 1);
-            dept.setCode("");
-            dept.setTeamId(teamId);
-            dept.setDisplayOrder(departmentVO.getDisplayOrder());
-            dept.setType(WbConstant.DEPARTMENT_TYPE_COMMON);
-            dept.setParentId(parentDept.getId());
-            wbDepartmentDao.saveOrUpdateDepartment(dept);
 
-            dept.setCode(parentDept.getCode() + WbConstant.DEPARTMENT_CODE_SEPARATOR + dept.getId());
-            wbDepartmentDao.saveOrUpdateDepartment(dept);
-        }
+        WbDepartmentDO dept = searchAndSaveDepartment(teamId, departmentVO);
 
         if (departmentVO.getOuterCombineId() != null) {
             WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
@@ -248,8 +223,7 @@ public class DepartmentManagerImpl implements DepartmentManager {
     @Override
     public WbDepartmentDO updateDepartmentInfo(AutoCreateDepartmentVO departmentVO) {
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
-                departmentVO.getClient(), departmentVO.getOuterCombineId()
-        );
+                departmentVO.getClient(), departmentVO.getOuterCombineId());
         if (departmentDO == null) {
             throw new WorkbeiServiceException(
                     ExceptionCode.getMessage(DEPT_NOT_FOUND, "departmentVO: ", departmentVO));
@@ -505,5 +479,42 @@ public class DepartmentManagerImpl implements DepartmentManager {
         userDeptDO.setDepartmentId(deptId);
         wbDepartmentDao.saveOrUpdateUserDept(userDeptDO);
         return userDeptDO;
+    }
+
+    private WbDepartmentDO searchAndSaveDepartment(Long teamId, AutoCreateDepartmentVO departmentVO){
+        //  查找父级部门
+        if (departmentVO.getTop()) {
+            //  说明是根部门，根部门不做处理，直接把topDepartment作为根部门
+            return wbDepartmentDao.getTopDepartment(teamId);
+        }
+        //  判断要保存的部门是否已存在，如果已存在，那么就走更新流程
+        WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
+                departmentVO.getClient(), departmentVO.getOuterCombineId());
+        if (departmentDO != null) {
+            return updateDepartmentInfo(departmentVO);
+        }
+
+        //  说明是普通部门
+        WbDepartmentDO parentDept = wbDepartmentDao.getDepartmentByClientAndOuterId(
+                departmentVO.getClient(), departmentVO.getOuterParentCombineId()
+        );
+        //  如果父级部门没找到，那么就直接挂到topDepartment下
+        if (parentDept == null) {
+            parentDept = getTeamTopDepartment(teamId);
+        }
+        WbDepartmentDO dept = DepartmentFactory.getDepartmentDO();
+        dept.setName(departmentVO.getName());
+        dept.setLevel(parentDept.getLevel() + 1);
+        dept.setCode("");
+        dept.setTeamId(teamId);
+        dept.setDisplayOrder(departmentVO.getDisplayOrder());
+        dept.setType(WbConstant.DEPARTMENT_TYPE_COMMON);
+        dept.setParentId(parentDept.getId());
+        wbDepartmentDao.saveOrUpdateDepartment(dept);
+
+        dept.setCode(parentDept.getCode() + WbConstant.DEPARTMENT_CODE_SEPARATOR + dept.getId());
+        wbDepartmentDao.saveOrUpdateDepartment(dept);
+
+        return dept;
     }
 }
