@@ -13,7 +13,10 @@ import java.util.Date;
  * Date: 2018-12-01 17:01
  */
 public class TestTeamFactory {
-    public static AutoCreateTeamVO getAutoCreateTeamVO(){
+    private static final Long MILLS_DELAY = 1L;
+
+    public static AutoCreateTeamVO getAutoCreateTeamVO() throws Exception{
+        Thread.sleep(MILLS_DELAY);
         AutoCreateTeamVO team = new AutoCreateTeamVO();
         Date now = new Date();
         team.setName("auto_test_team_name_" + now.getTime());
@@ -21,14 +24,16 @@ public class TestTeamFactory {
         return team;
     }
 
-    public static WbTeamDO getTeamDO(){
+    public static WbTeamDO getTeamDO() throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
         Date now = new Date();
         WbTeamDO teamDO = TeamFactory.getTeamDO();
         teamDO.setName("auto_test_team_name_" + now.getTime());
         return teamDO;
     }
 
-    public static WbOuterDataTeamDO getOuterDataTeam(Long teamId){
+    public static WbOuterDataTeamDO getOuterDataTeam(Long teamId) throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
         Date now = new Date();
         WbOuterDataTeamDO outerDataTeamDO = TeamFactory.getOuterDataTeamDO();
         outerDataTeamDO.setClient(WbConstant.APP_DEFAULT_CLIENT);

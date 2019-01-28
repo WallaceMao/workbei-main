@@ -305,7 +305,7 @@ public class AutoCreateController {
                     value = "授权token", defaultValue = "abcd"),
             @ApiImplicitParam(required = true, paramType = "path", name = "outerCombineId", dataType = "string",
                     value = "用户的outerId"),
-            @ApiImplicitParam(required = true, paramType = "path", name = "isAdmin", dataType = "boolean",
+            @ApiImplicitParam(required = true, paramType = "path", name = "admin", dataType = "boolean",
                     value = "是否是管理员")
     })
     @ApiResponses({
@@ -314,16 +314,16 @@ public class AutoCreateController {
             @ApiResponse(code = 500, message = "服务器错误"),
             @ApiResponse(code = 200, message = "成功"),
     })
-    @PutMapping("/user/{outerId}/admin/{isAdmin}")
+    @PutMapping("/user/{outerId}/admin/{admin}")
     public Map updateUserSetAdmin(
             @PathVariable("outerId") String outerId,
-            @PathVariable("isAdmin") Boolean isAdmin
+            @PathVariable("admin") Boolean isAdmin
     ) {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "updateUserSetAdmin",
                 getKV("outerId", outerId),
-                getKV("isAdmin", isAdmin)
+                getKV("admin", isAdmin)
         ));
         AutoCreateUserVO userVO = new AutoCreateUserVO();
         userVO.setOuterCombineId(outerId);

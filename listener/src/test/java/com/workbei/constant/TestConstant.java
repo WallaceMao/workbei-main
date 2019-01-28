@@ -13,6 +13,6 @@ public class TestConstant {
     public static String URL_DELETE_DEPARTMENT = "/v3w/tokenAuth/department/{outerId}";
     public static String URL_CREATE_USER = "/v3w/tokenAuth/user";
     public static String URL_UPDATE_USER = "/v3w/tokenAuth/user/{outerId}";
-    public static String URL_UPDATE_USER_SET_ADMIN = "/v3w/tokenAuth/user/{outerId}/admin/{isAdmin}";
+    public static String URL_UPDATE_USER_SET_ADMIN = "/v3w/tokenAuth/user/{outerId}/admin/{admin}";
     public static String URL_UPDATE_USER_REMOVE_TEAM = "/v3w/tokenAuth/user/{outerId}/team/null";
 }

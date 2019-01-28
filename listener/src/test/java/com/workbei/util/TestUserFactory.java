@@ -29,7 +29,9 @@ public class TestUserFactory {
         return user;
     }
 
-    public static WbAccountDO getAccountDO(){
+    public static WbAccountDO getAccountDO() throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
+
         Date now = new Date();
         WbAccountDO accountDO = UserFactory.getAccountDO();
         accountDO.setAvatar("at_account_avatar_" + now.getTime());
@@ -40,14 +42,18 @@ public class TestUserFactory {
         return accountDO;
     }
 
-    public static WbUserDO getUserDO(){
+    public static WbUserDO getUserDO() throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
+
         Date now = new Date();
         WbUserDO userDO = UserFactory.getUserDO();
         userDO.setName("at_user_name_" + now.getTime());
         return userDO;
     }
 
-    public static WbUserOauthDO getUserOauthDO(Long accountId) {
+    public static WbUserOauthDO getUserOauthDO(Long accountId) throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
+
         WbUserOauthDO userOauthDO = new WbUserOauthDO();
         userOauthDO.setAccountId(accountId);
         userOauthDO.setDdUnionId("at_dd_union_id" + new Date().getTime());

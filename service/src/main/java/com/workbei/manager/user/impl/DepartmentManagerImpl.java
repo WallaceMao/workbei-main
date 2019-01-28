@@ -229,18 +229,7 @@ public class DepartmentManagerImpl implements DepartmentManager {
                     ExceptionCode.getMessage(DEPT_NOT_FOUND, "departmentVO: ", departmentVO));
         }
         //  修改基本信息
-        boolean baseInfoChanged = false;
-        if (departmentVO.getName() != null) {
-            baseInfoChanged = true;
-            departmentDO.setName(departmentVO.getName());
-        }
-        if (departmentVO.getDisplayOrder() != null) {
-            baseInfoChanged = true;
-            departmentDO.setDisplayOrder(departmentVO.getDisplayOrder());
-        }
-        if (baseInfoChanged) {
-            wbDepartmentDao.saveOrUpdateDepartment(departmentDO);
-        }
+        updateDepartmentBaseInfo(departmentDO, departmentVO);
         //  修改父部门信息
         if (departmentVO.getOuterParentCombineId() != null) {
             WbDepartmentDO parentDept = getDepartmentByClientAndOuterId(
@@ -250,7 +239,10 @@ public class DepartmentManagerImpl implements DepartmentManager {
             if (parentDept == null) {
                 parentDept = wbDepartmentDao.getTopDepartment(departmentDO.getTeamId());
             }
-            if (!departmentDO.getId().equals(parentDept.getId())) {
+            //  根据parentCombineId获取到的parentDept的id为新的parentId
+            //  根据departmentDO.getParentId获取到的是旧的parentId
+            //  如果二者不一致，那么就移动部门
+            if (!parentDept.getId().equals(departmentDO.getParentId())) {
                 changeDepartment(departmentDO, parentDept);
             }
         }
@@ -271,9 +263,16 @@ public class DepartmentManagerImpl implements DepartmentManager {
         if (departmentDO == null) {
             return;
         }
+        //  以下情况不能删除部门：
+        //  1、要删除的部门是最顶级部门
+        //  2、要删除的部门是未分配部门
+        String type = departmentDO.getType();
+        if (WbConstant.DEPARTMENT_TYPE_TOP.equals(type) || WbConstant.DEPARTMENT_TYPE_UNASSIGNED.equals(type)) {
+            return;
+        }
         //  按照以下步骤进行：
-        //  1. 删除所有的userDeptAscription
-        //  2. 递归删除department极其子部门，包括userDept一并删除
+        //  1. 删除所有除topDepartment之外的userDeptAscription
+        //  2. 删除department及其关联，包括userDept、outerDataDepartment等
         //  3. 读取此时没有部门的user，将其所在的部门保存为unassigned（未分配部门）
         //  4. 重建userDeptAscription
         Long teamId = departmentDO.getTeamId();
@@ -281,10 +280,11 @@ public class DepartmentManagerImpl implements DepartmentManager {
         //  删除userDeptAscription，以便后面重建
         List<Long> allDeptUserIdList = wbDepartmentDao.listUserDeptAscriptionUserIdByDepartmentId(deptId);
         for (Long userId : allDeptUserIdList) {
-            wbDepartmentDao.deleteUserDeptAscriptionByUserId(userId);
+            wbDepartmentDao.deleteUserDeptAscriptionByUserIdAndDepartmentType(userId, WbConstant.DEPARTMENT_TYPE_COMMON);
+            wbDepartmentDao.deleteUserDeptAscriptionByUserIdAndDepartmentType(userId, WbConstant.DEPARTMENT_TYPE_UNASSIGNED);
         }
-        //  递归删除，先删除userDept的关联
-        deleteDepartmentRecursive(departmentDO);
+        //  删除department及其关联，包括userDept、outerDataDepartment等
+        deleteSingleDepartment(departmentDO);
         //  读取出没有部门的员工列表，将其关联为未分配部门中
         List<Long> userIdListWithoutDepartment = wbDepartmentDao.listUserUserIdWithoutDepartment(teamId);
         WbDepartmentDO unassignedDepartment = wbDepartmentDao.getUnassignedDepartment(teamId);
@@ -485,7 +485,8 @@ public class DepartmentManagerImpl implements DepartmentManager {
         //  查找父级部门
         if (departmentVO.getTop()) {
             //  说明是根部门，根部门不做处理，直接把topDepartment作为根部门
-            return wbDepartmentDao.getTopDepartment(teamId);
+            WbDepartmentDO topDepartment = wbDepartmentDao.getTopDepartment(teamId);
+            return updateDepartmentBaseInfo(topDepartment, departmentVO);
         }
         //  判断要保存的部门是否已存在，如果已存在，那么就走更新流程
         WbDepartmentDO departmentDO = getDepartmentByClientAndOuterId(
@@ -516,5 +517,21 @@ public class DepartmentManagerImpl implements DepartmentManager {
         wbDepartmentDao.saveOrUpdateDepartment(dept);
 
         return dept;
+    }
+
+    private WbDepartmentDO updateDepartmentBaseInfo(WbDepartmentDO departmentDO, AutoCreateDepartmentVO departmentVO) {
+        boolean baseInfoChanged = false;
+        if (departmentVO.getName() != null) {
+            baseInfoChanged = true;
+            departmentDO.setName(departmentVO.getName());
+        }
+        if (departmentVO.getDisplayOrder() != null) {
+            baseInfoChanged = true;
+            departmentDO.setDisplayOrder(departmentVO.getDisplayOrder());
+        }
+        if (baseInfoChanged) {
+            wbDepartmentDao.saveOrUpdateDepartment(departmentDO);
+        }
+        return departmentDO;
     }
 }

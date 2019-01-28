@@ -46,7 +46,7 @@ public class TokenAuthInterceptorTest extends WebBaseTest {
         Date now = new Date();
         Map<String, String> params = new HashMap<>();
         params.put("outerId", String.valueOf(now.getTime()));
-        params.put("isAdmin", String.valueOf(true));
+        params.put("admin", String.valueOf(true));
         checkNoAuthorization(post(URL_CREATE_TEAM));
         checkNoAuthorization(post(URL_CREATE_DEPARTMENT));
         checkNoAuthorization(post(URL_CREATE_USER));
@@ -62,7 +62,7 @@ public class TokenAuthInterceptorTest extends WebBaseTest {
         Date now = new Date();
         Map<String, String> params = new HashMap<>();
         params.put("outerId", String.valueOf(now.getTime()));
-        params.put("isAdmin", String.valueOf(true));
+        params.put("admin", String.valueOf(true));
         checkIpNotInWhiteList(post(URL_CREATE_TEAM), IP_2);
         checkIpNotInWhiteList(post(URL_CREATE_DEPARTMENT), IP_2);
         checkIpNotInWhiteList(post(URL_CREATE_USER), IP_2);
@@ -78,7 +78,7 @@ public class TokenAuthInterceptorTest extends WebBaseTest {
         Date now = new Date();
         Map<String, String> params = new HashMap<>();
         params.put("outerId", String.valueOf(now.getTime()));
-        params.put("isAdmin", String.valueOf(true));
+        params.put("admin", String.valueOf(true));
         String invalidToken = "invalid_token_" + now.getTime();
         checkInvlidaToken(post(URL_CREATE_TEAM), IP_1, invalidToken);
         checkInvlidaToken(post(URL_CREATE_DEPARTMENT), IP_1, invalidToken);

@@ -17,7 +17,7 @@ public class AutoCreateUserVO implements Serializable {
     private String outerCombineId;
     private List<String> outerCombineDeptIdList;
     private String outerUnionId;
-    private Boolean isAdmin;
+    private Boolean admin;
 
     @Deprecated
     private String username;
@@ -99,11 +99,11 @@ public class AutoCreateUserVO implements Serializable {
     }
 
     public Boolean getAdmin() {
-        return isAdmin;
+        return admin;
     }
 
     public void setAdmin(Boolean admin) {
-        isAdmin = admin;
+        this.admin = admin;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class AutoCreateUserVO implements Serializable {
                 ", outerCombineId='" + outerCombineId + '\'' +
                 ", outerCombineDeptIdList=" + outerCombineDeptIdList +
                 ", outerUnionId='" + outerUnionId + '\'' +
-                ", isAdmin=" + isAdmin +
+                ", admin=" + admin +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", teamId=" + teamId +

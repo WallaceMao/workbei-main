@@ -293,7 +293,7 @@ public class AutoCreateControllerTest extends WebBaseTest {
 
         Map<String, Object> pathParams = new HashMap<>();
         pathParams.put("outerId", userVO.getOuterCombineId());
-        pathParams.put("isAdmin", true);
+        pathParams.put("admin", true);
         String updateUserSetAdminPath = RegExpUtil.replacePathVariable(URL_UPDATE_USER_SET_ADMIN, pathParams);
 
         mockMvc.perform(put(updateUserSetAdminPath)

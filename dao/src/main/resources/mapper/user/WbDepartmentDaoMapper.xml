@@ -121,6 +121,7 @@
     <select id="getDepartmentByClientAndOuterId" resultMap="departmentMap">
         SELECT d.id,
                d.uuid,
+               d.version,
                d.`level`,
                d.display_order,
                d.`code`,

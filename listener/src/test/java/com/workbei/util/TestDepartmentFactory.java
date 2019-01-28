@@ -13,7 +13,11 @@ import java.util.Date;
  * Date: 2018-12-02 1:45
  */
 public class TestDepartmentFactory {
-    public static AutoCreateDepartmentVO getAutoCreateDepartmentVO(String corpOuterId){
+    private static final Long MILLS_DELAY = 1L;
+
+    public static AutoCreateDepartmentVO getAutoCreateDepartmentVO(String corpOuterId) throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
+
         Date now = new Date();
         AutoCreateDepartmentVO departmentVO = new AutoCreateDepartmentVO();
         departmentVO.setName("at_dept_name" + now.getTime());
@@ -24,7 +28,9 @@ public class TestDepartmentFactory {
         departmentVO.setOuterParentCombineId("at_dept_outer_pcomid" + now.getTime());
         return departmentVO;
     }
-    public static WbDepartmentDO getDepartmentDO(Long teamId, Long parentId, Integer level){
+    public static WbDepartmentDO getDepartmentDO(Long teamId, Long parentId, Integer level) throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
+
         Date now = new Date();
         WbDepartmentDO departmentDO = DepartmentFactory.getDepartmentDO();
         departmentDO.setTeamId(teamId);
@@ -35,7 +41,9 @@ public class TestDepartmentFactory {
         return departmentDO;
     }
 
-    public static WbOuterDataDepartmentDO getOuterDataDepartment(Long departmentId) {
+    public static WbOuterDataDepartmentDO getOuterDataDepartment(Long departmentId) throws InterruptedException {
+        Thread.sleep(MILLS_DELAY);
+
         Date now = new Date();
         WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
         outerDataDepartmentDO.setClient(WbConstant.APP_DEFAULT_CLIENT);
