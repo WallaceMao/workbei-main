@@ -10,4 +10,8 @@ public interface AppManager {
     void saveOrUpdateOuterDataApp(WbOuterDataAppDO wbOuterDataAppDO);
 
     WbOuterDataAppDO getOuterDataAppByToken(String token);
+
+    WbOuterDataAppDO getOuterDataAppByKey(String key);
+
+    void deleteOuterDataAppByKey(String key);
 }

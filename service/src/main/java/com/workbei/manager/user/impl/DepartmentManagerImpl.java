@@ -263,11 +263,9 @@ public class DepartmentManagerImpl implements DepartmentManager {
         if (departmentDO == null) {
             return;
         }
-        //  以下情况不能删除部门：
-        //  1、要删除的部门是最顶级部门
-        //  2、要删除的部门是未分配部门
+        //  未分配部门不能删除
         String type = departmentDO.getType();
-        if (WbConstant.DEPARTMENT_TYPE_TOP.equals(type) || WbConstant.DEPARTMENT_TYPE_UNASSIGNED.equals(type)) {
+        if (WbConstant.DEPARTMENT_TYPE_UNASSIGNED.equals(type)) {
             return;
         }
         //  按照以下步骤进行：
@@ -469,8 +467,11 @@ public class DepartmentManagerImpl implements DepartmentManager {
     private void deleteSingleDepartment(WbDepartmentDO departmentDO) {
         Long deptId = departmentDO.getId();
         wbDepartmentDao.deleteUserDeptByDepartmentId(deptId);
-        wbDepartmentDao.deleteDepartmentById(deptId);
         wbOuterDataDepartmentDao.deleteOuterDataDepartmentByDepartmentId(deptId);
+        //  topDepartment不允许删除
+        if (!WbConstant.DEPARTMENT_TYPE_TOP.equals(departmentDO.getType())) {
+            wbDepartmentDao.deleteDepartmentById(deptId);
+        }
     }
 
     private WbUserDeptDO saveOrUpdateUserDept(Long deptId, Long userId){

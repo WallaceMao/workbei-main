@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository("wbOuterDataAppDao")
 public interface WbOuterDataAppDao extends BaseCrudDao<WbOuterDataAppDO, Long> {
     WbOuterDataAppDO getOuterDataAppByToken(
-            @Param("token") String token
-    );
+            @Param("token") String token);
+    WbOuterDataAppDO getOuterDataAppByKey(
+            @Param("key") String key);
+    void deleteOuterDataAppByKey(
+            @Param("key") String key);
 }

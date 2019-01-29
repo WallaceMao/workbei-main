@@ -14,6 +14,7 @@ public class WbOuterDataAppDO implements Serializable {
     private String token;
     private String whiteIpList;
     private String note;
+    private String rootDeptId;
 
     public Long getId() {
         return id;
@@ -71,6 +72,14 @@ public class WbOuterDataAppDO implements Serializable {
         this.note = note;
     }
 
+    public String getRootDeptId() {
+        return rootDeptId;
+    }
+
+    public void setRootDeptId(String rootDeptId) {
+        this.rootDeptId = rootDeptId;
+    }
+
     @Override
     public String toString() {
         return "WbOuterDataAppDO{" +
@@ -81,6 +90,7 @@ public class WbOuterDataAppDO implements Serializable {
                 ", token='" + token + '\'' +
                 ", whiteIpList='" + whiteIpList + '\'' +
                 ", note='" + note + '\'' +
+                ", rootDeptId='" + rootDeptId + '\'' +
                 '}';
     }
 }

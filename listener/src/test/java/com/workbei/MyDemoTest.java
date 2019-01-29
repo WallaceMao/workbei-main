@@ -8,6 +8,7 @@ import com.workbei.model.domain.user.WbAccountDO;
 import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.model.domain.user.WbUserDO;
 import com.workbei.util.TestUserFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Transactional(transactionManager = "transactionManager")
 @Rollback
+@Ignore
 public class MyDemoTest extends BaseUnitTest {
     @Autowired
     private AccountManager accountManager;

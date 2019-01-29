@@ -3,12 +3,16 @@ package com.workbei.controller.util;
 import com.workbei.BaseUnitTest;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Transactional(transactionManager = "transactionManager")
+@Rollback
 public class IpUtilTest extends BaseUnitTest {
 
     @Test

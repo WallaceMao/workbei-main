@@ -29,3 +29,6 @@ ALTER TABLE `outer_data_app`
   MODIFY COLUMN `key` varchar(168) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ALTER TABLE `outer_data_app` ADD UNIQUE INDEX `uq_outer_data_app_key`(`key`) USING BTREE;
 ALTER TABLE `user_role_group` ADD UNIQUE INDEX `uq_user_role_group_user_role`(`user_id`, `role_group_id`) USING BTREE;
+
+# 新增app默认的顶级部门id
+ALTER TABLE `outer_data_app` ADD COLUMN `root_dept_id` varchar(32) DEFAULT '1';

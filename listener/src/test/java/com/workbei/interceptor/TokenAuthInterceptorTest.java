@@ -4,13 +4,16 @@ import com.workbei.WebBaseTest;
 import com.workbei.manager.app.AppManager;
 import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.util.RegExpUtil;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +23,8 @@ import static com.workbei.constant.TestConstant.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Transactional(transactionManager = "transactionManager")
+@Rollback
 public class TokenAuthInterceptorTest extends WebBaseTest {
     @Autowired
     private AppManager appManager;
@@ -39,6 +44,11 @@ public class TokenAuthInterceptorTest extends WebBaseTest {
         appDO.setWhiteIpList(SUB_NETWORK);
         appManager.saveOrUpdateOuterDataApp(appDO);
         globalApp = appDO;
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        appManager.deleteOuterDataAppByKey(globalApp.getKey());
     }
 
     @Test

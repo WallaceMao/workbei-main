@@ -266,17 +266,16 @@ public class AutoCreateServiceImpl implements AutoCreateService {
                 newDeptList.add(deptId);
             }
         }
-        //  遍历newDeptList，如果newDeptId在oldDeptId中不存在，说明是新增的
-        for (Long newDeptId : newDeptList) {
-            if (!oldDeptList.contains(newDeptId)) {
-                departmentManager.saveDepartmentUser(newDeptId, userId);
-            }
-        }
-
         //  遍历oldDeptList，如果oldDeptId在newDeptId中不存在，说明是需要删除的
         for (Long oldDeptId : oldDeptList) {
             if (!newDeptList.contains(oldDeptId)) {
                 departmentManager.deleteDepartmentUser(oldDeptId, userId);
+            }
+        }
+        //  遍历newDeptList，如果newDeptId在oldDeptId中不存在，说明是新增的
+        for (Long newDeptId : newDeptList) {
+            if (!oldDeptList.contains(newDeptId)) {
+                departmentManager.saveDepartmentUser(newDeptId, userId);
             }
         }
         // 如果最终这个用户没有任何部门关联，那么会将其放到未分配部门中

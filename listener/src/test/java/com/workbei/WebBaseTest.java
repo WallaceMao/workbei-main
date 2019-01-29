@@ -19,7 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextHierarchy({
-        @ContextConfiguration("classpath:spring-context.xml"),
+        @ContextConfiguration("classpath:spring-test.xml"),
         @ContextConfiguration("file:src/main/webapp/WEB-INF/spring-servlet.xml")
 })
 public class WebBaseTest {

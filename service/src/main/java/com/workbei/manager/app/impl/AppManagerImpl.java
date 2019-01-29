@@ -25,4 +25,14 @@ public class AppManagerImpl implements AppManager {
     public WbOuterDataAppDO getOuterDataAppByToken(String token) {
         return wbOuterDataAppDao.getOuterDataAppByToken(token);
     }
+
+    @Override
+    public WbOuterDataAppDO getOuterDataAppByKey(String key) {
+        return wbOuterDataAppDao.getOuterDataAppByKey(key);
+    }
+
+    @Override
+    public void deleteOuterDataAppByKey(String key) {
+        wbOuterDataAppDao.deleteOuterDataAppByKey(key);
+    }
 }

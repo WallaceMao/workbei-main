@@ -8,12 +8,16 @@ import com.workbei.service.tokenauth.TokenAuthService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Transactional(transactionManager = "transactionManager")
+@Rollback
 public class TokenAuthServiceImplTest extends BaseUnitTest {
     @Autowired
     private AppManager appManager;
@@ -21,7 +25,7 @@ public class TokenAuthServiceImplTest extends BaseUnitTest {
     private TokenAuthService tokenAuthService;
 
     @Test
-    public void checkToken() {
+    public void checkToken() throws Exception {
         Date now = new Date();
         String randomToken  ="random_token_" + now.getTime();
         //  token不存在，返回false
@@ -33,7 +37,7 @@ public class TokenAuthServiceImplTest extends BaseUnitTest {
         appDO.setToken(randomToken);
         appDO.setWhiteIpList("127.0.0.1");
         appManager.saveOrUpdateOuterDataApp(appDO);
-        // token不是WbConstant，返回false
+        // token不是WbConstant.APP_DEFAULT_CLIENT，返回false
         assertThat(tokenAuthService.checkToken(appDO.getToken())).isFalse();
 
         WbOuterDataAppDO appDO2 = new WbOuterDataAppDO();

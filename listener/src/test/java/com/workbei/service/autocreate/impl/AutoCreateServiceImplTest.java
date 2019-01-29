@@ -280,7 +280,12 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         assertThat(userRole).isNotNull();
         List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
         assertThat(savedDeptList).hasSize(2);
-        assertThat(savedDeptList).contains(deptVO1.getId(), deptVO2.getId());
+        assertThat(savedDeptList).containsExactlyInAnyOrder(
+                deptVO1.getId(), deptVO2.getId());
+        List<Long> userDeptAscriptionDeptIdList = departmentManager.listUserDeptAscriptionDepartmentIdByUserId(userId);
+        assertThat(userDeptAscriptionDeptIdList).hasSize(2);
+        assertThat(userDeptAscriptionDeptIdList).containsExactlyInAnyOrder(
+                deptVO1.getId(), deptVO2.getId());
     }
 
     /**
@@ -441,6 +446,9 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userVO.getId());
         assertThat(savedDeptList).hasSize(2);
         assertThat(savedDeptList).contains(deptVO1.getId(), deptVO3.getId());
+        List<Long> savedUserDeptAscriptionDeptIdList = departmentManager.listUserDeptAscriptionDepartmentIdByUserId(userVO.getId());
+        assertThat(savedUserDeptAscriptionDeptIdList).hasSize(2);
+        assertThat(savedUserDeptAscriptionDeptIdList).contains(deptVO1.getId(), deptVO3.getId());
     }
 
     /**

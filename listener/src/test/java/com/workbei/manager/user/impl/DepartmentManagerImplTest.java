@@ -657,25 +657,10 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
     }
 
     /**
-     * top部门和unassigned部门不能删除
+     * unassigned部门不能删除
      */
     @Test
-    public void testDeleteDepartmentNotEditable() throws Exception {
-        WbOuterDataDepartmentDO topOuterDataDepartmentDO = TestDepartmentFactory.getOuterDataDepartment(
-                globalTopDepartment.getId());
-        departmentManager.saveOrUpdateOuterDataDepartment(topOuterDataDepartmentDO);
-        WbOuterDataDepartmentDO topOuterDataDepartment = departmentManager.getOuterDataDepartmentByClientAndDepartmentId(
-                globalOuterDataTeam.getClient(), globalTopDepartment.getId());
-        AutoCreateDepartmentVO topAutoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        topAutoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
-        topAutoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
-        topAutoCreateDepartmentVO.setOuterCombineId(topOuterDataDepartment.getOuterId());
-        departmentManager.deleteDepartmentInfo(topAutoCreateDepartmentVO);
-        WbDepartmentDO topDept = departmentManager.getTeamTopDepartment(globalTeam.getId());
-
-        assertThat(topDept).isNotNull();
-        assertThat(topDept.getId()).isEqualTo(globalTopDepartment.getId());
-
+    public void testDeleteUnassignedDepartment() throws Exception {
         WbOuterDataDepartmentDO unassignedOuterDataDepartmentDO = TestDepartmentFactory.getOuterDataDepartment(
                 globalUnassignedDepartment.getId());
         departmentManager.saveOrUpdateOuterDataDepartment(unassignedOuterDataDepartmentDO);
@@ -690,6 +675,76 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         assertThat(unassignedDept).isNotNull();
         assertThat(unassignedDept.getId()).isEqualTo(globalUnassignedDepartment.getId());
+    }
+
+    /**
+     * 对于top部门，删除top部门对应的outerDataDepartment，同时处理userDept和userDeptAscription
+     * @throws Exception
+     */
+    @Test
+    public void testDeleteTopDepartment() throws Exception {
+        Long teamId = globalTeam.getId();
+        WbUserDO topDeptUser = getSavedUser();
+        Long topDeptUserId = topDeptUser.getId();
+        WbOuterDataDepartmentDO topOuterDataDepartmentDO = TestDepartmentFactory.getOuterDataDepartment(
+                globalTopDepartment.getId());
+        departmentManager.saveOrUpdateOuterDataDepartment(topOuterDataDepartmentDO);
+        WbOuterDataDepartmentDO topOuterDataDepartment = departmentManager.getOuterDataDepartmentByClientAndDepartmentId(
+                globalOuterDataTeam.getClient(), globalTopDepartment.getId());
+        departmentManager.saveDepartmentUser(globalTopDepartment.getId(), topDeptUserId);
+
+        AutoCreateDepartmentVO topAutoCreateDepartmentVO = new AutoCreateDepartmentVO();
+        topAutoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        topAutoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
+        topAutoCreateDepartmentVO.setOuterCombineId(topOuterDataDepartment.getOuterId());
+        departmentManager.deleteDepartmentInfo(topAutoCreateDepartmentVO);
+
+        WbDepartmentDO topDept = departmentManager.getTeamTopDepartment(globalTeam.getId());
+        assertThat(topDept).isNotNull();
+        assertThat(topDept.getId()).isEqualTo(globalTopDepartment.getId());
+
+        WbOuterDataDepartmentDO topOuterDataDept = departmentManager.getOuterDataDepartmentByClientAndOuterId(
+                globalOuterDataTeam.getClient(), topOuterDataDepartment.getOuterId());
+        assertThat(topOuterDataDept).isNull();
+
+        List<Long> deptIdList = departmentManager.listUserDeptDepartmentIdByUserId(topDeptUserId);
+        assertThat(deptIdList).containsExactly(globalUnassignedDepartment.getId());
+
+        List<Long> userDeptAscriptionDeptIdList = departmentManager.listUserDeptAscriptionDepartmentIdByUserId(topDeptUserId);
+        assertThat(userDeptAscriptionDeptIdList).containsExactlyInAnyOrder(
+                globalTopDepartment.getId(),
+                globalUnassignedDepartment.getId());
+    }
+
+    @Test
+    public void testDeleteTopDepartmentInfoWithUserTopDeptLinkExists() throws Exception {
+        Long teamId = globalTeam.getId();
+        WbUserDO userDO1 = getSavedUser();
+        Long userId1 = userDO1.getId();
+        //  deptA1
+        AutoCreateDepartmentVO deptA1 = TestDepartmentFactory.getAutoCreateDepartmentVO(
+                globalOuterDataTeam.getOuterId());
+        deptA1.setOuterParentCombineId(globalCommonOuterDataDepartment.getOuterId());
+        departmentManager.saveDepartmentInfo(teamId, deptA1);
+        WbDepartmentDO deptDOA1 = departmentManager.getDepartmentByClientAndOuterId(
+                deptA1.getClient(), deptA1.getOuterCombineId());
+        departmentManager.saveDepartmentUser(deptDOA1.getId(), userId1);
+        departmentManager.saveDepartmentUser(globalUnassignedDepartment.getId(), userId1);
+
+        //  delete deptA1
+        AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
+        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
+        autoCreateDepartmentVO.setOuterCombineId(deptA1.getOuterCombineId());
+        departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO);
+
+        //  验证userId1
+        List<Long> user1DepartmentIdList = departmentManager.listUserDeptDepartmentIdByUserId(userId1);
+        assertThat(user1DepartmentIdList).containsExactly(globalUnassignedDepartment.getId());
+        List<Long> user1AscriptionDepartmentIdList = departmentManager.listUserDeptAscriptionDepartmentIdByUserId(userId1);
+        assertThat(user1AscriptionDepartmentIdList).containsExactlyInAnyOrder(
+                globalTopDepartment.getId(),
+                globalUnassignedDepartment.getId());
     }
 
     /**

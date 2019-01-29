@@ -8,6 +8,7 @@ public class WbConstant {
     //  app层级
     public static final String APP_DEFAULT_CLIENT = "dingtalk";
     public static final String APP_DEFAULT_MODE = "dingtalk";
+    public static final String APP_OUTER_ID_SEPARATOR = "--";
     public static final String APP_ROLE_GROUP_SUPERUSER = "系统管理员";
     public static final String APP_ROLE_GROUP_ADMIN = "管理员";
     public static final String APP_ROLE_GROUP_SUPER_ADMIN = "超级管理员";

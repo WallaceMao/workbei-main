@@ -16,6 +16,7 @@ import com.workbei.util.RegExpUtil;
 import com.workbei.util.TestDepartmentFactory;
 import com.workbei.util.TestTeamFactory;
 import com.workbei.util.TestUserFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,11 @@ public class AutoCreateControllerTest extends WebBaseTest {
         appDO.setWhiteIpList("127.0.0.1");
         appManager.saveOrUpdateOuterDataApp(appDO);
         globalApp = appDO;
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        appManager.deleteOuterDataAppByKey(WbConstant.APP_DEFAULT_CLIENT);
     }
 
     @Test
