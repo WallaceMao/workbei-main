@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -268,5 +269,44 @@ public class TeamManagerImplTest extends BaseUnitTest {
         assertThat(roleListAfterRepeatDelete).hasSameSizeAs(roleListAfterDelete);
         assertThat(roleListAfterRepeatDelete).extracting(WbTeamUserRoleDO::getRole)
                 .doesNotContain(WbConstant.TEAM_USER_ROLE_ADMIN);
+    }
+
+    /**
+     * 批量更新team中所有的管理员
+     * oldAdminIdList: userId1, userId2
+     * newAdminIdList: userId2, userId3
+     * 最终结果：userId2, userId3
+     * @throws Exception
+     */
+    @Test
+    public void testBatchUpdateTeamAdmin() throws Exception {
+        Long teamId = globalTeam.getId();
+        Long userId1 = new Date().getTime();
+        Long userId2 = userId1 + 1;
+        Long userId3 = userId1 + 2;
+
+        List<Long> oldAdminIdList = new ArrayList<>();
+        oldAdminIdList.add(userId1);
+        oldAdminIdList.add(userId2);
+
+        List<Long> newAdminIdList = new ArrayList<>();
+        newAdminIdList.add(userId2);
+        newAdminIdList.add(userId3);
+
+        teamManager.updateBatchTeamAdmin(teamId, oldAdminIdList);
+        List<WbTeamUserRoleDO> adminList = teamManager.listTeamUserRoleByTeamIdAndRole(teamId, WbConstant.TEAM_USER_ROLE_ADMIN);
+
+        assertThat(adminList).hasSize(2);
+        assertThat(adminList).extracting("teamId", "userId", "role")
+                .contains(tuple(teamId, userId1, WbConstant.TEAM_USER_ROLE_ADMIN),
+                        tuple(teamId, userId2, WbConstant.TEAM_USER_ROLE_ADMIN));
+
+        teamManager.updateBatchTeamAdmin(teamId, newAdminIdList);
+        adminList = teamManager.listTeamUserRoleByTeamIdAndRole(teamId, WbConstant.TEAM_USER_ROLE_ADMIN);
+
+        assertThat(adminList).hasSize(2);
+        assertThat(adminList).extracting("teamId", "userId", "role")
+                .contains(tuple(teamId, userId2, WbConstant.TEAM_USER_ROLE_ADMIN),
+                        tuple(teamId, userId3, WbConstant.TEAM_USER_ROLE_ADMIN));
     }
 }

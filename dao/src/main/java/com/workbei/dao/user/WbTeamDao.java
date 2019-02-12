@@ -36,9 +36,15 @@ public interface WbTeamDao {
     List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndUserId(
             @Param("teamId") Long teamId,
             @Param("userId") Long userId);
+    List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndRole(
+            @Param("teamId") Long teamId,
+            @Param("role") String role);
     WbTeamUserRoleDO getTeamUserRoleByTeamIdAndUserIdAndRole(
             @Param("teamId") Long teamId,
             @Param("userId") Long userId,
+            @Param("role") String role);
+    List<Long> listTeamUserRoleUserIdByTeamIdAndRole(
+            @Param("teamId") Long teamId,
             @Param("role") String role);
 
     void saveOrUpdateJoinAndQuitTeamRecord(WbJoinAndQuitTeamRecordDO joinAndQuitTeamRecordDO);

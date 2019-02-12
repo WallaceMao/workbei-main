@@ -86,7 +86,7 @@
         WHERE o.outer_id=#{outerId}
 		 ]]>
     </select>
-    <select id="getAccountByIdDdUnionId" resultMap="accountMap">
+    <select id="getAccountByDdUnionId" resultMap="accountMap">
         SELECT
             a.id,
             a.uuid,

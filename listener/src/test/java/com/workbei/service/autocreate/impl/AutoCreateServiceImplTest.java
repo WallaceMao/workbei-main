@@ -703,4 +703,65 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         );
         assertThat(adminRole).isNotNull();
     }
+
+    /**
+     * oldAdminOuterIdList: userOuterId1, userOuterId2
+     * newAdminOuterIdList: userOuterId2, userOuterId3
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateBatchUserSetAdmin() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        String client = WbConstant.APP_DEFAULT_CLIENT;
+        String outerCorpId = teamVO.getOuterCorpId();
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+
+        AutoCreateUserVO userVO1 = TestUserFactory.getAutoCreateUserVO();
+        userVO1.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        userVO1.setOuterCombineDeptIdList(deptList);
+        userVO1.setAdmin(false);
+        userVO1.setClient(client);
+        autoCreateService.createUser(userVO1);
+
+        AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
+        userVO2.setOuterCorpId(teamVO.getOuterCorpId());
+        userVO2.setOuterCombineDeptIdList(deptList);
+        userVO2.setAdmin(false);
+        userVO2.setClient(client);
+        autoCreateService.createUser(userVO2);
+
+        List<WbTeamUserRoleDO> adminList = teamManager.listTeamUserRoleByTeamIdAndRole(teamId, WbConstant.TEAM_USER_ROLE_ADMIN);
+        //  没有管理员
+        assertThat(adminList).hasSize(0);
+
+        String randomUserOuterId = "auto_test_random_user_outer_id_" + now.getTime();
+        String user1OuterId = userVO1.getOuterCombineId();
+        String user2OuterId = userVO2.getOuterCombineId();
+
+        List<String> userOuterIdList = new ArrayList<>();
+        userOuterIdList.add(randomUserOuterId);
+        userOuterIdList.add(user1OuterId);
+        userOuterIdList.add(user2OuterId);
+
+        autoCreateService.updateBatchUserSetAdmin(client, outerCorpId, userOuterIdList);
+        adminList = teamManager.listTeamUserRoleByTeamIdAndRole(teamId, WbConstant.TEAM_USER_ROLE_ADMIN);
+
+        assertThat(adminList).hasSize(2);
+        assertThat(adminList).extracting("teamId", "userId", "role")
+                .contains(tuple(teamId, userVO1.getId(), WbConstant.TEAM_USER_ROLE_ADMIN),
+                        tuple(teamId, userVO2.getId(), WbConstant.TEAM_USER_ROLE_ADMIN));
+    }
 }

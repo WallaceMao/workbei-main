@@ -142,6 +142,30 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     }
 
     @Override
+    public void updateBatchUserSetAdmin(String client, String corpOuterId, List<String> userOuterIdList) {
+        Long teamId = null;
+        List<Long> userIdList = new ArrayList<>(userOuterIdList.size());
+        for (String userOuterId : userOuterIdList) {
+            WbOuterDataUserDO outerDataUserDO = userManager.getOuterDataUserByClientAndOuterId(
+                    client, userOuterId);
+            if (outerDataUserDO != null) {
+                userIdList.add(outerDataUserDO.getUserId());
+                if (teamId == null) {
+                    WbUserDO userDO = userManager.getUserByClientAndOuterId(
+                            client, userOuterId
+                    );
+                    if (userDO != null) {
+                        teamId = userDO.getTeamId();
+                    }
+                }
+            }
+        }
+        if (teamId != null) {
+            teamManager.updateBatchTeamAdmin(teamId, userIdList);
+        }
+    }
+
+    @Override
     public void createDepartment(AutoCreateDepartmentVO departmentVO) {
         if (departmentVO.getClient() == null) {
             departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);

@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.workbei.util.LogFormatter.*;
@@ -329,6 +330,37 @@ public class AutoCreateController {
         userVO.setOuterCombineId(outerId);
         userVO.setAdmin(isAdmin);
         autoCreateService.updateUserSetAdmin(userVO);
+        return ResponseResult.success();
+    }
+
+    @ApiOperation(value = "更新团队的所有管理员", httpMethod = "PUT")
+    @ApiImplicitParams({
+            @ApiImplicitParam(required = true, paramType = "header", name = "Authorization", dataType = "string",
+                    value = "授权token", defaultValue = "abcd"),
+            @ApiImplicitParam(required = true, paramType = "path", name = "outerId", dataType = "string",
+                    value = "团队的outerId"),
+            @ApiImplicitParam(required = true, paramType = "body", name = "adminList", dataType = "list",
+                    value = "管理员列表")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 400, message = "参数错误，未提供正确的参数"),
+            @ApiResponse(code = 401, message = "无权限访问，比如token未提供"),
+            @ApiResponse(code = 500, message = "服务器错误"),
+            @ApiResponse(code = 200, message = "成功"),
+    })
+    @PutMapping("/client/${client}/team/{outerId}/admin")
+    public Map updateTeamAllAdmin(
+            @PathVariable("client") String client,
+            @PathVariable("outerId") String outerId,
+            @RequestBody List<String> adminList
+    ) {
+        bizLogger.info(LogFormatter.format(
+                LogEvent.START,
+                "updateTeamAllAdmin",
+                getKV("outerId", outerId),
+                getKV("adminList", adminList)
+        ));
+        autoCreateService.updateBatchUserSetAdmin(client, outerId, adminList);
         return ResponseResult.success();
     }
 

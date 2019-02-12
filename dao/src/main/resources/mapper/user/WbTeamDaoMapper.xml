@@ -249,10 +249,22 @@
 			WHERE team_id=#{teamId} AND user_id=#{userId}
 		 ]]>
     </select>
+    <select id="listTeamUserRoleByTeamIdAndRole" resultMap="teamUserRoleMap">
+        SELECT <include refid="select-all-fields-team-user-role"/>  FROM team_user_role
+        <![CDATA[
+			WHERE team_id=#{teamId} AND role=#{role}
+		 ]]>
+    </select>
     <select id="getTeamUserRoleByTeamIdAndUserIdAndRole" resultMap="teamUserRoleMap">
         SELECT <include refid="select-all-fields-team-user-role"/>  FROM team_user_role
         <![CDATA[
 			WHERE team_id=#{teamId} AND user_id=#{userId} AND role=#{role}
+		 ]]>
+    </select>
+    <select id="listTeamUserRoleUserIdByTeamIdAndRole" resultType="long">
+        SELECT user_id  FROM team_user_role
+        <![CDATA[
+			WHERE team_id=#{teamId} AND role=#{role}
 		 ]]>
     </select>
 

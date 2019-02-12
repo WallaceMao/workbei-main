@@ -28,6 +28,8 @@ public interface TeamManager {
 
     List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndUserId(Long teamId, Long userId);
 
+    List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndRole(Long teamId, String role);
+
     //  --------outerDataTeam--------
     WbOuterDataTeamDO saveOrUpdateOuterDataTeam(WbOuterDataTeamDO outerDataTeamDO);
 
@@ -46,4 +48,6 @@ public interface TeamManager {
     void deleteTeamUserRole(Long teamId, Long userId);
 
     WbTeamUserRoleDO updateTeamAdmin(Long teamId, Long userId, Boolean admin);
+
+    void updateBatchTeamAdmin(Long teamId, List<Long> adminIdList);
 }

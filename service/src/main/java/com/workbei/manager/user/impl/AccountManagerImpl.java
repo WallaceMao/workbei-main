@@ -7,7 +7,6 @@ import com.workbei.exception.WorkbeiServiceException;
 import com.workbei.factory.UserFactory;
 import com.workbei.manager.user.AccountManager;
 import com.workbei.model.domain.user.WbAccountDO;
-import com.workbei.model.domain.user.WbUserDO;
 import com.workbei.model.domain.user.WbUserOauthDO;
 import com.workbei.model.domain.user.WbUserRegisterDO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
@@ -47,7 +46,7 @@ public class AccountManagerImpl implements AccountManager {
 
     @Override
     public WbAccountDO getAccountByDdUnionId(String ddUnionId) {
-        return wbAccountDao.getAccountByIdDdUnionId(ddUnionId);
+        return wbAccountDao.getAccountByDdUnionId(ddUnionId);
     }
 
     //  --------userRegister--------

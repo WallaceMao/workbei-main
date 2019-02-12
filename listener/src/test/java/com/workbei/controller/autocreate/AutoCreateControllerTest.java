@@ -7,7 +7,9 @@ import com.workbei.WebBaseTest;
 import com.workbei.constant.WbConstant;
 import com.workbei.http.HttpResultCode;
 import com.workbei.manager.app.AppManager;
+import com.workbei.manager.user.TeamManager;
 import com.workbei.model.domain.user.WbOuterDataAppDO;
+import com.workbei.model.domain.user.WbTeamUserRoleDO;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
 import com.workbei.model.view.autocreate.AutoCreateTeamVO;
 import com.workbei.model.view.autocreate.AutoCreateUserVO;
@@ -24,10 +26,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 
 import static com.workbei.constant.TestConstant.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,6 +43,8 @@ public class AutoCreateControllerTest extends WebBaseTest {
     private AutoCreateService autoCreateService;
     @Autowired
     private AppManager appManager;
+    @Autowired
+    private TeamManager teamManager;
 
     private WbOuterDataAppDO globalApp = null;
 
@@ -309,6 +314,71 @@ public class AutoCreateControllerTest extends WebBaseTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
+    }
+
+    @Test
+    public void testUpdateTeamAllAdmin() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        String client = WbConstant.APP_DEFAULT_CLIENT;
+        String outerCorpId = teamVO.getOuterCorpId();
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+
+        AutoCreateUserVO userVO1 = TestUserFactory.getAutoCreateUserVO();
+        userVO1.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        userVO1.setOuterCombineDeptIdList(deptList);
+        userVO1.setAdmin(false);
+        userVO1.setClient(client);
+        autoCreateService.createUser(userVO1);
+
+        AutoCreateUserVO userVO2 = TestUserFactory.getAutoCreateUserVO();
+        userVO2.setOuterCorpId(teamVO.getOuterCorpId());
+        userVO2.setOuterCombineDeptIdList(deptList);
+        userVO2.setAdmin(false);
+        userVO2.setClient(client);
+        autoCreateService.createUser(userVO2);
+        List<WbTeamUserRoleDO> adminList = teamManager.listTeamUserRoleByTeamIdAndRole(teamId, WbConstant.TEAM_USER_ROLE_ADMIN);
+        assertThat(adminList).hasSize(0);
+
+        String randomUserOuterId = "auto_test_random_user_outer_id_" + now.getTime();
+        String user1OuterId = userVO1.getOuterCombineId();
+        String user2OuterId = userVO2.getOuterCombineId();
+
+        List<String> userOuterIdList = new ArrayList<>();
+        userOuterIdList.add(randomUserOuterId);
+        userOuterIdList.add(user1OuterId);
+        userOuterIdList.add(user2OuterId);
+
+        Map<String, Object> pathParams = new HashMap<>();
+        pathParams.put("client", WbConstant.APP_DEFAULT_CLIENT);
+        pathParams.put("outerId", teamVO.getOuterCorpId());
+        String updateUserSetAdminPath = RegExpUtil.replacePathVariable(URL_UPDATE_TEAM_ALL_ADMIN, pathParams);
+        mockMvc.perform(put(updateUserSetAdminPath)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSON.toJSONString(userOuterIdList))
+                .header("Authorization", globalApp.getToken()))
+                // .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+        adminList = teamManager.listTeamUserRoleByTeamIdAndRole(teamId, WbConstant.TEAM_USER_ROLE_ADMIN);
+
+        assertThat(adminList).hasSize(2);
+        assertThat(adminList).extracting("teamId", "userId", "role")
+                .contains(tuple(teamId, userVO1.getId(), WbConstant.TEAM_USER_ROLE_ADMIN),
+                        tuple(teamId, userVO2.getId(), WbConstant.TEAM_USER_ROLE_ADMIN));
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.workbei.manager.user.TeamManager;
 import com.workbei.factory.TeamFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,6 +73,11 @@ public class TeamManagerImpl implements TeamManager {
     @Override
     public List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndUserId(Long teamId, Long userId) {
         return wbTeamDao.listTeamUserRoleByTeamIdAndUserId(teamId, userId);
+    }
+
+    @Override
+    public List<WbTeamUserRoleDO> listTeamUserRoleByTeamIdAndRole(Long teamId, String role) {
+        return wbTeamDao.listTeamUserRoleByTeamIdAndRole(teamId, role);
     }
 
     //  --------outerDataTeam--------
@@ -142,17 +148,8 @@ public class TeamManagerImpl implements TeamManager {
      */
     @Override
     public WbTeamUserRoleDO saveTeamCreatorRole(Long teamId, Long userId) {
-        //  设置teamUserRole
-        WbTeamUserRoleDO creatorRole = TeamFactory.getTeamUserRoleDO();
-        creatorRole.setTeamId(teamId);
-        creatorRole.setUserId(userId);
-        creatorRole.setRole(WbConstant.TEAM_USER_ROLE_CREATOR);
-        wbTeamDao.saveOrUpdateTeamUserRole(creatorRole);
-        WbTeamUserRoleDO adminRole = TeamFactory.getTeamUserRoleDO();
-        adminRole.setTeamId(teamId);
-        adminRole.setUserId(userId);
-        adminRole.setRole(WbConstant.TEAM_USER_ROLE_ADMIN);
-        wbTeamDao.saveOrUpdateTeamUserRole(adminRole);
+        WbTeamUserRoleDO creatorRole =saveOnlyTeamCreator(teamId, userId);
+        saveOnlyTeamAdmin(teamId, userId);
         //  添加创建公司的记录
         WbJoinAndQuitTeamRecordDO joinAndQuitTeamRecordDO = TeamFactory.getJoinAndQuitTeamRecordDO();
         joinAndQuitTeamRecordDO.setTeamId(teamId);
@@ -171,11 +168,7 @@ public class TeamManagerImpl implements TeamManager {
      */
     @Override
     public WbTeamUserRoleDO saveTeamCommonUserRole(Long teamId, Long userId) {
-        WbTeamUserRoleDO userRole = TeamFactory.getTeamUserRoleDO();
-        userRole.setTeamId(teamId);
-        userRole.setUserId(userId);
-        userRole.setRole(WbConstant.TEAM_USER_ROLE_COMMON);
-        wbTeamDao.saveOrUpdateTeamUserRole(userRole);
+        WbTeamUserRoleDO userRole = saveOnlyTeamCommonRole(teamId, userId);
         //  添加创建公司的记录
         WbJoinAndQuitTeamRecordDO joinAndQuitTeamRecordDO = TeamFactory.getJoinAndQuitTeamRecordDO();
         joinAndQuitTeamRecordDO.setTeamId(teamId);
@@ -219,12 +212,7 @@ public class TeamManagerImpl implements TeamManager {
                 WbConstant.TEAM_USER_ROLE_ADMIN);
         if (admin) {
             if (adminRole == null) {
-                //  新增角色
-                adminRole = TeamFactory.getTeamUserRoleDO();
-                adminRole.setTeamId(teamId);
-                adminRole.setUserId(userId);
-                adminRole.setRole(WbConstant.TEAM_USER_ROLE_ADMIN);
-                wbTeamDao.saveOrUpdateTeamUserRole(adminRole);
+                saveOnlyTeamAdmin(teamId, userId);
             }
         } else {
             if (adminRole != null) {
@@ -236,6 +224,65 @@ public class TeamManagerImpl implements TeamManager {
                 adminRole = null;
             }
         }
+        return adminRole;
+    }
+
+    /**
+     * 批量修改团队管理员，这里的操作步骤为：
+     * 1.  读取当前的admin的id的列表，currentAdminIdList
+     * 2.  比对currentAdminIdList和adminIdList
+     * 3.  adminIdList中存在，currentAdminIdList不存在，那么新增admin
+     * 4.  adminIdList中不存在，currentAdminIdList中存在，那么删除原admin
+     * @param teamId
+     * @param adminIdList
+     */
+    @Override
+    public void updateBatchTeamAdmin(Long teamId, List<Long> adminIdList) {
+        List<Long> currentAdminList = wbTeamDao.listTeamUserRoleUserIdByTeamIdAndRole(
+                teamId,
+                WbConstant.TEAM_USER_ROLE_ADMIN);
+        List<Long> insertList = findExcludeElement(adminIdList, currentAdminList);
+        List<Long> deleteList = findExcludeElement(currentAdminList, adminIdList);
+        for (Long insertId : insertList) {
+            saveOnlyTeamAdmin(teamId, insertId);
+        }
+        for (Long deleteId : deleteList) {
+            wbTeamDao.deleteTeamUserRoleByTeamIdAndUserIdAndRole(
+                    teamId,
+                    deleteId,
+                    WbConstant.TEAM_USER_ROLE_ADMIN);
+        }
+    }
+
+    private List<Long> findExcludeElement(List<Long> iterateList, List<Long> compareList) {
+        List<Long> list = new ArrayList<>();
+        for (Long adminId : iterateList) {
+            if (!compareList.contains(adminId)) {
+                list.add(adminId);
+            }
+        }
+        return list;
+    }
+
+    private WbTeamUserRoleDO saveOnlyTeamCommonRole(Long teamId, Long userId) {
+        return saveOnlyTeamUserRole(teamId, userId, WbConstant.TEAM_USER_ROLE_COMMON);
+    }
+
+    private WbTeamUserRoleDO saveOnlyTeamAdmin(Long teamId, Long userId) {
+        return saveOnlyTeamUserRole(teamId, userId, WbConstant.TEAM_USER_ROLE_ADMIN);
+    }
+
+    private WbTeamUserRoleDO saveOnlyTeamCreator(Long teamId, Long userId) {
+        return saveOnlyTeamUserRole(teamId, userId, WbConstant.TEAM_USER_ROLE_CREATOR);
+    }
+
+    private WbTeamUserRoleDO saveOnlyTeamUserRole(Long teamId, Long userId, String role) {
+        //  新增角色
+        WbTeamUserRoleDO adminRole = TeamFactory.getTeamUserRoleDO();
+        adminRole.setTeamId(teamId);
+        adminRole.setUserId(userId);
+        adminRole.setRole(role);
+        wbTeamDao.saveOrUpdateTeamUserRole(adminRole);
         return adminRole;
     }
 }
