@@ -433,7 +433,7 @@ public class DepartmentManagerImpl implements DepartmentManager {
 
     private List<Long> getParentDepartmentIdList(WbDepartmentDO dept) {
         WbDepartmentDO oldParentDept = wbDepartmentDao.getDepartmentById(dept.getParentId());
-        //  获取到dept原来的所有父部门的id，用来做比对更新userDeptAscription
+        //  获取到dept原来的所有父部门的id，用来做比对更新userDeptAscription，这里的oldParentDept可能为null！！
         List<Long> parentIdList = new ArrayList<>();
         collectParentDepartmentIdRecursive(oldParentDept, parentIdList);
         return parentIdList;
