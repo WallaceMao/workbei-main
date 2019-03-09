@@ -272,7 +272,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     }
 
     /**
-     * 校正部门
+     * 校正userDO所属的部门
      * @param userDO
      * @param newOuterDeptIdList
      */

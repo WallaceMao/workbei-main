@@ -754,11 +754,11 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
      *     DeptA1:  user1
      *       DeptB1:  user2 user3
      *         DeptC1: user4 user5
-     *         DeptC2: user6
+     *           DeptD1: user6
      *     DeptA2: user7
      *       DeptB2: user8
      * 测试将DeptB1删除，那么user2、user3会被关联到unassigned部门，DeptC1和DeptC2保持不变。且userDeptAscription会做相应删除
-     * 如果DeptB1删除后，那么DeptC1和DeptC2下的用户将成为孤儿
+     * 如果DeptB1删除后，那么DeptC1和DeptC2将成为孤儿，其下的用户也将成为孤儿
      * @throws Exception
      */
     @Test
@@ -804,15 +804,15 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         Long userId5 = userDO5.getId();
         departmentManager.saveDepartmentUser(deptDOC1.getId(), userId4);
         departmentManager.saveDepartmentUser(deptDOC1.getId(), userId5);
-        //  deptA1-deptB1-deptC2
-        AutoCreateDepartmentVO deptC2 = TestDepartmentFactory.getAutoCreateDepartmentVO(
+        //  deptA1-deptB1-deptC1-deptD1
+        AutoCreateDepartmentVO deptD1 = TestDepartmentFactory.getAutoCreateDepartmentVO(
                 globalOuterDataTeam.getOuterId());
-        deptC2.setOuterParentCombineId(deptB1.getOuterCombineId());
-        departmentManager.saveDepartmentInfo(teamId, deptC2);
-        WbDepartmentDO deptDOC2 = departmentManager.getDepartmentByClientAndOuterId(
-                deptC2.getClient(), deptC2.getOuterCombineId());
+        deptD1.setOuterParentCombineId(deptC1.getOuterCombineId());
+        departmentManager.saveDepartmentInfo(teamId, deptD1);
+        WbDepartmentDO deptDOD1 = departmentManager.getDepartmentByClientAndOuterId(
+                deptD1.getClient(), deptD1.getOuterCombineId());
         Long userId6 = userDO6.getId();
-        departmentManager.saveDepartmentUser(deptDOC2.getId(), userId6);
+        departmentManager.saveDepartmentUser(deptDOD1.getId(), userId6);
         //  deptA2
         AutoCreateDepartmentVO deptA2 = TestDepartmentFactory.getAutoCreateDepartmentVO(
                 globalOuterDataTeam.getOuterId());
@@ -846,19 +846,28 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         assertThat(newDeptDOB1).isNull();
         assertThat(newOuterDataDepartmentDOB1).isNull();
 
+        //  B1删除后C1和C2都变成了孤儿部门，会直接挂到top部门下面
         WbDepartmentDO newDeptDOC1 = departmentManager.getDepartmentById(deptDOC1.getId());
         WbOuterDataDepartmentDO newOuterDataDepartmentDOC1 = departmentManager.getOuterDataDepartmentByClientAndOuterId(
                 deptC1.getClient(), deptC1.getOuterCombineId()
         );
         assertThat(newDeptDOC1).isNotNull();
         assertThat(newOuterDataDepartmentDOC1).isNotNull();
+        assertThat(newDeptDOC1.getParentId()).isEqualTo(globalTopDepartment.getId());
+        assertThat(newDeptDOC1.getLevel()).isEqualTo(globalTopDepartment.getLevel() + 1);
+        assertThat(newDeptDOC1.getCode()).isEqualTo(
+                globalTopDepartment.getCode() + WbConstant.DEPARTMENT_CODE_SEPARATOR + newDeptDOC1.getId());
 
-        WbDepartmentDO newDeptDOC2 = departmentManager.getDepartmentById(deptDOC2.getId());
+        WbDepartmentDO newDeptDOD1 = departmentManager.getDepartmentById(deptDOD1.getId());
         WbOuterDataDepartmentDO newOuterDataDepartmentDOC2 = departmentManager.getOuterDataDepartmentByClientAndOuterId(
-                deptC2.getClient(), deptC2.getOuterCombineId()
+                deptD1.getClient(), deptD1.getOuterCombineId()
         );
-        assertThat(newDeptDOC2).isNotNull();
+        assertThat(newDeptDOD1).isNotNull();
         assertThat(newOuterDataDepartmentDOC2).isNotNull();
+        assertThat(newDeptDOD1.getParentId()).isEqualTo(newDeptDOC1.getId());
+        assertThat(newDeptDOD1.getLevel()).isEqualTo(newDeptDOC1.getLevel() + 1);
+        assertThat(newDeptDOD1.getCode()).isEqualTo(
+                newDeptDOC1.getCode() + WbConstant.DEPARTMENT_CODE_SEPARATOR + newDeptDOD1.getId());
         //  验证userId1
         List<Long> user1DepartmentIdList = departmentManager.listUserDeptDepartmentIdByUserId(userId1);
         assertThat(user1DepartmentIdList).containsExactly(deptDOA1.getId());
@@ -897,11 +906,12 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
                 deptDOC1.getId());
         //  验证userId6
         List<Long> user6DepartmentIdList = departmentManager.listUserDeptDepartmentIdByUserId(userId6);
-        assertThat(user6DepartmentIdList).containsExactly(deptDOC2.getId());
+        assertThat(user6DepartmentIdList).containsExactly(deptDOD1.getId());
         List<Long> user6AscriptionDepartmentIdList = departmentManager.listUserDeptAscriptionDepartmentIdByUserId(userId6);
         assertThat(user6AscriptionDepartmentIdList).containsExactlyInAnyOrder(
                 globalTopDepartment.getId(),
-                deptDOC2.getId());
+                deptDOC1.getId(),
+                deptDOD1.getId());
     }
 
     /**

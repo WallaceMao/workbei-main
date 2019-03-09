@@ -271,6 +271,7 @@ public class DepartmentManagerImpl implements DepartmentManager {
         //  按照以下步骤进行：
         //  1. 删除所有除topDepartment之外的userDeptAscription
         //  2. 删除department及其关联，包括userDept、outerDataDepartment等
+        //  3. 递归更新该部门所有的子部门，更新的字段包括：parentId/code/level等
         //  3. 读取此时没有部门的user，将其所在的部门保存为unassigned（未分配部门）
         //  4. 重建userDeptAscription
         Long teamId = departmentDO.getTeamId();
@@ -283,6 +284,19 @@ public class DepartmentManagerImpl implements DepartmentManager {
         }
         //  删除department及其关联，包括userDept、outerDataDepartment等
         deleteSingleDepartment(departmentDO);
+        //  读取该部门的所有直接子部门，进行递归更新
+        List<WbDepartmentDO> childDeptList = wbDepartmentDao.listDepartmentByParentId(departmentDO.getId());
+        Long topDeptId = wbDepartmentDao.getTopDepartmentId(teamId);
+        if (childDeptList != null) {
+            for (WbDepartmentDO dept : childDeptList) {
+                //  修改dept的parentId为top部门
+                dept.setParentId(topDeptId);
+                wbDepartmentDao.saveOrUpdateDepartment(dept);
+                List<Long> excludeIdList = new ArrayList<>();
+                //  递归修改该子部门下的所有子部门
+                refreshSubDepartmentRecursive(dept, excludeIdList);
+            }
+        }
         //  读取出没有部门的员工列表，将其关联为未分配部门中
         List<Long> userIdListWithoutDepartment = wbDepartmentDao.listUserUserIdWithoutDepartment(teamId);
         WbDepartmentDO unassignedDepartment = wbDepartmentDao.getUnassignedDepartment(teamId);
@@ -464,6 +478,10 @@ public class DepartmentManagerImpl implements DepartmentManager {
         deleteSingleDepartment(departmentDO);
     }
 
+    /**
+     * 可以删除顶级部门的关联关系，但是顶级部门不允许删除
+     * @param departmentDO
+     */
     private void deleteSingleDepartment(WbDepartmentDO departmentDO) {
         Long deptId = departmentDO.getId();
         wbDepartmentDao.deleteUserDeptByDepartmentId(deptId);

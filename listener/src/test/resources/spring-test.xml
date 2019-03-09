@@ -11,5 +11,5 @@
         <entry key="client" value="dingtalk"/>
     </util:map>
 
-    <import resource="classpath:spring-context.xml"/>
+    <import resource="spring-context.xml"/>
 </beans>
