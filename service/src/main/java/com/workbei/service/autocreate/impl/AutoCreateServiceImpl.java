@@ -48,7 +48,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void createTeam(AutoCreateTeamVO teamVO) {
         if (teamVO.getClient() == null) {
-            teamVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         WbTeamDO teamDO = teamManager.getTeamByClientAndOuterId(
                 teamVO.getClient(), teamVO.getOuterCorpId());
@@ -61,7 +61,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
             if (teamVO.getCreator() != null) {
                 AutoCreateUserVO creatorVO = teamVO.getCreator();
                 if (creatorVO.getClient() == null) {
-                    creatorVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+                    creatorVO.setClient(teamVO.getClient());
                 }
                 WbAccountDO accountDO = searchOrSaveAccount(creatorVO);
 
@@ -85,7 +85,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void createUser(AutoCreateUserVO userVO) {
         if (userVO.getClient() == null) {
-            userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         createOrUpdateUser(userVO);
     }
@@ -93,7 +93,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void updateUser(AutoCreateUserVO userVO) {
         if (userVO.getClient() == null) {
-            userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         createOrUpdateUser(userVO);
     }
@@ -101,7 +101,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void updateUserLeaveTeam(AutoCreateUserVO userVO) {
         if (userVO.getClient() == null) {
-            userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         WbUserDO userDO = userManager.getUserByClientAndOuterId(
                 userVO.getClient(), userVO.getOuterCombineId()
@@ -128,7 +128,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void updateUserSetAdmin(AutoCreateUserVO userVO) {
         if (userVO.getClient() == null) {
-            userVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         WbUserDO userDO = userManager.getUserByClientAndOuterId(
                 userVO.getClient(), userVO.getOuterCombineId()
@@ -143,6 +143,9 @@ public class AutoCreateServiceImpl implements AutoCreateService {
 
     @Override
     public void updateBatchUserSetAdmin(String client, String corpOuterId, List<String> userOuterIdList) {
+        if (client == null) {
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
+        }
         Long teamId = null;
         List<Long> userIdList = new ArrayList<>(userOuterIdList.size());
         for (String userOuterId : userOuterIdList) {
@@ -168,7 +171,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void createDepartment(AutoCreateDepartmentVO departmentVO) {
         if (departmentVO.getClient() == null) {
-            departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         WbTeamDO teamDO = checkTeam(departmentVO.getClient(), departmentVO.getOuterCorpId());
         WbDepartmentDO departmentDO = departmentManager.saveDepartmentInfo(teamDO.getId(), departmentVO);
@@ -178,7 +181,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void updateDepartment(AutoCreateDepartmentVO departmentVO) {
         if (departmentVO.getClient() == null) {
-            departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         // 修改部门的时候，如果部门不存在，那么直接创建
         departmentManager.updateDepartmentInfo(departmentVO);
@@ -192,7 +195,7 @@ public class AutoCreateServiceImpl implements AutoCreateService {
     @Override
     public void deleteDepartment(AutoCreateDepartmentVO departmentVO) {
         if (departmentVO.getClient() == null) {
-            departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+            throw new WorkbeiServiceException(ExceptionCode.getMessage(ExceptionCode.CLIENT_NOT_FOUND));
         }
         departmentManager.deleteDepartmentInfo(departmentVO);
     }

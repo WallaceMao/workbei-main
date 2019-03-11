@@ -32,3 +32,7 @@ ALTER TABLE `user_role_group` ADD UNIQUE INDEX `uq_user_role_group_user_role`(`u
 
 # 新增app默认的顶级部门id
 ALTER TABLE `outer_data_app` ADD COLUMN `root_dept_id` varchar(32) DEFAULT '1';
+
+ALTER TABLE `outer_data_app`
+  MODIFY COLUMN `token` varchar(168) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL AFTER `key`;
+ALTER TABLE `outer_data_app` ADD UNIQUE INDEX `uq_outer_data_app_token`(`token`) USING BTREE;

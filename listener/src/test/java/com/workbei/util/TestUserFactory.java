@@ -1,5 +1,6 @@
 package com.workbei.util;
 
+import com.workbei.constant.TestV2Constant;
 import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.WbAccountDO;
 import com.workbei.model.domain.user.WbUserDO;
@@ -22,7 +23,7 @@ public class TestUserFactory {
         Date now = new Date();
         user.setName("auto_test_user_name_" + now.getTime());
         user.setAvatar("auto_test_user_avatar" + now.getTime());
-        user.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        user.setClient(TestV2Constant.CLIENT_FAKED);
         user.setAdmin(false);
         user.setOuterUserId("at_user_outer_id_" + now.getTime());
         user.setOuterCombineId("at_user_comid_" + now.getTime());

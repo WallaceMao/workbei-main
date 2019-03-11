@@ -10,6 +10,7 @@ import java.util.Map;
 public enum HttpResultCode {
     OK("0", "ok"),
     SYSTEM_ERROR("-1", "system error"),
+    HTTP_UNAUTHORIZED("401", "no auth"),
     HTTP_FORBIDDEN("403", "no auth"),
     TEAM_NAME_NULL("1001", "team name can not be null"),
     TEAM_OUTER_CORP_ID_NULL("1002", "outerCorpId can not be null"),

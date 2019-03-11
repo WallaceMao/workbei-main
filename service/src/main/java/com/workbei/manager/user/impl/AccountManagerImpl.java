@@ -85,7 +85,7 @@ public class AccountManagerImpl implements AccountManager {
         wbAccountDao.saveOrUpdateAccount(accountDO);
 
         //  保存userRegister
-        WbUserRegisterDO userRegister = UserFactory.getUserRegisterDO();
+        WbUserRegisterDO userRegister = UserFactory.getUserRegisterDO(userVO.getClient());
         userRegister.setClient(userVO.getClient());
         userRegister.setMode(userVO.getClient());
         userRegister.setRegDate(new Date());

@@ -1,6 +1,7 @@
 package com.workbei.manager.user.impl;
 
 import com.workbei.BaseUnitTest;
+import com.workbei.constant.TestV2Constant;
 import com.workbei.constant.WbConstant;
 import com.workbei.manager.user.AccountManager;
 import com.workbei.manager.user.TeamManager;
@@ -57,8 +58,8 @@ public class AccountManagerImplTest extends BaseUnitTest {
                 userRegisterDO.getLastUpdated(),
                 userRegisterDO.getRegDate());
         assertThat(userRegisterDO.getSystem()).isFalse();
-        assertThat(userRegisterDO.getMode()).isEqualTo(WbConstant.APP_DEFAULT_MODE);
-        assertThat(userRegisterDO.getClient()).isEqualTo(WbConstant.APP_DEFAULT_CLIENT);
+        assertThat(userRegisterDO.getMode()).isEqualTo(TestV2Constant.CLIENT_FAKED);
+        assertThat(userRegisterDO.getClient()).isEqualTo(TestV2Constant.CLIENT_FAKED);
 
         WbUserOauthDO userOauthDO = accountManager.getUserOauthByAccountId(accountId);
         assertThat(userOauthDO).isNotNull();

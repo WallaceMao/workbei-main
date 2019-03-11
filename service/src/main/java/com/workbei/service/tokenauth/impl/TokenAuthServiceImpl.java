@@ -1,6 +1,5 @@
 package com.workbei.service.tokenauth.impl;
 
-import com.workbei.constant.WbConstant;
 import com.workbei.manager.app.AppManager;
 import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.service.tokenauth.TokenAuthService;
@@ -19,15 +18,8 @@ public class TokenAuthServiceImpl implements TokenAuthService {
     }
 
     @Override
-    public Boolean checkToken(String token) {
-        WbOuterDataAppDO outerDataAppDO = appManager.getOuterDataAppByToken(token);
-        if (outerDataAppDO == null) {
-            return false;
-        }
-        if (!WbConstant.APP_DEFAULT_CLIENT.equals(outerDataAppDO.getKey())) {
-            return false;
-        }
-        return true;
+    public WbOuterDataAppDO checkToken(String token) {
+        return appManager.getOuterDataAppByToken(token);
     }
 
     @Override

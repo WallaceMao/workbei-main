@@ -18,7 +18,9 @@ public class RegExpUtil {
         while (matcher.find()) {
             String groupString = matcher.group();
             String key = groupString.substring(1, groupString.length() - 1);
-            result = result.replace(matcher.group(), String.valueOf(json.get(key)));
+            if (json.containsKey(key)) {
+                result = result.replace(matcher.group(), String.valueOf(json.get(key)));
+            }
         }
         return result;
     }

@@ -19,12 +19,12 @@ public class UserFactory {
         return accountDO;
     }
 
-    public static WbUserRegisterDO getUserRegisterDO(){
+    public static WbUserRegisterDO getUserRegisterDO(String client){
         WbUserRegisterDO userRegisterDO = new WbUserRegisterDO();
         userRegisterDO.setSystem(false);
         userRegisterDO.setRegDate(new Date());
-        userRegisterDO.setClient(WbConstant.APP_DEFAULT_CLIENT);
-        userRegisterDO.setMode(WbConstant.APP_DEFAULT_MODE);
+        userRegisterDO.setClient(client);
+        userRegisterDO.setMode(client);
         return userRegisterDO;
     }
 

@@ -29,7 +29,6 @@
     </bean>
 
     <!--基础service-->
-    <bean id="demoService" class="com.workbei.service.demo.impl.DemoServiceImpl"/>
     <bean id="solutionBizService" class="com.workbei.service.solution.impl.SolutionServiceImpl"/>
     <bean id="tokenAuthService" class="com.workbei.service.tokenauth.impl.TokenAuthServiceImpl"/>
     <bean id="queryService" class="com.workbei.service.autocreate.impl.QueryServiceImpl"/>

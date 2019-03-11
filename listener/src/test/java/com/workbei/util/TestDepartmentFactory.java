@@ -1,5 +1,6 @@
 package com.workbei.util;
 
+import com.workbei.constant.TestV2Constant;
 import com.workbei.constant.WbConstant;
 import com.workbei.model.domain.user.WbDepartmentDO;
 import com.workbei.model.domain.user.WbOuterDataDepartmentDO;
@@ -21,7 +22,7 @@ public class TestDepartmentFactory {
         Date now = new Date();
         AutoCreateDepartmentVO departmentVO = new AutoCreateDepartmentVO();
         departmentVO.setName("at_dept_name" + now.getTime());
-        departmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        departmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         departmentVO.setDisplayOrder((double) now.getTime());
         departmentVO.setOuterCorpId(corpOuterId);
         departmentVO.setOuterCombineId("at_dept_outer_comid_" + now.getTime());
@@ -46,7 +47,7 @@ public class TestDepartmentFactory {
 
         Date now = new Date();
         WbOuterDataDepartmentDO outerDataDepartmentDO = DepartmentFactory.getOuterDataDepartmentDO();
-        outerDataDepartmentDO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        outerDataDepartmentDO.setClient(TestV2Constant.CLIENT_FAKED);
         outerDataDepartmentDO.setDepartmentId(departmentId);
         outerDataDepartmentDO.setOuterId("at_department_outer_id_" + now.getTime());
         return outerDataDepartmentDO;

@@ -17,6 +17,7 @@ public enum ExceptionCode {
     //  13xxx user
     USER_NOT_FOUND("13000", "user not found"),
     USER_OUTER_DATA_NOT_FOUND("13001", "user not found"),
+    CLIENT_NOT_FOUND("13002", "client not found"),
     //  14xxx account
     ACCOUNT_NOT_FOUND("14000", "account not found");
 

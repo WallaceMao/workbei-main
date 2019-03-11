@@ -1,6 +1,7 @@
 package com.workbei.interceptor;
 
 import com.workbei.controller.util.IpUtil;
+import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.service.tokenauth.TokenAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -31,17 +32,19 @@ public class TokenAuthInterceptor extends HandlerInterceptorAdapter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
+        // 检查token在数据库中是否存在
+        WbOuterDataAppDO outerDataAppDO = tokenAuthService.checkToken(auth);
+        if (outerDataAppDO == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
         // 检查ip是否在白名单中
         String whiteIpList = tokenAuthService.getAppWhiteIpList(auth);
         if (!IpUtil.checkIpInSubNetwork(whiteIpList, IpUtil.getRequestIp(request))) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
-        // 检查token在数据库中是否存在
-        if (!tokenAuthService.checkToken(auth)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
-        }
+        request.setAttribute("outerClient", outerDataAppDO.getKey());
         return true;
     }
 }

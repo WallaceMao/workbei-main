@@ -1,8 +1,10 @@
 package com.workbei.service.autocreate.impl;
 
 import com.workbei.BaseUnitTest;
+import com.workbei.constant.TestV2Constant;
 import com.workbei.constant.WbConstant;
 import com.workbei.exception.ExceptionCode;
+import com.workbei.exception.WorkbeiServiceException;
 import com.workbei.manager.user.*;
 import com.workbei.model.domain.user.*;
 import com.workbei.model.view.autocreate.AutoCreateDepartmentVO;
@@ -53,13 +55,21 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
         teamVO.setClient(null);
+        assertThatThrownBy(() -> autoCreateService.createTeam(teamVO))
+                .isInstanceOf(WorkbeiServiceException.class)
+                .hasMessageStartingWith("13002");
+
+        teamVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateService.createTeam(teamVO);
-        assertThat(teamVO.getClient()).isEqualTo(WbConstant.APP_DEFAULT_CLIENT);
         WbTeamDO teamDO = teamManager.getTeamByClientAndOuterId(
                 teamVO.getClient(), teamVO.getOuterCorpId()
         );
         Long teamId = teamDO.getId();
         assertThat(teamVO.getId()).isEqualTo(teamId);
+        WbOuterDataTeamDO outerDataTeamDO = teamManager.getOuterDataTeamByClientAndOuterId(
+                teamVO.getClient(), teamVO.getOuterCorpId());
+        assertThat(outerDataTeamDO.getClient()).isEqualTo(teamVO.getClient());
+
         WbDepartmentDO topDepartment = departmentManager.getTeamTopDepartment(teamId);
         WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
         assertThat(topDepartment).isNotNull();
@@ -122,8 +132,11 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
 
         AutoCreateDepartmentVO departmentVO = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
         departmentVO.setClient(null);
+        assertThatThrownBy(() -> autoCreateService.createDepartment(departmentVO))
+                .isInstanceOf(WorkbeiServiceException.class)
+                .hasMessageStartingWith("13002");
+        departmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateService.createDepartment(departmentVO);
-        assertThat(departmentVO.getClient()).isEqualTo(WbConstant.APP_DEFAULT_CLIENT);
         assertThat(departmentVO.getId()).isNotNull();
         WbDepartmentDO departmentDO = departmentManager.getDepartmentById(departmentVO.getId());
         assertThat(departmentDO.getTeamId()).isEqualTo(teamVO.getId());
@@ -142,9 +155,12 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         departmentVO.setName("at_new_department_name" + now.getTime());
         departmentVO.setDisplayOrder((double) now.getTime());
         departmentVO.setClient(null);
+        assertThatThrownBy(() -> autoCreateService.updateDepartment(departmentVO))
+                .isInstanceOf(WorkbeiServiceException.class)
+                .hasMessageStartingWith("13002");
+        departmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateService.updateDepartment(departmentVO);
 
-        assertThat(departmentVO.getClient()).isEqualTo(WbConstant.APP_DEFAULT_CLIENT);
         WbDepartmentDO departmentDO = departmentManager.getDepartmentById(departmentVO.getId());
         assertThat(departmentDO.getName()).isEqualTo(departmentVO.getName());
         assertThat(departmentDO.getDisplayOrder()).isEqualTo(departmentVO.getDisplayOrder());
@@ -590,8 +606,11 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         Long userId = userVO.getId();
 
         userVO.setClient(null);
+        assertThatThrownBy(() -> autoCreateService.updateUserLeaveTeam(userVO))
+                .isInstanceOf(WorkbeiServiceException.class)
+                .hasMessageStartingWith("13002");
+        userVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateService.updateUserLeaveTeam(userVO);
-        assertThat(userVO.getClient()).isEqualTo(WbConstant.APP_DEFAULT_CLIENT);
         WbUserDO userDO = userManager.getUserById(userId);
         assertThat(userDO.getTeamId()).isNull();
         List<WbTeamUserRoleDO> teamUserRoleList = teamManager.listTeamUserRoleByTeamIdAndUserId(
@@ -632,7 +651,6 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         autoCreateService.createUser(userVO);
         Long userId = userVO.getId();
 
-        userVO.setClient(null);
         autoCreateService.updateUserLeaveTeam(userVO);
 
         AutoCreateUserVO userVOCopy = (AutoCreateUserVO) SerializationUtils.clone(userVO);
@@ -693,11 +711,14 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         deptList.add(deptVO2.getOuterCombineId());
         userVO.setOuterCombineDeptIdList(deptList);
         userVO.setAdmin(true);
-        userVO.setClient(null);
         autoCreateService.createUser(userVO);
 
+        userVO.setClient(null);
+        assertThatThrownBy(() -> autoCreateService.updateUserSetAdmin(userVO))
+                .isInstanceOf(WorkbeiServiceException.class)
+                .hasMessageStartingWith("13002");
+        userVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateService.updateUserSetAdmin(userVO);
-        assertThat(userVO.getClient()).isEqualTo(WbConstant.APP_DEFAULT_CLIENT);
         WbTeamUserRoleDO adminRole = teamManager.getTeamUserRoleByTeamIdAndUserIdAndRole(
                 teamId, userVO.getId(), WbConstant.TEAM_USER_ROLE_ADMIN
         );
@@ -715,7 +736,7 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
         autoCreateService.createTeam(teamVO);
-        String client = WbConstant.APP_DEFAULT_CLIENT;
+        String client = TestV2Constant.CLIENT_FAKED;
         String outerCorpId = teamVO.getOuterCorpId();
         Long teamId = teamVO.getId();
 

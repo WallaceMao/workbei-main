@@ -1,11 +1,10 @@
 package com.workbei.service.tokenauth.impl;
 
 import com.workbei.BaseUnitTest;
-import com.workbei.constant.WbConstant;
+import com.workbei.constant.TestV2Constant;
 import com.workbei.manager.app.AppManager;
 import com.workbei.model.domain.user.WbOuterDataAppDO;
 import com.workbei.service.tokenauth.TokenAuthService;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -28,8 +27,9 @@ public class TokenAuthServiceImplTest extends BaseUnitTest {
     public void checkToken() throws Exception {
         Date now = new Date();
         String randomToken  ="random_token_" + now.getTime();
+        String fakedToken = "fake_token_" + now.getTime();
         //  token不存在，返回false
-        assertThat(tokenAuthService.checkToken(randomToken)).isFalse();
+        assertThat(tokenAuthService.checkToken(randomToken)).isNull();
 
         WbOuterDataAppDO appDO = new WbOuterDataAppDO();
         appDO.setName("appName_" + now.getTime());
@@ -38,15 +38,15 @@ public class TokenAuthServiceImplTest extends BaseUnitTest {
         appDO.setWhiteIpList("127.0.0.1");
         appManager.saveOrUpdateOuterDataApp(appDO);
         // token不是WbConstant.APP_DEFAULT_CLIENT，返回false
-        assertThat(tokenAuthService.checkToken(appDO.getToken())).isFalse();
+        assertThat(tokenAuthService.checkToken(fakedToken)).isNull();
 
         WbOuterDataAppDO appDO2 = new WbOuterDataAppDO();
         appDO2.setName("appName_" + now.getTime());
-        appDO2.setKey(WbConstant.APP_DEFAULT_CLIENT);
-        appDO2.setToken("appToken_" + now.getTime());
+        appDO2.setKey(TestV2Constant.CLIENT_FAKED);
+        appDO2.setToken(randomToken);
         appDO2.setWhiteIpList("127.0.0.1");
         appManager.saveOrUpdateOuterDataApp(appDO2);
-        assertThat(tokenAuthService.checkToken(appDO2.getToken())).isTrue();
+        assertThat(tokenAuthService.checkToken(randomToken)).isNotNull();
     }
 
     @Test

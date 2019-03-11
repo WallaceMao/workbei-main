@@ -1,6 +1,7 @@
 package com.workbei.manager.user.impl;
 
 import com.workbei.BaseUnitTest;
+import com.workbei.constant.TestV2Constant;
 import com.workbei.constant.WbConstant;
 import com.workbei.exception.ExceptionCode;
 import com.workbei.manager.user.AccountManager;
@@ -286,7 +287,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         departmentManager.saveOrUpdateOuterDataDepartment(targetOuterDataDepartment);
 
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(targetOuterDataDepartment.getOuterId());
         Date now = new Date();
@@ -315,7 +316,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
                 globalOuterDataTeam.getClient(), globalTopDepartment.getId());
         //  顶级部门不允许移动
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(topOuterDataDepartment.getOuterId());
         //  给定globalCommonOuterDataDepartment
@@ -333,7 +334,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
                 globalOuterDataTeam.getClient(), globalUnassignedDepartment.getId());
         //  未分配部门不允许移动
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(outerDataDepartmentDO.getOuterId());
         //  给定globalCommonOuterDataDepartment
@@ -368,7 +369,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  不允许移动到子部门
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptA1.getOuterCombineId());
         //  给定globalCommonOuterDataDepartment
@@ -454,7 +455,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  deptB1 move to deptB2
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptB1.getOuterCombineId());
         autoCreateDepartmentVO.setOuterParentCombineId(deptB2.getOuterCombineId());
@@ -578,7 +579,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  deptB1 move to top
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptB1.getOuterCombineId());
         autoCreateDepartmentVO.setOuterParentCombineId(globalOuterDataTeam.getOuterId());
@@ -649,7 +650,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
     @Test
     public void testDeleteDepartmentNotExist() throws Exception {
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId("at_department_outer_comid_" + new Date().getTime());
         assertThatCode(() -> departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO))
@@ -667,7 +668,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         WbOuterDataDepartmentDO outerDataDepartmentDO = departmentManager.getOuterDataDepartmentByClientAndDepartmentId(
                 globalOuterDataTeam.getClient(), globalUnassignedDepartment.getId());
         AutoCreateDepartmentVO unassignedAutoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        unassignedAutoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        unassignedAutoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         unassignedAutoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         unassignedAutoCreateDepartmentVO.setOuterCombineId(outerDataDepartmentDO.getOuterId());
         departmentManager.deleteDepartmentInfo(unassignedAutoCreateDepartmentVO);
@@ -694,7 +695,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
         departmentManager.saveDepartmentUser(globalTopDepartment.getId(), topDeptUserId);
 
         AutoCreateDepartmentVO topAutoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        topAutoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        topAutoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         topAutoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         topAutoCreateDepartmentVO.setOuterCombineId(topOuterDataDepartment.getOuterId());
         departmentManager.deleteDepartmentInfo(topAutoCreateDepartmentVO);
@@ -733,7 +734,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  delete deptA1
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptA1.getOuterCombineId());
         departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO);
@@ -834,7 +835,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  delete deptB1
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptB1.getOuterCombineId());
         departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO);
@@ -964,7 +965,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  delete deptB1
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptB1.getOuterCombineId());
         departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO);
@@ -1023,7 +1024,7 @@ public class DepartmentManagerImplTest extends BaseUnitTest {
 
         //  delete deptA1
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
-        autoCreateDepartmentVO.setClient(WbConstant.APP_DEFAULT_CLIENT);
+        autoCreateDepartmentVO.setClient(TestV2Constant.CLIENT_FAKED);
         autoCreateDepartmentVO.setOuterCorpId(globalOuterDataTeam.getOuterId());
         autoCreateDepartmentVO.setOuterCombineId(deptA1.getOuterCombineId());
         departmentManager.deleteDepartmentInfo(autoCreateDepartmentVO);
