@@ -234,8 +234,9 @@ public class AutoCreateV2ControllerTest extends WebBaseTest {
         json.put("outerCorpId", "dingaaaaaxxxx");
         checkSaveValidator(globalUrlCreateUser, json.toString(), HttpResultCode.USER_OUTER_ID_NULL);
         json.put("outerCombineId", "ding_outerCombineId");
-        checkSaveValidator(globalUrlCreateUser, json.toString(), HttpResultCode.USER_OUTER_DEPT_ID_NULL);
         JSONArray deptList = new JSONArray();
+        json.put("outerCombineDeptIdList", null);
+        checkSaveValidator(globalUrlCreateUser, json.toString(), HttpResultCode.USER_OUTER_DEPT_ID_NULL);
         deptList.add("ding_outerCombineDeptIdList");
         json.put("outerCombineDeptIdList", deptList);
         checkSaveValidator(globalUrlCreateUser, json.toString(), HttpResultCode.USER_NAME_NULL);

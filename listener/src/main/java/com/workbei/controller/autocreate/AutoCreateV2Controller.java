@@ -108,6 +108,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "createTeam",
+                getKV("client", client),
                 getKV("autoCreateTeamVO", autoCreateTeamVO)
         ));
         if (autoCreateTeamVO.getClient() == null) {
@@ -155,6 +156,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "createDepartment",
+                getKV("client", client),
                 getKV("autoCreateDepartmentVO", autoCreateDepartmentVO)
         ));
         if (autoCreateDepartmentVO.getClient() == null) {
@@ -203,6 +205,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "updateDepartment",
+                getKV("client", client),
                 getKV("outerId", outerId),
                 getKV("autoCreateDepartmentVO", autoCreateDepartmentVO)
         ));
@@ -245,6 +248,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "deleteDepartment",
+                getKV("client", client),
                 getKV("outerId", outerId)
         ));
         AutoCreateDepartmentVO autoCreateDepartmentVO = new AutoCreateDepartmentVO();
@@ -291,6 +295,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "createUser",
+                getKV("client", client),
                 getKV("userVO", userVO)
         ));
         if (userVO.getClient() == null) {
@@ -339,6 +344,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "updateUser",
+                getKV("client", client),
                 getKV("outerId", outerId),
                 getKV("userVO", userVO)
         ));
@@ -382,6 +388,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "updateUserSetAdmin",
+                getKV("client", client),
                 getKV("outerId", outerId),
                 getKV("admin", isAdmin)
         ));
@@ -422,6 +429,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "updateTeamAllAdmin",
+                getKV("client", client),
                 getKV("outerId", outerId),
                 getKV("adminList", adminList)
         ));
@@ -455,6 +463,7 @@ public class AutoCreateV2Controller {
         bizLogger.info(LogFormatter.format(
                 LogEvent.START,
                 "updateUserLeaveTeam",
+                getKV("client", client),
                 getKV("outerId", outerId)
         ));
         AutoCreateUserVO userVO = new AutoCreateUserVO();

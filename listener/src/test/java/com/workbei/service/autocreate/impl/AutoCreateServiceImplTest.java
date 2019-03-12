@@ -343,11 +343,38 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
     }
 
     /**
-     * 创建用户时，如果用户的部门列表中的部门id在系统中都不存在，那么会将该部门放到未分配部门中
+     * 创建用户时，如果用户的部门列表为空，那么会将该部门放到未分配部门中
      * @throws Exception
      */
     @Test
     public void testCreateUserWithoutDepartment() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        final Long teamId = teamVO.getId();
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        //  设置为空
+        List<String> deptList = new ArrayList<>();
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+
+        assertThat(userVO.getId()).isNotNull();
+        Long userId = userVO.getId();
+        List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userId);
+        WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
+        assertThat(savedDeptList).hasSize(1);
+        assertThat(savedDeptList).contains(unassignedDepartment.getId());
+    }
+
+    /**
+     * 创建用户时，如果用户的部门列表中的部门id在系统中都不存在，那么会将该部门放到未分配部门中
+     * @throws Exception
+     */
+    @Test
+    public void testCreateUserWithDepartmentNotExists() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
@@ -468,10 +495,50 @@ public class AutoCreateServiceImplTest extends BaseUnitTest {
     }
 
     /**
-     * 如果更新时用户的
+     * 如果更新时用户的，department列表为空，那么将该用户设置到未分配部门下
      */
     @Test
     public void testUpdateUserWithoutDepartment() throws Exception {
+        Date now = new Date();
+        AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
+        teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());
+        autoCreateService.createTeam(teamVO);
+        Long teamId = teamVO.getId();
+
+        AutoCreateDepartmentVO deptVO1 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO1.setTop(true);
+        autoCreateService.createDepartment(deptVO1);
+        AutoCreateDepartmentVO deptVO2 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO2.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO2);
+        AutoCreateDepartmentVO deptVO3 = TestDepartmentFactory.getAutoCreateDepartmentVO(teamVO.getOuterCorpId());
+        deptVO3.setOuterParentCombineId(deptVO1.getOuterCombineId());
+        autoCreateService.createDepartment(deptVO3);
+
+        AutoCreateUserVO userVO = TestUserFactory.getAutoCreateUserVO();
+        userVO.setOuterCorpId(teamVO.getOuterCorpId());
+        List<String> deptList = new ArrayList<>();
+        deptList.add(deptVO1.getOuterCombineId());
+        deptList.add(deptVO2.getOuterCombineId());
+        userVO.setOuterCombineDeptIdList(deptList);
+        autoCreateService.createUser(userVO);
+
+        List<String> newDeptList = new ArrayList<>();
+        // 用户的部门列表为空
+        userVO.setOuterCombineDeptIdList(newDeptList);
+        autoCreateService.updateUser(userVO);
+
+        List<Long> savedDeptList = departmentManager.listUserDeptDepartmentIdByUserId(userVO.getId());
+        WbDepartmentDO unassignedDepartment = departmentManager.getTeamUnassignedDepartment(teamId);
+        assertThat(savedDeptList).hasSize(1);
+        assertThat(savedDeptList).containsExactly(unassignedDepartment.getId());
+    }
+
+    /**
+     * 如果更新时用户的
+     */
+    @Test
+    public void testUpdateUserWithDepartmentNotExists() throws Exception {
         Date now = new Date();
         AutoCreateTeamVO teamVO = TestTeamFactory.getAutoCreateTeamVO();
         teamVO.setOuterCorpId("auto_test_team_outer_id_" + now.getTime());

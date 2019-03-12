@@ -20,12 +20,14 @@ public class CreateUserValidator implements Validator{
 
     @Override
     public void validate(Object o, Errors errors) {
+        AutoCreateUserVO user = (AutoCreateUserVO)o;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "outerCorpId",
                 HttpResultCode.USER_OUTER_CORP_ID_NULL.getCode());
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "outerCombineId",
                 HttpResultCode.USER_OUTER_ID_NULL.getCode());
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "outerCombineDeptIdList",
-                HttpResultCode.USER_OUTER_DEPT_ID_NULL.getCode());
+        if (user.getOuterCombineDeptIdList() == null) {
+            errors.rejectValue("outerCombineDeptIdList", HttpResultCode.USER_OUTER_DEPT_ID_NULL.getCode());
+        }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name",
                 HttpResultCode.USER_NAME_NULL.getCode());
     }
